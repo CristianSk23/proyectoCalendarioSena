@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Horario\HorarioController;
 use App\Http\Controllers\Evento\EventoController;
+use App\Http\Controllers\Login\LoginController;
 
 //index
 
@@ -10,7 +11,7 @@ Route::get('/', function () {
 
     return view('index'); // Vista principal
 
-});
+})->middleware('auth');
 
 
 
@@ -27,7 +28,8 @@ Route::resource('horarios', HorarioController::class);
 
 //+++++ === EVENTO  ===  +++++
 
-Route::resource('eventos', EventoController::class);
+Route::resource('eventos', EventoController::class)
+    ->middleware('auth');
 
 // Route::get('/', function () {
 //     return redirect()->route('eventos.index');
@@ -37,4 +39,11 @@ Route::resource('eventos', EventoController::class);
 
 //  ++++ CALENDARIO  ++++++
 
-Route::resource('eventos', EventoController::class);
+Route::resource('eventos', EventoController::class)->middleware('auth');;
+
+
+//  ++++ LOGIN  ++++++
+
+Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
+Route::post('loginIngresar', [LoginController::class, 'login'])->name('login.ingresar');
+Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');

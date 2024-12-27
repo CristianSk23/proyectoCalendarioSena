@@ -3,9 +3,9 @@
 namespace App\Models\Participante;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Participante extends Model
+class Participante extends Authenticatable
 {
     use HasFactory;
 
@@ -30,6 +30,7 @@ class Participante extends Model
         'par_direccion',
         'par_telefono',
         'par_correo',
+        'par_contrasena',
         'est_apr_id',
         'rol_id',
         'beneficio_sena',
@@ -40,7 +41,12 @@ class Participante extends Model
     // Si tienes timestamps en tu tabla, habilita esto
     public $timestamps = false; // Cambia a true si tienes created_at y updated_at
 
-
-
-    
+    public function getAuthPassword()
+    {
+        return $this->par_contrasena;
+    }
+    public function getAuthIdentifierName()
+    {
+        return 'par_correo'; // Especifica que 'par_correo' es el campo utilizado para la autenticación
+    }
 }
