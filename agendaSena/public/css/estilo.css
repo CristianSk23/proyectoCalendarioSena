@@ -1,0 +1,255 @@
+/* body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #c82333;
+}
+
+.alert {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+} */
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.h-screen {
+    height: 100vh;
+}
+
+.bg-gray-800 {
+    background-color: #2d3748; /* Gray-800 */
+}
+
+.bg-gray-200 {
+    background-color: #edf2f7; /* Gray-200 */
+}
+
+.p-4 {
+    padding: 1rem;
+}
+
+.text-white {
+    color: white;
+}
+
+.text-blue-600 {
+    color: #3182ce; /* Blue-600 */
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.mt-6 {
+    margin-top: 1.5rem;
+}
+
+/* Estilos específicos para la vista de eventos */
+.eventos-container {
+    background-color: #f4f4f4; /* Color de fondo específico */
+    padding: 20px; /* Espaciado específico */
+}
+
+.eventos-title {
+    color: #2c3e50; /* Color del título específico */
+}
+
+/* Otros estilos específicos para la vista de eventos */
+
+
+
+
+
+/* Estilos específicos para la vista de horarios */
+.horarios-container {
+    background-color: #e9ecef; /* Color de fondo específico */
+    padding: 20px; /* Espaciado específico */
+    border-radius: 8px; /* Bordes redondeados */
+}
+
+.horarios-title {
+    color: #343a40; /* Color del título específico */
+    font-size: 2rem; /* Tamaño de fuente del título */
+    margin-bottom: 20px; /* Espaciado inferior */
+}
+
+.horarios-table {
+    width: 100%; /* Ancho completo */
+    border-collapse: collapse; /* Colapsar bordes */
+    margin-top: 20px; /* Espaciado superior */
+}
+
+.horarios-table th, .horarios-table td {
+    border: 1px solid #dee2e6; /* Bordes de las celdas */
+    padding: 10px; /* Espaciado interno */
+    text-align: center; /* Alinear texto al centro */
+}
+
+.horarios-table th {
+    background-color: #007bff; /* Color de fondo de los encabezados */
+    color: white; /* Color del texto de los encabezados */
+}
+
+.horarios-table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color de fondo para filas pares */
+}
+
+.horarios-button {
+    background-color: #28a745; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    padding: 10px 15px; /* Espaciado interno del botón */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cambiar cursor al pasar el mouse */
+}
+
+.horarios-button:hover {
+    background-color: #218838; /* Color de fondo al pasar el mouse */
+}
+
+
+
+
+
+/* CALENDARIO */
+
+
+
+/* Estilos específicos para la vista de calendario */
+.calendar-container {
+    background-color: #e9ecef; /* Color de fondo específico */
+    padding: 20px; /* Espaciado específico */
+    border-radius: 8px; /* Bordes redondeados */
+}
+
+.calendar-title {
+    color: #343a40; /* Color del título específico */
+    font-size: 2rem; /* Tamaño de fuente del título */
+    margin-bottom: 20px; /* Espaciado inferior */
+    text-align: center; /* Centrar el título */
+}
+
+.calendar-table {
+    width: 100%; /* Ancho completo */
+    border-collapse: collapse; /* Colapsar bordes */
+    margin-top: 20px; /* Espaciado superior */
+}
+
+.calendar-table th, .calendar-table td {
+    border: 1px solid #dee2e6; /* Bordes de las celdas */
+    padding: 10px; /* Espaciado interno */
+    text-align: center; /* Alinear texto al centro */
+}
+
+.calendar-table th {
+    background-color: #007bff; /* Color de fondo de los encabezados */
+    color: white; /* Color del texto de los encabezados */
+}
+
+.calendar-table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color de fondo para filas pares */
+}
+
+.calendar-button {
+    background-color: #28a745; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    padding: 10px 15px; /* Espaciado interno del botón */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cambiar cursor al pasar el mouse */
+}
+
+.calendar-button:hover {
+    background-color: #218838; /* Color de fondo al pasar el mouse */
+}
+
+/* Estilo para el contenedor del calendario */
+#calendar {
+    display: flex;
+    flex-direction: column; /* Asegura que los elementos se apilen verticalmente */
+    align-items: center; /* Centra el contenido horizontalmente */
+    margin: 0 auto; /* Centra el contenedor en la página */
+}
+
+
