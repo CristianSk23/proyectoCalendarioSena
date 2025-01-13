@@ -1,3 +1,5 @@
+
+
 @extends('Layouts.Plantilla')
 
 @section('styles')

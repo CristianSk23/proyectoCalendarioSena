@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /* 
 
 body {
@@ -42,11 +43,13 @@ body {
 }
 
 .bg-gray-800 {
-    background-color: #2d3748; /* Gray-800 */
+    background-color: #2d3748;
+    /* Gray-800 */
 }
 
 .bg-gray-200 {
-    background-color: #edf2f7; /* Gray-200 */
+    background-color: #edf2f7;
+    /* Gray-200 */
 }
 
 .p-4 {
@@ -58,7 +61,8 @@ body {
 }
 
 .text-blue-600 {
-    color: #3182ce; /* Blue-600 */
+    color: #3182ce;
+    /* Blue-600 */
 }
 
 .mt-2 {
