@@ -30,7 +30,7 @@ class Participante extends Authenticatable
         'par_direccion',
         'par_telefono',
         'par_correo',
-        'par_contrasena',
+        'par_contrasenia',
         'est_apr_id',
         'rol_id',
         'beneficio_sena',

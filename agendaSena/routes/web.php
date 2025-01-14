@@ -7,11 +7,13 @@ use App\Http\Controllers\Login\LoginController;
 
 //index
 
+<<<<<<< Updated upstream
 Route::get('/', function () {
 
     return view('index'); // Vista principal
 
 })->middleware('auth');
+=======
 
 
 
@@ -28,8 +30,10 @@ Route::resource('horarios', HorarioController::class);
 
 //+++++ === EVENTO  ===  +++++
 
+<<<<<<< Updated upstream
 Route::resource('eventos', EventoController::class)
     ->middleware('auth');
+=======
 
 // Route::get('/', function () {
 //     return redirect()->route('eventos.index');
