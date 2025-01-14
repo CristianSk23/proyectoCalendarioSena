@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Evento;
 
 use App\Http\Controllers\Controller;
 use App\Models\Evento\Evento;
-use App\Models\Categoria\Categoria; 
-use App\Models\Ficha\Ficha; 
-use App\Models\sep_participante\Participante; 
+use App\Models\Categoria\Categoria;
+use App\Models\Ficha\Ficha;
+use App\Models\sep_participante\Participante;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class EventoController extends Controller
 {
@@ -53,6 +54,31 @@ class EventoController extends Controller
     {
         $evento->delete(); // Eliminar el evento
         return redirect()->route('eventos.index')->with('success', 'Evento eliminado exitosamente.');
+    }
+
+    public function buscarEventos(Request $request)
+    {
+
+        $dia = $request->input('dia');
+        $mes = $request->input('mes');
+        $anio = $request->input('anio');
+        // Construir la fecha en formato YYYY-MM-DD
+        $fecha = sprintf('%04d-%02d-%02d', $anio, $mes, $dia);
+
+        // Buscar eventos para la fecha específica
+        try {
+            $eventos = Evento::whereDate('fechaEvento', $fecha)->get();
+            return response()->json([
+                'success' => true,
+                'eventos' => $eventos,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al buscar los eventos.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     private function validateRequest(Request $request)
