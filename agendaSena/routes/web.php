@@ -10,7 +10,7 @@ use App\Http\Controllers\CalendarioController;
 
 //index
 
-Route::get('/', [CalendarioController::class, 'index'])->name('calendario.index')->middleware('auth');
+Route::get('/', [CalendarioController::class, 'index'])->name('calendario.index')/* ->middleware('auth') */;
 
 
 
@@ -28,7 +28,7 @@ Route::resource('horarios', HorarioController::class);
 //+++++ === EVENTO  ===  +++++
 
 Route::resource('eventos', EventoController::class)->middleware('auth');
-Route::get('buscar', [EventoController::class, 'buscarEventos'])->name('eventos.buscar')->middleware('auth');
+Route::get('buscar', [EventoController::class, 'buscarEventos'])->name('eventos.buscar')/* ->middleware('auth') */;
 
 // Route::get('/', function () {
 //     return redirect()->route('eventos.index');
