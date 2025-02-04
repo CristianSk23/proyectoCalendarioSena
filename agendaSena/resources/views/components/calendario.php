@@ -1,29 +1,34 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\View\Components;
 
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\View\Component;
 
-class CalendarioController extends Controller
+class Calendario extends Component
 {
+    public $calendario;
+    public $anio;
+    public $mes;
 
-    public function generarCalendario(Request $request)
+    public function __construct($mes = null, $anio = null)
     {
-        // Obtener el mes y año actuales o proporcionados por el usuario
+        // Si no se proporciona mes o año, se utilizan los actuales
         $fechaActual = Carbon::now();
-        $vista = $request->query('vista');
+        $this->mes = $mes ?? $fechaActual->month;
+        $this->anio = $anio ?? $fechaActual->year;
 
-        $mes = $request->query('mes', $fechaActual->month);
-        $anio = $request->query('anio', $fechaActual->year);
+        $this->calendario = $this->generarCalendario();
+    }
 
+    private function generarCalendario()
+    {
         // Crear una instancia de Carbon para el primer día del mes
-        $primerDia_delMes = Carbon::createFromDate($anio, $mes, 1);
+        $primerDia_delMes = Carbon::createFromDate($this->anio, $this->mes, 1);
         $ultimoDia_delMes = $primerDia_delMes->copy()->endOfMonth();
 
         // Día de la semana en que comienza el mes (0=Domingo, 6=Sábado)
         $diaInicioSemana = $primerDia_delMes->dayOfWeek;
-
 
         // Total de días en el mes
         $diasEnElMes  = $ultimoDia_delMes->day;
@@ -54,12 +59,12 @@ class CalendarioController extends Controller
         }
         $calendario[] = $semana;
 
-        // Pasar los datos del calendario a la vista
-        if ($vista) {
-            return view($vista, compact('calendario', 'mes', 'anio'));
-        } else {
-            return view('index', compact('calendario', 'mes', 'anio'));
-        }
-        //return $calendario;
+        echo("Sería la información del calendario ". $calendario);
+        return $calendario; 
+    }
+
+    public function render()
+    {
+        return view('components.calendario');
     }
 }

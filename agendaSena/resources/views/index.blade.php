@@ -6,14 +6,14 @@
 
 @section('content')
     <!-- <div class="container mx-auto mt-10">
-                                                                                                                                                                                                                                    <h1 class="text-3xl font-bold">Bienvenido a la Gestión de Eventos</h1>
-                                                                                                                                                                                                                                    <p class="mt-4">Selecciona una opción para continuar:</p>
+                                                                                                                                                                                                                                                    <h1 class="text-3xl font-bold">Bienvenido a la Gestión de Eventos</h1>
+                                                                                                                                                                                                                                                    <p class="mt-4">Selecciona una opción para continuar:</p>
 
-                                                                                                                                                                                                                                    <div class="mt-6">
-                                                                                                                                                                                                                                        <a href="{{ route('eventos.index') }}" class="bg-blue-500 text-white px-4 py-2 rounded mr-4">Ver Eventos</a>
-                                                                                                                                                                                                                                        <a href="{{ route('horarios.index') }}" class="bg-green-500 text-white px-4 py-2 rounded">Ver Horarios</a>
-                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                </div> -->
+                                                                                                                                                                                                                                                    <div class="mt-6">
+                                                                                                                                                                                                                                                        <a href="{{ route('eventos.index') }}" class="bg-blue-500 text-white px-4 py-2 rounded mr-4">Ver Eventos</a>
+                                                                                                                                                                                                                                                        <a href="{{ route('horarios.index') }}" class="bg-green-500 text-white px-4 py-2 rounded">Ver Horarios</a>
+                                                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                                                </div> -->
 
 
 
@@ -74,6 +74,7 @@
             <div class="absolute top-20 right-20 p-4 text-xl font-semibold text-gray-700">
                 {{ $anio }}
             </div>
+
         </div>
 
         <table id="calendario" class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md"></table>
@@ -195,14 +196,14 @@
                         let nombreMes = formatoMes.format(new Date(anio, nuevoMes, dia));
                         nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toLowerCase();
                         sidebar.innerHTML = '';
-                       
+
                         if (data.eventos && data.eventos.length > 0) {
                             // Si hay eventos, mostrarlos en el sidebar
                             const eventosHTML = data.eventos.map(evento => `
                     <div class="p-4 border-solid border-black bg-white rounded-md">
                         <div class="bg-blue-600 rounded-md"> <h3 class="font-bold text-lg text-center text-white">${evento.nomEvento}</h3> </div>
-                        <p class="text-sm text-gray-700">${evento.descripcion}</p>
-                        <p class="text-sm text-gray-500">Hora: ${evento.hora}</p>
+                        <p class="text-sm text-gray-700">Descripción del evento:${evento.descripcion}</p>
+                        <p class="text-sm text-gray-500">Encargado del evento: ${evento.nomSolicitante}</p>
                     </div>
                 `).join('');
                             sidebar.innerHTML = `
@@ -219,12 +220,12 @@
                     <h2 class="font-bold text-xl mb-4">Sin eventos para ${dia}-${nombreMes}-${anio}</h2>
                     <button id="agregarEvento" class="bg-blue-500 text-white px-4 py-2 rounded">Agregar Evento</button>
                 `;
-
+                            const baseRutaCrearEvento = "{{ route('eventos.crearEvento') }}";
                             // Agregar evento al botón
                             const botonAgregar = document.getElementById('agregarEvento');
                             botonAgregar.addEventListener('click', () => {
                                 window.location.href =
-                                    `/eventos/crear?dia=${dia}&mes=${mes}&anio=${anio}`;
+                                    `${baseRutaCrearEvento}?dia=${dia}&mes=${mes}&anio=${anio}"`;
                             });
                         }
                     })

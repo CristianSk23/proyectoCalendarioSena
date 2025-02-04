@@ -24,22 +24,41 @@ class HorarioController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validador = $request->validate([
             'pla_amb_id' => 'required|integer',
-            'inicio' => 'required|string|max:255',
-            'fin' => 'required|string|max:255',
-            'estadoHora' => 'required|boolean',
+            'inicio' => 'required|date',
+            'fin' => 'required|date',
         ]);
+        if (!$validador) {
+            return response()->json([
+                'message' => 'Error de validación',
+            ], 422);
+        }
 
-        Horario::create($request->all()); 
-        return redirect()->route('horarios.index')->with('success', 'Horario creado exitosamente.');
+        try {
+            $horario = Horario::create([
+                'pla_amb_id' => $request->pla_amb_id,
+                'inicio' => $request->inicio,
+                'fin' => $request->fin,
+            ]);
+            return response()->json([
+                'message' => 'Horario creado exitosamente.',
+                'horario' => $horario,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Ocurrió un error al crear el horario.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+        //return redirect()->route('horarios.index')->with('success', 'Horario creado exitosamente.');
     }
 
     // public function edit($id)
     // {
     //     $horario = Horario::findOrFail($id); // buscar en la tabla agendasena
     //     //return view('Horario.editarHorario', compact('horario'));
-       
+
 
     // $ambientes = Ambiente::all(); 
 
@@ -50,7 +69,6 @@ class HorarioController extends Controller
     {
         $ambientes = Ambiente::all(); // Cargar ambientes para el select
         return view('Horario.editarHorario', compact('horario', 'ambientes'));
-        
     }
 
     // public function update(Request $request, $id)
@@ -68,28 +86,26 @@ class HorarioController extends Controller
     // }
 
     public function update(Request $request, Horario $horario)
-{
-    $this->validateRequest($request);
-    $horario->update($request->all());
-    return redirect()->route('horarios.index')->with('success', 'Horario actualizado exitosamente.');
-}
+    {
+        $this->validateRequest($request);
+        $horario->update($request->all());
+        return redirect()->route('horarios.index')->with('success', 'Horario actualizado exitosamente.');
+    }
 
     public function destroy($id)
     {
-        $horario = Horario::findOrFail($id);// busca
+        $horario = Horario::findOrFail($id); // busca
         $horario->delete(); // eliminar
-        return redirect()->route('horarios.index')->with('success', 'Horario eliminado exitosamente.');// redirecciona
+        return redirect()->route('horarios.index')->with('success', 'Horario eliminado exitosamente.'); // redirecciona
     }
 
     private function validateRequest(Request $request)
-{
-    return $request->validate([
-        'pla_amb_id' => 'required|integer',
-        'inicio' => 'required|string|max:255',
-        'fin' => 'required|string|max:255',
-        'estadoHora' => 'required|boolean',
-    ]);
-}
-    
-
+    {
+        return $request->validate([
+            'pla_amb_id' => 'required|integer',
+            'inicio' => 'required|string|max:255',
+            'fin' => 'required|string|max:255',
+            'estadoHora' => 'required|boolean',
+        ]);
+    }
 }
