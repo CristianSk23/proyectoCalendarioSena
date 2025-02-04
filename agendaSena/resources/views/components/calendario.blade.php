@@ -32,34 +32,4 @@
             </table>
         </div>
     </div>
-   {{--  <x-calendario /> --}}
-
-
-    <h2 class="font-bold">Navegación</h2>
-
-
-
-
-    <!-- Sección de Navegación Principal -->
-    <div class="mt-4">
-        <h3 class="font-bold">Navegación Principal</h3>
-        <ul>
-            <!-- <li class="mt-2"><a href="{{ route('eventos.index') }}" class="text-blue-600">Ver Eventos</a></li> -->
-            <li class="mt-2"><a href="{{ route('horarios.index') }}" class="text-blue-600">Ver
-                    Horarios</a></li>
-            <!-- Agrega más enlaces según sea necesario -->
-        </ul>
-    </div>
-
-    <!-- Sección de Recursos Adicionales -->
-    <div class="mt-4">
-        <h3 class="font-bold">Recursos Adicionales</h3>
-        <ul>
-            <h3 class="font-bold">Navegación Principal</h3>
-            <!-- Agrega más enlaces según sea necesario -->
-        </ul>
-    </div>
-
-
-
 </nav>

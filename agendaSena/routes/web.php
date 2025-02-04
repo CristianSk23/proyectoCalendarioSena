@@ -12,7 +12,7 @@ use App\Http\Controllers\CalendarioController;
 
 
 
-Route::get('/', [CalendarioController::class, 'index'])->name('calendario.index')->middleware('auth');
+Route::get('/', [CalendarioController::class, 'generarCalendario'])->name('calendario.index')/* ->middleware('auth') */;
 
 
 
@@ -31,8 +31,11 @@ Route::resource('horarios', HorarioController::class);
 
 
 
-Route::resource('eventos', EventoController::class)->middleware('auth');
-Route::get('buscar', [EventoController::class, 'buscarEventos'])->name('eventos.buscar')->middleware('auth');
+//Route::resource('eventos', EventoController::class)/* ->middleware('auth') */;
+Route::get('index', [EventoController::class, 'index'])->name('eventos.index')/* ->middleware('auth') */;
+Route::post('crearPost', [EventoController::class, 'store'])->name('eventos.store')/* ->middleware('auth') */;
+Route::get('buscar', [EventoController::class, 'buscarEventos'])->name('eventos.buscar')/* ->middleware('auth') */;
+Route::get("crear", [EventoController::class, 'create'])->name('eventos.crearEvento');
 
 // Route::get('/', function () {
 //     return redirect()->route('eventos.index');
@@ -42,7 +45,7 @@ Route::get('buscar', [EventoController::class, 'buscarEventos'])->name('eventos.
 
 //  ++++ CALENDARIO  ++++++
 //Route::resource('eventos', EventoController::class)->middleware('auth');;
-
+Route::get("calendario", [CalendarioController::class, 'generarCalendario'])->name('calendario.generar');
 
 //  ++++ LOGIN  ++++++
 
