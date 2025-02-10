@@ -81,6 +81,13 @@
     </div>
 
 
+    </div>
+
+    <!-- Botón para generar reportes en la esquina inferior derecha -->
+    <a href="{{ route('reportes.index_reportes') }}" class="fixed bottom-10 right-10 bg-blue-500 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-600 transition duration-200 z-10">
+        Generar Reportes
+    </a>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

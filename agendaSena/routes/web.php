@@ -6,6 +6,7 @@ use App\Http\Controllers\Horario\HorarioController;
 use App\Http\Controllers\Evento\EventoController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\CalendarioController;
+use App\Http\Controllers\Evento\ReportesController;
 
 
 //index
@@ -45,3 +46,10 @@ Route::get('buscar', [EventoController::class, 'buscarEventos'])->name('eventos.
 Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('loginIngresar', [LoginController::class, 'login'])->name('login.ingresar');
 Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');
+
+
+
+Route::prefix('evento/reportes')->name('evento.reportes.')->group(function () {
+    Route::get('/', [ReportesController::class, 'index'])->name('index');
+    Route::get('/{id}', [ReportesController::class, 'show'])->name('show');
+});
