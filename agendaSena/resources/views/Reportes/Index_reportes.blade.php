@@ -2,12 +2,13 @@ extends('Layouts.Plantilla')
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}"> <!-- Incluir el CSS específico -->
 @endsection
-section('content')
+
+@section('content')
 
 <!-- index_reportes.blade.php -->
 
     <h1>Reportes</h1>
-
+ 
     <form action="{{ route('reportes.mensual') }}" method="POST">
         @csrf
         <label for="mes">Mes:</label>
@@ -34,8 +35,8 @@ section('content')
             <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">Generar Reporte Anual</button>
         </form>
 
-        <canvas id="myChart" width="400" height="200"></canvas> -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <canvas id="myChart" width="400" height="200"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
     <script>
         var ctx = document.getElementById('myChart').getContext('2d');
         var myChart = new Chart(ctx, {
@@ -66,7 +67,7 @@ section('content')
                 }
             }
         });
-    </script>
+    </script> 
 
 
 
