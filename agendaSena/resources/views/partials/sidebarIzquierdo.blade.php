@@ -35,8 +35,12 @@
    {{--  <x-calendario /> --}}
 
 
-<!-- Contenedor para el listado de eventos -->
-    <div class="mt-4 border rounded-lg p-4 bg-gray-50">
+
+<!-- segmento eventos del dia actual yaque -->
+
+
+   <!-- Contenedor para el listado de eventos -->
+   <div class="mt-4 border rounded-lg p-4 bg-gray-50">
         <h3 class="font-bold text-lg">Eventos del {{ \Carbon\Carbon::now()->locale('es')->day }} de {{ \Carbon\Carbon::now()->locale('es')->monthName }}</h3>
         <ul id="event-list" class="list-disc pl-5">
             <!-- Aquí se llenarán los eventos -->
@@ -45,7 +49,8 @@
     </div>
 </nav>
 
-<script>
+   
+    <script>
     // Simulación de eventos agendados
     const eventos = [
         { fecha: '2025-01-16', nombre: 'Reunión de Proyecto' },
@@ -67,6 +72,6 @@
     } else {
         noEventos.classList.remove('hidden');
     }
-</script>
 
+</script>
 </nav>
