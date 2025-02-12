@@ -35,31 +35,43 @@
    {{--  <x-calendario /> --}}
 
 
-    <h2 class="font-bold">Navegación</h2>
+
+<!-- segmento eventos del dia actual yaque -->
 
 
-
-
-    <!-- Sección de Navegación Principal -->
-    <div class="mt-4">
-        <h3 class="font-bold">Navegación Principal</h3>
-        <ul>
-            <!-- <li class="mt-2"><a href="{{ route('eventos.index') }}" class="text-blue-600">Ver Eventos</a></li> -->
-            <li class="mt-2"><a href="{{ route('horarios.index') }}" class="text-blue-600">Ver
-                    Horarios</a></li>
-            <!-- Agrega más enlaces según sea necesario -->
+   <!-- Contenedor para el listado de eventos -->
+   <div class="mt-4 border rounded-lg p-4 bg-gray-50">
+        <h3 class="font-bold text-lg">Eventos del {{ \Carbon\Carbon::now()->locale('es')->day }} de {{ \Carbon\Carbon::now()->locale('es')->monthName }}</h3>
+        <ul id="event-list" class="list-disc pl-5">
+            <!-- Aquí se llenarán los eventos -->
         </ul>
+        <p id="no-events" class="hidden">No hay nada agendado.</p>
     </div>
+</nav>
 
-    <!-- Sección de Recursos Adicionales -->
-    <div class="mt-4">
-        <h3 class="font-bold">Recursos Adicionales</h3>
-        <ul>
-            <h3 class="font-bold">Navegación Principal</h3>
-            <!-- Agrega más enlaces según sea necesario -->
-        </ul>
-    </div>
+   
+    <script>
+    // Simulación de eventos agendados
+    const eventos = [
+        { fecha: '2025-01-16', nombre: 'Reunión de Proyecto' },
+        { fecha: '2025-01-17', nombre: 'Taller de Desarrollo' }
+    ];
 
+    const hoy = new Date().toISOString().split('T')[0]; // Obtener la fecha de hoy en formato YYYY-MM-DD
+    const listaEventos = document.getElementById('event-list');
+    const noEventos = document.getElementById('no-events');
 
+    const eventosHoy = eventos.filter(evento => evento.fecha === hoy);
 
+    if (eventosHoy.length > 0) {
+        eventosHoy.forEach(evento => {
+            const li = document.createElement('li');
+            li.textContent = evento.nombre;
+            listaEventos.appendChild(li);
+        });
+    } else {
+        noEventos.classList.remove('hidden');
+    }
+
+</script>
 </nav>

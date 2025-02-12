@@ -6,7 +6,7 @@ use App\Http\Controllers\Horario\HorarioController;
 use App\Http\Controllers\Evento\EventoController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\CalendarioController;
-
+use App\Http\Controllers\Evento\ReporteController;
 
 //index
 
@@ -48,3 +48,12 @@ Route::get("calendario", [CalendarioController::class, 'generarCalendario'])->na
 Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('loginIngresar', [LoginController::class, 'login'])->name('login.ingresar');
 Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');
+
+
+
+//**** reportes*** */
+
+
+Route::get('evento/reportes', [ReporteController::class, 'index_report'])->name('evento.reportes.index');
+Route::post('evento/reportes/generar-mensual', [ReporteController::class, 'generarReporteMensual'])->name('reportes.mensual');
+Route::post('evento/reportes/generar-anual', [ReporteController::class, 'generarReporteAnual'])->name('reportes.anual');

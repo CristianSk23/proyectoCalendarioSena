@@ -31,7 +31,7 @@
 
 </div>
 
-
+        
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -138,18 +138,18 @@
                 .then(data => {
 
 
-                    // Limpiar el contenido del sidebar
-                    const formatoMes = new Intl.DateTimeFormat('es-ES', {
-                        month: 'long'
-                    }); // 'es-ES' para español
-                    const nuevoMes = mes - 1;
-                    let nombreMes = formatoMes.format(new Date(anio, nuevoMes, dia));
-                    nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toLowerCase();
-                    sidebar.innerHTML = '';
+                        // Limpiar el contenido del sidebar
+                        const formatoMes = new Intl.DateTimeFormat('es-ES', {
+                            month: 'long'
+                        }); // 'es-ES' para español
+                        const nuevoMes = mes - 1;
+                        let nombreMes = formatoMes.format(new Date(anio, nuevoMes, dia));
+                        nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toLowerCase();
+                        sidebar.innerHTML = '';
 
-                    if (data.eventos && data.eventos.length > 0) {
-                        // Si hay eventos, mostrarlos en el sidebar
-                        const eventosHTML = data.eventos.map(evento => `
+                        if (data.eventos && data.eventos.length > 0) {
+                            // Si hay eventos, mostrarlos en el sidebar
+                            const eventosHTML = data.eventos.map(evento => `
                     <div class="p-4 border-solid border-black bg-white rounded-md">
                         <div class="bg-blue-600 rounded-md"> <h3 class="font-bold text-lg text-center text-white">${evento.nomEvento}</h3> </div>
                         <p class="text-sm text-gray-700">Descripción del evento:${evento.descripcion}</p>
@@ -170,21 +170,21 @@
                     <h2 class="font-bold text-xl mb-4">Sin eventos para ${dia}-${nombreMes}-${anio}</h2>
                     <button id="agregarEvento" class="bg-blue-500 text-white px-4 py-2 rounded">Agregar Evento</button>
                 `;
-                        const baseRutaCrearEvento = "{{ route('eventos.crearEvento') }}";
-                        // Agregar evento al botón
-                        const botonAgregar = document.getElementById('agregarEvento');
-                        botonAgregar.addEventListener('click', () => {
-                            window.location.href =
-                                `${baseRutaCrearEvento}?dia=${dia}&mes=${mes}&anio=${anio}"`;
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al cargar los eventos:', error);
-                    sidebar.innerHTML =
-                        `<p class="text-red-500">Error al cargar los eventos. Intenta nuevamente.</p>`;
-                });
-        }
+                            const baseRutaCrearEvento = "{{ route('eventos.crearEvento') }}";
+                            // Agregar evento al botón
+                            const botonAgregar = document.getElementById('agregarEvento');
+                            botonAgregar.addEventListener('click', () => {
+                                window.location.href =
+                                    `${baseRutaCrearEvento}?dia=${dia}&mes=${mes}&anio=${anio}"`;
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar los eventos:', error);
+                        sidebar.innerHTML =
+                            `<p class="text-red-500">Error al cargar los eventos. Intenta nuevamente.</p>`;
+                    });
+            }
 
         // Generar calendario inicial
         generarCalendario(fechaActual);
@@ -195,10 +195,17 @@
             generarCalendario(fechaActual);
         });
 
-        nextMonthButton.addEventListener('click', function () {
-            fechaActual.setMonth(fechaActual.getMonth() + 1);
-            generarCalendario(fechaActual);
+            nextMonthButton.addEventListener('click', function() {
+                fechaActual.setMonth(fechaActual.getMonth() + 1);
+                generarCalendario(fechaActual);
+            });
         });
-    });
-</script>
+    </script>
+
+    <!-- Botón para redirigir a index_reportes -->
+    <div class="text-center mb-4">
+            <a href="{{ route('evento.reportes.index') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-200">
+                Ver Reportes
+            </a>
+        </div>
 @endsection
