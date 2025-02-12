@@ -12,6 +12,7 @@
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <title>Agenda CDTI-SENA</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;700&display=swap" rel="stylesheet">
 
 </head>
 </head>
@@ -20,7 +21,7 @@
 
     <div class="flex flex-col h-screen">
         <!-- Header -->
-        <header class="bg-gray-800 text-white p-4">
+        <header class="bg-lime-500 text-white p-4">
             <h1 class="text-2xl font-bold">Agenda SENA CDTI</h1>
             <form method="POST" action="{{ route('login.logout') }}">
                 @csrf

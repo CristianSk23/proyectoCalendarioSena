@@ -1,9 +1,9 @@
 <nav class="bg-gray-200 w-1/4 p-4">
 
     <div class="container mx-1 px-1">
-        <div class="border rounded-lg p-4 bg-gray-50">
-            <div class="border rounded-lg p-4">
-                <h1 class="text-3xl font-bold text-center ">{{ \Carbon\Carbon::now()->locale('es')->monthName }}</h1>
+        <div class="border rounded-lg p-4 bg-lime-700 border-lime-500">
+            <div class="border rounded-lg p-4 text-white ">
+                <h1 class="text-3xl font-bold font-sans text-center ">{{ \Carbon\Carbon::now()->locale('es')->monthName }}</h1>
             </div>
 
             <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md table-auto">
