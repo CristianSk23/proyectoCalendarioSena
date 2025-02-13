@@ -13,7 +13,7 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 </head>
-</head>
+
 
 <body>
 
@@ -38,7 +38,7 @@
 
 
             <!-- Sidebar Izquierda -->
-            @include ('partials.sidebarIzquierdo', ['calendario' => $calendario, 'anio'=>$anio])
+            @include ('partials.sidebarIzquierdo')
 
             <!-- Contenido Principal -->
             <main class="flex-1 p-4">

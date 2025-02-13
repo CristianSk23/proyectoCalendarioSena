@@ -59,6 +59,7 @@
                 </thead>
                 <tbody id="calendarBody" class="text-gray-600 text-sm font-light">
                     <!-- Las celdas del calendario se generarán aquí -->
+                     
                 </tbody>
             </table>
         </div>
