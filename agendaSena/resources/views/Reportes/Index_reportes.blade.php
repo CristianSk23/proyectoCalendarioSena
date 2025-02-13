@@ -1,4 +1,4 @@
-extends('Layouts.Plantilla')
+@extends('Layouts.Header')
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}"> <!-- Incluir el CSS específico -->
 @endsection

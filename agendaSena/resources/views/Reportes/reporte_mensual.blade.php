@@ -1,4 +1,4 @@
-@extends('Layouts.Plantilla') <!-- Asegúrate de que esta plantilla exista -->
+@extends('Layouts.Header') <!-- Asegúrate de que esta plantilla exista -->
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}"> <!-- Incluir el CSS específico -->

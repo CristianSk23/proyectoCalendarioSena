@@ -10,8 +10,8 @@ use App\Http\Controllers\Evento\ReporteController;
 
 //index
 
-Route::get('/', [CalendarioController::class, 'generarCalendario'])->name('calendario.index')/* ->middleware('auth') */;
 
+Route::get('/', [CalendarioController::class, 'generarCalendario'])->name('calendario.index')/* ->middleware('auth') */;
 
 
 //+++++  ===  Horarios  === +++++
@@ -20,7 +20,6 @@ Route::resource('horarios', HorarioController::class);
 // Route::get('/', function () {
 //     return redirect()->route('horarios.index');
 // });
-
 
 
 
@@ -38,7 +37,6 @@ Route::get("crear", [EventoController::class, 'create'])->name('eventos.crearEve
 // });
 
 
-
 //  ++++ CALENDARIO  ++++++
 //Route::resource('eventos', EventoController::class)->middleware('auth');;
 Route::get("calendario", [CalendarioController::class, 'generarCalendario'])->name('calendario.generar');
@@ -48,6 +46,7 @@ Route::get("calendario", [CalendarioController::class, 'generarCalendario'])->na
 Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('loginIngresar', [LoginController::class, 'login'])->name('login.ingresar');
 Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');
+
 
 
 

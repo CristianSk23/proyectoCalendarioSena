@@ -8,14 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
     @vite('resources/css/app.css')
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <title>Agenda CDTI-SENA</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;700&display=swap" rel="stylesheet">
 
 </head>
-</head>
+
 
 <body>
 
@@ -40,7 +39,7 @@
 
 
             <!-- Sidebar Izquierda -->
-            @include ('partials.sidebarIzquierdo', ['calendario' => $calendario, 'anio'=>$anio])
+            @include ('partials.sidebarIzquierdo')
 
             <!-- Contenido Principal -->
             <main class="flex-1 p-4">

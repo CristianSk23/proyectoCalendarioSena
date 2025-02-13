@@ -59,6 +59,7 @@ class CalendarioController extends Controller
             return view($vista, compact('calendario', 'mes', 'anio'));
         } else {
             return view('index', compact('calendario', 'mes', 'anio'));
+            
         }
         //return $calendario;
     }
