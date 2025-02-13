@@ -31,7 +31,7 @@
 
 </div>
 
-        
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -138,30 +138,43 @@
                 .then(data => {
 
 
-                        // Limpiar el contenido del sidebar
-                        const formatoMes = new Intl.DateTimeFormat('es-ES', {
-                            month: 'long'
-                        }); // 'es-ES' para español
-                        const nuevoMes = mes - 1;
-                        let nombreMes = formatoMes.format(new Date(anio, nuevoMes, dia));
-                        nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toLowerCase();
-                        sidebar.innerHTML = '';
+                    // Limpiar el contenido del sidebar
+                    const formatoMes = new Intl.DateTimeFormat('es-ES', {
+                        month: 'long'
+                    }); // 'es-ES' para español
+                    const nuevoMes = mes - 1;
+                    let nombreMes = formatoMes.format(new Date(anio, nuevoMes, dia));
+                    nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toLowerCase();
+                    sidebar.innerHTML = '';
 
-                        if (data.eventos && data.eventos.length > 0) {
-                            // Si hay eventos, mostrarlos en el sidebar
-                            const eventosHTML = data.eventos.map(evento => `
-                    <div class="p-4 border-solid border-black bg-white rounded-md">
-                        <div class="bg-blue-600 rounded-md"> <h3 class="font-bold text-lg text-center text-white">${evento.nomEvento}</h3> </div>
-                        <p class="text-sm text-gray-700">Descripción del evento:${evento.descripcion}</p>
-                        <p class="text-sm text-gray-500">Encargado del evento: ${evento.nomSolicitante}</p>
-                    </div>
-                `).join('');
+                    if (data.data.length > 0) {   
+                        const eventosHTML = data.data.map(item => {
+                            // Acceder a las propiedades anidadas
+                            const evento = item.evento;
+                            const categoria = item.categoria;
+                            const horario = item.horario;
+                            const ambiente = item.ambiente;
+
+                            return `
+                                    <div class="container bg-lime-700 mx-auto mt-10 h-[70vh] rounded-md px-11 py-5">      
+                                        <div class="p-4 border-solid border-black bg-white rounded-md w-[350px] max-h-[200px] overflow-auto px-3">
+                                            <div class="bg-lime-500 rounded-md">
+                                                <h3 class="font-bold text-lg text-center text-white">${evento.nomEvento}</h3>
+                                            </div>
+                                            <p class="text-sm text-black-700">Descripción del evento: ${evento.descripcion}</p>
+                                            <p class="text-sm text-black-500">Encargado del evento: ${evento.nomSolicitante}</p>
+                                            <p class="text-sm text-black-500">Ambiente: ${ambiente.pla_amb_descripcion}</p>
+                                            <p class="text-sm text-black-500">Categoría: ${categoria.nomCategoria}</p>
+                                            <p class="text-sm text-black-500">Horario: ${horario.inicio} - ${horario.fin}</p>
+                                        </div>
+                                    </div>
+        `;
+                        }).join('');
                         sidebar.innerHTML = `
                             <h1 class="text-3xl font-bold">Bienvenido a la Gestión de Eventos</h1>
                             <br>
                     <h2 class="font-bold text-xl mb-4">Eventos para ${dia}-<b>${nombreMes}</b>-${anio}</h2>
-                    ${eventosHTML}
-                `;
+                    ${eventosHTML} `;
                     } else {
                         // Si no hay eventos, mostrar botones para agregar un evento
                         sidebar.innerHTML = `
@@ -170,21 +183,21 @@
                     <h2 class="font-bold text-xl mb-4">Sin eventos para ${dia}-${nombreMes}-${anio}</h2>
                     <button id="agregarEvento" class="bg-blue-500 text-white px-4 py-2 rounded">Agregar Evento</button>
                 `;
-                            const baseRutaCrearEvento = "{{ route('eventos.crearEvento') }}";
-                            // Agregar evento al botón
-                            const botonAgregar = document.getElementById('agregarEvento');
-                            botonAgregar.addEventListener('click', () => {
-                                window.location.href =
-                                    `${baseRutaCrearEvento}?dia=${dia}&mes=${mes}&anio=${anio}"`;
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error al cargar los eventos:', error);
-                        sidebar.innerHTML =
-                            `<p class="text-red-500">Error al cargar los eventos. Intenta nuevamente.</p>`;
-                    });
-            }
+                        const baseRutaCrearEvento = "{{ route('eventos.crearEvento') }}";
+                        // Agregar evento al botón
+                        const botonAgregar = document.getElementById('agregarEvento');
+                        botonAgregar.addEventListener('click', () => {
+                            window.location.href =
+                                `${baseRutaCrearEvento}?dia=${dia}&mes=${mes}&anio=${anio}"`;
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar los eventos:', error);
+                    sidebar.innerHTML =
+                        `<p class="text-red-500">Error al cargar los eventos. Intenta nuevamente.</p>`;
+                });
+        }
 
         // Generar calendario inicial
         generarCalendario(fechaActual);
@@ -195,17 +208,18 @@
             generarCalendario(fechaActual);
         });
 
-            nextMonthButton.addEventListener('click', function() {
-                fechaActual.setMonth(fechaActual.getMonth() + 1);
-                generarCalendario(fechaActual);
-            });
+        nextMonthButton.addEventListener('click', function () {
+            fechaActual.setMonth(fechaActual.getMonth() + 1);
+            generarCalendario(fechaActual);
         });
-    </script>
+    });
+</script>
 
-    <!-- Botón para redirigir a index_reportes -->
-    <div class="text-center mb-4">
-            <a href="{{ route('evento.reportes.index') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-200">
-                Ver Reportes
-            </a>
-        </div>
+<!-- Botón para redirigir a index_reportes -->
+<div class="text-center mb-4">
+    <a href="{{ route('evento.reportes.index') }}"
+        class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-200">
+        Ver Reportes
+    </a>
+</div>
 @endsection

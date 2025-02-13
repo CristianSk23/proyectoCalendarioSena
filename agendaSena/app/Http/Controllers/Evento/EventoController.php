@@ -47,20 +47,6 @@ class EventoController extends Controller
 
             // Validar los datos enviados al controlador
 
-            $validador =   $request->validate([
-                'par_identificacion' => 'required|string|max:30',
-                'pla_amb_id' => 'required|integer',
-                'idHorario' => 'nullable|integer',
-                'nomEvento' => 'required|string|max:255',
-                'descripcion' => 'required|string|max:255',
-                'fechaEvento' => 'required|date',
-                'aforoEvento' => 'required|integer',
-                'fic_numero' => 'nullable|string|max:20',
-                'idCategoria' => 'nullable|integer',
-                'publicidad' => 'nullable|blob',
-                'estadoEvento' => 'required|boolean',
-            ]);
-
             Log::info('Datos para crear Evento: ', [
                 'pla_amb_id' => $request->pla_amb_id,
 
@@ -79,7 +65,7 @@ class EventoController extends Controller
                     'nomSolicitante' => $participante->par_nombres,
                 ]);
             } else {
-                // Si no se encuentra el participante, puedes manejarlo de alguna manera
+                // Si no se encuentra el participante
                 return redirect()->back()->with('error', 'Participante no encontrado.');
             }
 
@@ -148,9 +134,27 @@ class EventoController extends Controller
         // Buscar eventos para la fecha específica
         try {
             $eventos = Evento::whereDate('fechaEvento', $fecha)->get();
+            $resultados = [];
+            foreach ($eventos as $evento) {
+                $idAmbiente = $evento->pla_amb_id;
+                $idHorario = $evento->idHorario;
+                $idCategoria = $evento->idCategoria;
+
+                $ambiente = Ambiente::find($idAmbiente); // Busca por clave primaria
+                $horario = Horario::find($idHorario);
+                $categoria = Categoria::find($idCategoria);
+
+                $resultados[] = [
+                    'evento' => $evento,
+                    'ambiente' => $ambiente,
+                    'horario' => $horario,
+                    'categoria' => $categoria,
+                ];
+            };
+
             return response()->json([
                 'success' => true,
-                'eventos' => $eventos,
+                'data' => $resultados,
             ]);
         } catch (\Exception $e) {
             return response()->json([

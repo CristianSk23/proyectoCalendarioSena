@@ -53,7 +53,7 @@
     <script>
     // Simulación de eventos agendados
     const eventos = [
-        { fecha: '2025-01-16', nombre: 'Reunión de Proyecto' },
+        { fecha: '2025-02-12', nombre: 'Reunión de Proyecto' },
         { fecha: '2025-01-17', nombre: 'Taller de Desarrollo' }
     ];
 
