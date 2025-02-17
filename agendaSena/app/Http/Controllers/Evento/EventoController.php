@@ -165,6 +165,7 @@ class EventoController extends Controller
         }
     }
 
+
     private function validateRequest(Request $request)
     {
         return $request->validate([

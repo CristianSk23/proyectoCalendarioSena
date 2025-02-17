@@ -13,6 +13,7 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Work Sans', ...defaultTheme.fontFamily.sans],
+                calibri: ['Calibri', ...defaultTheme.fontFamily.sans],
             },
         },
     },

@@ -1,7 +1,7 @@
 @extends('Layouts.Plantilla')
 
 @section('styles')
-<link rel="stylesheet" href="{{ asset('css/estilo.css') }}"> <!-- Incluir el CSS específico -->
+<link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
 @endsection
 
 @section('content')
@@ -21,9 +21,6 @@
             class="bg-lime-700 text-white px-3 py-2 rounded hover:bg-lime-900 transition duration-200" id="nextMonth">
             <box-icon type='solid' name='right-arrow'></box-icon>
         </a>
-        <div class="absolute top-20 right-20 p-4 text-xl font-semibold text-gray-700">
-            {{ $anio }}
-        </div>
 
     </div>
 
@@ -35,6 +32,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
+
         const calendarioTabla = document.getElementById('calendario');
         const mesAnioElemento = document.getElementById('mesAnio');
         const prevMonthButton = document.getElementById('prevMonth');
@@ -82,7 +81,7 @@
                 </tr>
             </thead>
             <tbody></tbody>
-        `;
+         `;
 
             const tbody = calendarioTabla.querySelector('tbody');
             let fila = document.createElement('tr');
@@ -105,6 +104,17 @@
                 celda.className =
                     'py-4 px-4 text-center border border-gray-300 hover:bg-lime-700 hover:text-white transition-colors duration-200';
                 celda.textContent = dia;
+
+                const eventoEnEsteDia = eventos.find(evento => {
+                   /*  console.log(eventosEncontrados); */
+                    
+                    const fechaEvento = new Date(evento.fecha);
+                    return fechaEvento.getFullYear() === anio && fechaEvento.getMonth() === mes && fechaEvento.getDate() === dia;
+                });
+
+                if (eventoEnEsteDia) {
+                    celda.classList.add('bg-lime-500', 'text-white'); // Aplicar clases para resaltar el evento
+                }
 
                 celda.addEventListener('click', function () {
                     agregarEvento(dia, mes + 1, anio);
@@ -147,7 +157,7 @@
                     nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toLowerCase();
                     sidebar.innerHTML = '';
 
-                    if (data.data.length > 0) {   
+                    if (data.data.length > 0) {
                         const eventosHTML = data.data.map(item => {
                             // Acceder a las propiedades anidadas
                             const evento = item.evento;
@@ -155,19 +165,21 @@
                             const horario = item.horario;
                             const ambiente = item.ambiente;
 
-                            return `
-                                    <div class="container bg-lime-700 mx-auto mt-10 h-[70vh] rounded-md px-11 py-5">      
-                                        <div class="p-4 border-solid border-black bg-white rounded-md w-[350px] max-h-[200px] overflow-auto px-3">
-                                            <div class="bg-lime-500 rounded-md">
-                                                <h3 class="font-bold text-lg text-center text-white">${evento.nomEvento}</h3>
-                                            </div>
-                                            <p class="text-sm text-black-700">Descripción del evento: ${evento.descripcion}</p>
-                                            <p class="text-sm text-black-500">Encargado del evento: ${evento.nomSolicitante}</p>
-                                            <p class="text-sm text-black-500">Ambiente: ${ambiente.pla_amb_descripcion}</p>
-                                            <p class="text-sm text-black-500">Categoría: ${categoria.nomCategoria}</p>
-                                            <p class="text-sm text-black-500">Horario: ${horario.inicio} - ${horario.fin}</p>
+                            return `               
+                            <div class="container bg-lime-700 mx-auto mt-10 h-[70vh] rounded-lg px-6 py-4 ">
+                                <div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-white">
+                                    <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="/docs/images/blog/image-4.jpg" alt="">
+                                    <div class="flex flex-col justify-between p-4 leading-normal">
+                                        <div class="bg-lime-500 rounded-lg p-3 mb-4">
+                                            <h3 class="font-bold text-lg text-center text-white">${evento.nomEvento}</h3>
                                         </div>
+                                         <p class="mb-3 font-calibri text-gray-700 dark:text-black"><b>Descripción del evento:</b><br>${evento.descripcion}</p>
+                                         <p class="text-sm font-calibri text-gray-600"><b>Ambiente:</b><br>${ambiente.pla_amb_descripcion}</p>
+                                         <p class="text-sm font-calibri text-gray-600"><b>Categoría:</b><br>${categoria.nomCategoria}</p>
+                                         <p class="text-sm font-calibri text-gray-600"><b>Horario:</b><br>${horario.inicio} - ${horario.fin}</p>
                                     </div>
+                                </div>
+                            </div>
         `;
                         }).join('');
                         sidebar.innerHTML = `

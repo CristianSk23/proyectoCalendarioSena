@@ -40,6 +40,7 @@ Route::get("crear", [EventoController::class, 'create'])->name('eventos.crearEve
 //  ++++ CALENDARIO  ++++++
 //Route::resource('eventos', EventoController::class)->middleware('auth');;
 Route::get("calendario", [CalendarioController::class, 'generarCalendario'])->name('calendario.generar');
+Route::get("calendario/buscarEventos", [CalendarioController::class, 'buscarEventosPorMes'])->name('calendario.buscarEventos');
 
 //  ++++ LOGIN  ++++++
 
