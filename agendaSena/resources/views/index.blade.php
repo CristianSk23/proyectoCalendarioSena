@@ -5,6 +5,9 @@
 @endsection
 
 @section('content')
+
+
+
 <div class="container mx-auto p-4">
     <h1 class="text-3xl font-bold mb-4 text-center">Calendario de Eventos</h1>
 
@@ -107,7 +110,7 @@
 
                 const eventoEnEsteDia = eventos.find(evento => {
                    /*  console.log(eventosEncontrados); */
-                    
+
                     const fechaEvento = new Date(evento.fecha);
                     return fechaEvento.getFullYear() === anio && fechaEvento.getMonth() === mes && fechaEvento.getDate() === dia;
                 });
@@ -165,7 +168,7 @@
                             const horario = item.horario;
                             const ambiente = item.ambiente;
 
-                            return `               
+                            return `
                             <div class="container bg-lime-700 mx-auto mt-10 h-[70vh] rounded-lg px-6 py-4 ">
                                 <div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-white">
                                     <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="/docs/images/blog/image-4.jpg" alt="">

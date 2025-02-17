@@ -15,16 +15,16 @@
 </head>
 
 
-<header class="bg-gray-800 text-white p-4">
-            <h1 class="text-2xl font-bold">Agenda SENA CDTI</h1>
-            <form method="POST" action="{{ route('login.logout') }}">
-                @csrf
-                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-                    Cerrar Sesión
-                </button>
-            </form>
-        </header>
+<header class="bg-lime-500 text-white p-4">
+    <h1 class="text-2xl font-bold">Agenda SENA CDTI</h1>
+    <form method="POST" action="{{ route('login.logout') }}">
+        @csrf
+        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+            Cerrar Sesión
+        </button>
+    </form>
+</header>
 
-        @yield('content')
+@yield('contentReportes')
 
-        </html>
+</html>
