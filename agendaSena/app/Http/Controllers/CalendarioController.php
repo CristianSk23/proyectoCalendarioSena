@@ -63,13 +63,15 @@ class CalendarioController extends Controller
             return view('index', compact('calendario', 'mes', 'anio'));
         }
         //return $calendario;
+
     }
 
 
     public function buscarEventosPorMes(Request $request)
     {
 
-        $mes = $request->query('mes');
+        $mesConvertir = $request->query('mes');
+        $mes = $mesConvertir + 1;
         $anio = $request->query('anio');
         try {
 
@@ -77,9 +79,9 @@ class CalendarioController extends Controller
             $ultimoDia_delMes = $primerDia_delMes->copy()->endOfMonth();
 
             $eventos = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
+                ->orderBy('fechaEvento', 'asc')
                 ->get();
 
-            var_dump($primerDia_delMes);
             $eventosEncontrados = $eventos->map(function ($evento) {
                 return [
                     'id' => $evento->idEvento,

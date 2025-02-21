@@ -20,7 +20,7 @@
 <body>
 
     @include('Layouts.Header')
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col bg-texture h-screen">
 
         <!-- Header -->
 
