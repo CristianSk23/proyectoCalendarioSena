@@ -11,23 +11,19 @@
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <title>Agenda CDTI-SENA</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap"
+        rel="stylesheet">
 
 </head>
 
 
 <body>
 
-    <div class="flex flex-col h-screen">
+    @include('Layouts.Header')
+    <div class="flex flex-col bg-texture h-screen">
+
         <!-- Header -->
-        <header class="bg-gray-800 text-white p-4">
-            <h1 class="text-2xl font-bold">Agenda SENA CDTI</h1>
-            <form method="POST" action="{{ route('login.logout') }}">
-                @csrf
-                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-                    Cerrar Sesión
-                </button>
-            </form>
-        </header>
+
 
 
 
@@ -48,7 +44,7 @@
 
 
             <!-- Aside Derecho -->
-         @include ('partials.sidebarDerecho')
+            @include ('partials.sidebarDerecho')
 
         </div>
     </div>

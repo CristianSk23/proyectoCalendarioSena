@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Evento\Evento;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -20,6 +21,7 @@ class CalendarioController extends Controller
         // Crear una instancia de Carbon para el primer día del mes
         $primerDia_delMes = Carbon::createFromDate($anio, $mes, 1);
         $ultimoDia_delMes = $primerDia_delMes->copy()->endOfMonth();
+
 
         // Día de la semana en que comienza el mes (0=Domingo, 6=Sábado)
         $diaInicioSemana = $primerDia_delMes->dayOfWeek;
@@ -59,8 +61,45 @@ class CalendarioController extends Controller
             return view($vista, compact('calendario', 'mes', 'anio'));
         } else {
             return view('index', compact('calendario', 'mes', 'anio'));
-            
         }
         //return $calendario;
+
+    }
+
+
+    public function buscarEventosPorMes(Request $request)
+    {
+
+        $mesConvertir = $request->query('mes');
+        $mes = $mesConvertir + 1;
+        $anio = $request->query('anio');
+        try {
+
+            $primerDia_delMes = Carbon::createFromDate($anio, $mes, 1);
+            $ultimoDia_delMes = $primerDia_delMes->copy()->endOfMonth();
+
+            $eventos = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
+                ->orderBy('fechaEvento', 'asc')
+                ->get();
+
+            $eventosEncontrados = $eventos->map(function ($evento) {
+                return [
+                    'id' => $evento->idEvento,
+                    'nombre' => $evento->nomEvento,
+                    'fecha' => $evento->fechaEvento,
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $eventosEncontrados,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al buscar los eventos.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
