@@ -2,18 +2,20 @@
 
 @section('content')
     <h1 class="text-2xl font-bold mb-4">Crear Evento</h1>
-    <form action="{{ route('eventos.store') }}" method="POST" class="bg-white p-6 rounded shadow-md">
+
+    <form action="{{ route('eventos.store') }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow-md">
         @csrf
 
         <div class="mb-4">
             <label for="par_identificacion" class="block text-sm font-medium text-gray-700">Encargado del Evento:</label>
-            <select name="par_identificacion"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+            {{-- <input type="text" id="searchBox" placeholder="Buscar participante..." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"> --}}
+            <select name="par_identificacion" id="par_identificacion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                 <option value="">Seleccionar Encargado</option>
                 @foreach ($participantes as $participante)
                     <option value="{{ $participante->par_identificacion }}">{{ $participante->par_nombres }}</option>
                 @endforeach
             </select>
+            <button class="bg-lime-500 rounded-md shadow-sm" id="cargarMas">Cargar más parcticipantes</button>
         </div>
 
         <div class="mb-4">
@@ -53,8 +55,7 @@
 
         <div class="mb-4">
             <label for="fechaEvento" class="block text-sm font-medium text-gray-700">Fecha:</label>
-            <input type="date" data="{{ $fecha }}" value="{{ $fecha }}" readonly="disabled" name="fechaEvento"
-                required
+            <input type="date" data="{{ $fecha }}" value="{{ $fecha }}" readonly="disabled" name="fechaEvento" required
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
         </div>
 
@@ -64,7 +65,7 @@
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
         </div>
 
-        
+
         <div class="mb-4">
             <label for="idFicha" class="block text-sm font-medium text-gray-700">Ficha:</label>
             <select name="fic_numero"
@@ -88,7 +89,7 @@
 
         <div class="mb-4">
             <label for="publicidad" class="block text-sm font-medium text-gray-700">Publicidad:</label>
-            <input type="file" name="publicidad"
+            <input type="file" name="publicidad" accept="image/*"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
         </div>
 
@@ -101,7 +102,7 @@
             </select>
         </div>
 
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Crear Evento</button>
+        <button type="submit" class="bg-lime-500 text-white px-4 py-2 rounded">Crear Evento</button>
     </form>
 
     <div x-data="{ open: false }" class="mt-4">
@@ -111,4 +112,31 @@
             <li><button wire:click="delete" class="text-red-600">Delete</button></li>
         </ul>
     </div>
+
+
+    <script>
+        let page = 1;
+    
+        function cargarParticipantes() {
+            fetch(`/cargarParticipantes?page=${page}`)
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('par_identificacion');
+                    data.items.forEach(participante => {
+                        const option = document.createElement('option');
+                        option.value = participante.par_identificacion;
+                        option.textContent = participante.par_nombres;
+                        select.appendChild(option);
+                    });
+                    page++;
+                });
+        }
+    
+        document.getElementById('cargarMas').addEventListener('click', cargarParticipantes);
+    
+        // Cargar la primera página al inicio
+        cargarParticipantes();
+    </script>
+
+
 @endsection

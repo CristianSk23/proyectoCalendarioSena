@@ -31,6 +31,7 @@ Route::get('index', [EventoController::class, 'index'])->name('eventos.index')/*
 Route::post('crearPost', [EventoController::class, 'store'])->name('eventos.store')/* ->middleware('auth') */;
 Route::get('buscar', [EventoController::class, 'buscarEventos'])->name('eventos.buscar')/* ->middleware('auth') */;
 Route::get("crear", [EventoController::class, 'create'])->name('eventos.crearEvento');
+Route::get("cargarParticipantes", [EventoController::class, 'cargarParticipantes'])->name('eventos.buscarParticipantes');
 
 // Route::get('/', function () {
 //     return redirect()->route('eventos.index');
