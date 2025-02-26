@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Evento\Evento;
 use App\Models\Categoria\Categoria;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use PDF;
 
@@ -15,7 +16,18 @@ class ReporteController extends Controller
 {
     public function index_report()
     {
-        return view('reportes.index_reportes');
+        {
+            // Calcular estadísticas
+            $estadisticas = [
+                'eventosPorCategoria' => Evento::select('idCategoria', DB::raw('count(*) as total'))
+                    ->groupBy('idCategoria')
+                    ->get()
+                    ->pluck('total', 'idCategoria'),
+                // Puedes agregar más estadísticas aquí
+            ];
+    
+            return view('reportes.index_reportes', compact('estadisticas'));
+        }
     }
 
     public function generarReporteMensual(Request $request)
