@@ -72,19 +72,19 @@
 
                 // Limpiar tabla
                 calendarioTabla.innerHTML = `
-                                                    <thead>
-                                                        <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
-                                                            <th class="py-3 px-4 text-center border border-gray-300">Dom</th>
-                                                            <th class="py-3 px-4 text-center border border-gray-300">Lun</th>
-                                                            <th class="py-3 px-4 text-center border border-gray-300">Mar</th>
-                                                            <th class="py-3 px-4 text-center border border-gray-300">Mié</th>
-                                                            <th class="py-3 px-4 text-center border border-gray-300">Jue</th>
-                                                            <th class="py-3 px-4 text-center border border-gray-300">Vie</th>
-                                                            <th class="py-3 px-4 text-center border border-gray-300">Sáb</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody></tbody>
-                                                `;
+                                                                                                                        <thead>
+                                                                                                                            <tr class="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                                                                                                                                <th class="py-3 px-4 text-center border border-gray-300">Dom</th>
+                                                                                                                                <th class="py-3 px-4 text-center border border-gray-300">Lun</th>
+                                                                                                                                <th class="py-3 px-4 text-center border border-gray-300">Mar</th>
+                                                                                                                                <th class="py-3 px-4 text-center border border-gray-300">Mié</th>
+                                                                                                                                <th class="py-3 px-4 text-center border border-gray-300">Jue</th>
+                                                                                                                                <th class="py-3 px-4 text-center border border-gray-300">Vie</th>
+                                                                                                                                <th class="py-3 px-4 text-center border border-gray-300">Sáb</th>
+                                                                                                                            </tr>
+                                                                                                                        </thead>
+                                                                                                                        <tbody></tbody>
+                                                                                                                    `;
 
                 const tbody = calendarioTabla.querySelector('tbody');
                 let fila = document.createElement('tr');
@@ -182,10 +182,27 @@
                         nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toLowerCase();
                         sidebar.innerHTML = '';
 
+                        const contenedorEventos = `
+                                                        <div class="container bg-lime-700 mx-auto mt-10 h-[70vh] rounded-lg px-6 py-4">
+                                                            <h1 class="text-3xl font-bold  text-white text-center">Bienvenido a la Gestión de Eventos</h1>
+                                                            <br>
+                                                            <h2 class="font-bold text-xl mb-4" id="tituloEventos"></h2>
+                                                            <div id="eventosList"></div>
+                                                            <button id="agregarEvento" class="bg-lime-500 text-white px-4 py-2 rounded mt-4 ">Agregar Evento</button>
+                                                        </div>
+                                                    `;
+
+                        sidebar.innerHTML = contenedorEventos;
+
+                        // Obtener referencias a los elementos
+                        const tituloEventos = document.getElementById('tituloEventos');
+                        const eventosList = document.getElementById('eventosList');
+                        const botonAgregar = document.getElementById('agregarEvento');
+
                         if (data.data.length > 0) {
                             const eventosHTML = data.data.map(item => {
                                 // Acceder a las propiedades anidadas
-                                const evento = item.evento;
+                                const evento = item.evento;         
                                 const categoria = item.categoria;
                                 const horario = item.horario;
                                 const ambiente = item.ambiente;
@@ -193,52 +210,58 @@
                                 const imagenPublicidad = evento.publicidad;
                                 const imagenURL = `/storage/${imagenPublicidad}`;
 
-
                                 return `
-                                                                                                                            <div class="container bg-lime-700 mx-auto mt-10 h-[70vh] rounded-lg px-6 py-4 ">
-                                                                                                                                <div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-white">
-                                                                                                                                    <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="${imagenURL}" alt="Publicidad del evento">
-                                                                                                                                    <div class="flex flex-col justify-between p-4 leading-normal">
-                                                                                                                                        <div class="bg-lime-500 rounded-lg p-3 mb-4">
-                                                                                                                                            <h3 class="font-bold text-lg text-center text-white">${evento.nomEvento}</h3>
-                                                                                                                                        </div>
-                                                                                                                                         <p class="mb-3 font-calibri text-gray-700 dark:text-black"><b>Descripción del evento:</b><br>${evento.descripcion}</p>
-                                                                                                                                         <p class="text-sm font-calibri text-gray-600"><b>Ambiente:</b><br>${ambiente.pla_amb_descripcion}</p>
-                                                                                                                                         <p class="text-sm font-calibri text-gray-600"><b>Categoría:</b><br>${categoria.nomCategoria}</p>
-                                                                                                                                         <p class="text-sm font-calibri text-gray-600"><b>Horario:</b><br>${horario.inicio} - ${horario.fin}</p>
-                                                                                                                                         <p class="text-sm font-calibri text-gray-600"><b>Encargado:</b><br> ${encargado.par_nombres}</p>
-                                                                                                                                    </div>
-                                                                                                                                </div>
-                                                                                                                            </div>
-                                                                                                        `;
+                                                        <div class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-white mb-4">
+                                                            <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" src="${imagenURL}" alt="Publicidad del evento">
+                                                            <div class="flex flex-col justify-between p-4 leading-normal">
+                                                                <div class="bg-lime-500 rounded-lg p-3 mb-4">
+                                                                    <h3 class="font-bold text-lg text-center text-white">${evento.nomEvento}</h3>
+                                                                </div>
+                                                                <p class="mb-3 font-calibri text-gray-700 dark:text-black"><b>Descripción del evento:</b><br>${evento.descripcion}</p>
+                                                                <p class="text-sm font-calibri text-gray-600"><b>Ambiente:</b><br>${ambiente.pla_amb_descripcion}</p>
+                                                                <p class="text-sm font-calibri text-gray-600"><b>Categoría:</b><br>${categoria.nomCategoria}</p>
+                                                                <p class="text-sm font-calibri text-gray-600"><b>Horario:</b><br>${horario.inicio} - ${horario.fin}</p>
+                                                                <p class="text-sm font-calibri text-gray-600"><b>Encargado:</b><br> ${encargado.par_nombres}</p>
+                                                                <div class="flex items-stretch ...">
+                                                                   <button id="actualizarEvento" class="bg-lime-500 text-white text-sm px-2 py-1 rounded mt-2 flex items-center">
+                                                                        <box-icon name='calendar-plus' type='solid' color='#ffffff'></box-icon>
+                                                                        <a href="{{ route('eventos.editarEvento', '') }}/${evento.idEvento}"class="ml-1">Actualizar</a>
+                                                                    </button>
+                                                                    <button id="eliminarEvento" class="bg-lime-500 text-white text-sm px-2 py-1 rounded mt-2 flex items-center">
+                                                                        <box-icon name='calendar-x' type='solid' color='#ffffff'></box-icon>
+                                                                        <span class="ml-1">Eliminar</span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    `;
                             }).join('');
-                            sidebar.innerHTML = `
-                                                                                                                            <h1 class="text-3xl font-bold">Bienvenido a la Gestión de Eventos</h1>
-                                                                                                                            <br>
-                                                                                                                    <h2 class="font-bold text-xl mb-4">Eventos para ${dia}-<b>${nombreMes}</b>-${anio}</h2>
-                                                                                                                    ${eventosHTML} `;
+
+                            tituloEventos.className = "text-white px-4 text-center";
+                            tituloEventos.innerHTML = `Eventos para: <b>${dia}-${nombreMes}-${anio}</b>`;
+                            eventosList.innerHTML = eventosHTML;
                         } else {
-                            // Si no hay eventos, mostrar botones para agregar un evento
-                            sidebar.innerHTML = `
-                                                                                                                            <h1 class="text-3xl font-bold">Bienvenido a la Gestión de Eventos</h1>
-                                                                                                                            <Br>
-                                                                                                                    <h2 class="font-bold text-xl mb-4">Sin eventos para ${dia}-${nombreMes}-${anio}</h2>
-                                                                                                                    <button id="agregarEvento" class="bg-lime-500 text-white px-4 py-2 rounded">Agregar Evento</button>
-                                                                                                                `;
-                            const baseRutaCrearEvento = "{{ route('eventos.crearEvento') }}";
-                            // Agregar evento al botón
-                            const botonAgregar = document.getElementById('agregarEvento');
-                            botonAgregar.addEventListener('click', () => {
-                                window.location.href =
-                                    `${baseRutaCrearEvento}?dia=${dia}&mes=${mes}&anio=${anio}"`;
-                            });
+                            tituloEventos.className = "text-white px-4 text-center";
+                            tituloEventos.innerHTML = `Sin eventos para ${dia}-${nombreMes}-${anio}`;
                         }
+
+
+                        const baseRutaCrearEvento = "{{ route('eventos.crearEvento') }}";
+                        botonAgregar.addEventListener('click', () => {
+                            window.location.href = `${baseRutaCrearEvento}?dia=${dia}&mes=${mes}&anio=${anio}`;
+                        });
+
+
+
                     })
                     .catch(error => {
                         console.error('Error al cargar los eventos:', error);
                         sidebar.innerHTML =
                             `<p class="text-red-500">Error al cargar los eventos. Intenta nuevamente.</p>`;
                     });
+
+
             }
 
             // Generar calendario inicial
