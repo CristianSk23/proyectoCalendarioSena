@@ -7,8 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Evento\Evento;
 use App\Models\Categoria\Categoria;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade as PDF;
 use App\Models\User;
-use PDF;
+// use PDF;
 
 
 
@@ -16,28 +17,55 @@ class ReporteController extends Controller
 {
     public function index_report()
     {
-        {
-            // Calcular estadísticas
-            $estadisticas = [
-                'eventosPorCategoria' => Evento::select('idCategoria', DB::raw('count(*) as total'))
-                    ->groupBy('idCategoria')
-                    ->get()
-                    ->pluck('total', 'idCategoria'),
-                // Puedes agregar más estadísticas aquí
-            ];
+
+
+        
+    // Calcular estadísticas
+    $estadisticas = [
+        'eventosPorCategoria' => Evento::select('idCategoria', DB::raw('count(*) as total'))
+            ->groupBy('idCategoria')
+            ->get()
+            ->pluck('total', 'idCategoria'),
+
+        // Obtener total de eventos del mes actual
+        'totalEventosMes' => Evento::whereMonth('fechaEvento', date('m'))
+            ->whereYear('fechaEvento', date('Y'))
+            ->count(),
+
+        // Obtener total de eventos del año actual
+        'totalEventosAnio' => Evento::whereYear('fechaEvento', date('Y'))
+            ->count(),
+    ];
+
+    return view('reportes.index_reportes', compact('estadisticas'));
+        // {
+        //     // Calcular estadísticas
+        //     $estadisticas = [
+        //         'eventosPorCategoria' => Evento::select('idCategoria', DB::raw('count(*) as total'))
+        //             ->groupBy('idCategoria')
+        //             ->get()
+        //             ->pluck('total', 'idCategoria'),
+        //         // Puedes agregar más estadísticas aquí
+        //     ];
     
-            return view('reportes.index_reportes', compact('estadisticas'));
-        }
+        //     return view('reportes.index_reportes', compact('estadisticas'));
+        // }
     }
 
     public function generarReporteMensual(Request $request)
     {
+        
+        $request->validate([
+            'mes' => 'required|integer|min:1|max:12',
+            'anio' => 'required|integer|min:2000|max:' . date('Y'),
+        ]);
+
         $mes = $request->input('mes');
         $anio = $request->input('anio');
 
         $eventos = Evento::whereMonth('fechaEvento', $mes)
-                         ->whereYear('fechaEvento', $anio)
-                         ->get();
+                        ->whereYear('fechaEvento', $anio)
+                        ->get();
 
         $estadisticas = [
             'totalEventos' => $eventos->count(),
@@ -53,11 +81,18 @@ class ReporteController extends Controller
 
     
     public function generarReporteAnual(Request $request)
+    
     {
+        $request->validate([
+            'anio' => 'required|integer|min:2000|max:' . date('Y'),
+        ]);
+
         $anio = $request->input('anio');
 
+        // Obtener eventos del año especificado
         $eventos = Evento::whereYear('fechaEvento', $anio)->get();
 
+        // Calcular estadísticas
         $estadisticas = [
             'totalEventos' => $eventos->count(),
             'eventosPorCategoria' => $eventos->groupBy('idCategoria')->map->count(),
@@ -66,6 +101,7 @@ class ReporteController extends Controller
             'actividadesMasFrecuentes' => $eventos->groupBy('idCategoria')->map->count()->sortDesc(),
         ];
 
+        // Generar el PDF
         $pdf = PDF::loadView('reportes.reporte_anual', compact('estadisticas', 'anio'));
         return $pdf->download('reporte_anual.pdf');
     }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Evento\EventoController;
 use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\Evento\ReporteController;
+use App\Http\Controllers\PDFController;
 
 //index
 
@@ -55,5 +56,19 @@ Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');
 
 
 Route::get('evento/reportes', [ReporteController::class, 'index_report'])->name('evento.reportes.index');
-Route::post('evento/reportes/generar-mensual', [ReporteController::class, 'generarReporteMensual'])->name('reportes.mensual');
-Route::post('evento/reportes/generar-anual', [ReporteController::class, 'generarReporteAnual'])->name('reportes.anual');
+// Route::post('evento/reportes/generar-mensual', [ReporteController::class, 'generarReporteMensual'])->name('reportes.mensual');
+// Route::post('evento/reportes/generar-anual', [ReporteController::class, 'generarReporteAnual'])->name('reportes.anual');
+
+
+
+Route::post('/reportes/mensual', [ReporteController::class, 'generarReporteMensual'])->name('reportes.mensual');
+Route::post('/reportes/anual', [ReporteController::class, 'generarReporteAnual'])->name('reportes.anual');
+
+
+
+
+// ************* PDF ********************
+    
+Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
+
+
