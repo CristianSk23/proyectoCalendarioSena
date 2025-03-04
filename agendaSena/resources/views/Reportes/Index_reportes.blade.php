@@ -86,11 +86,16 @@
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
-                }
+                beginAtZero: true,
+                min: 0, // Establece el valor mínimo
+                max: 20 // Establece el valor máximo
+            }
             }
         }
     });
+
+
+    
 
     // Gráfica de eventos mensuales
     var ctx2 = document.getElementById('eventosMensualesChart').getContext('2d');
