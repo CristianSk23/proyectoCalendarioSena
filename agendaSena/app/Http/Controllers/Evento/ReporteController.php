@@ -15,36 +15,48 @@ use App\Models\User;
 
 class ReporteController extends Controller
 {
-        public function index_report()
-        {
-            // Calcular estadísticas
-            $estadisticas = [
-                'eventosPorCategoria' => Evento::select('idCategoria', DB::raw('count(*) as total'))
-                    ->groupBy('idCategoria')
-                    ->get()
-                    ->pluck('total', 'idCategoria'),
+    public function index_report()
+    {
+        // Obtener todas las categorías
+        $categorias = Categoria::pluck('nomCategoria', 'idCategoria');
 
-                // Obtener total de eventos del mes actual
-                'totalEventosMes' => Evento::whereMonth('fechaEvento', date('m'))
-                    ->whereYear('fechaEvento', date('Y'))
-                    ->count(),
+        // Calcular estadísticas
+        $estadisticas = [
+            'eventosPorCategoria' => Evento::select('idCategoria', DB::raw('count(*) as total'))
+                ->groupBy('idCategoria')
+                ->get()
+                ->map(function ($item) use ($categorias) {
+                    return [
+                        'nombre' => $categorias[$item->idCategoria],
+                        'total' => $item->total,
+                    ];
+                }),
 
-                // Obtener total de eventos del año actual
-                'totalEventosAnio' => Evento::whereYear('fechaEvento', date('Y'))
-                    ->count(),
+            // Obtener total de eventos del mes actual
+            'totalEventosMes' => Evento::whereMonth('fechaEvento', date('m'))
+                ->whereYear('fechaEvento', date('Y'))
+                ->count(),
 
-                // Obtener eventos por día del mes actual
-                'eventosPorDia' => Evento::select(DB::raw('DAY(fechaEvento) as dia'), DB::raw('count(*) as total'))
-                    ->whereMonth('fechaEvento', date('m'))
-                    ->whereYear('fechaEvento', date('Y'))
-                    ->groupBy('dia')
-                    ->orderBy('dia')
-                    ->get()
-                    ->pluck('total', 'dia'),
-            ];
+            // Obtener total de eventos del año actual
+            'totalEventosAnio' => Evento::whereYear('fechaEvento', date('Y'))
+                ->count(),
+
+            // Obtener eventos del día actual
+            'eventosDelDia' => Evento::whereDate('fechaEvento', today())->count(),
+
+            // Obtener eventos por día del mes actual
+            'eventosPorDia' => Evento::select(DB::raw('DAY(fechaEvento) as dia'), DB::raw('count(*) as total'))
+                ->whereMonth('fechaEvento', date('m'))
+                ->whereYear('fechaEvento', date('Y'))
+                ->groupBy('dia')
+                ->orderBy('dia')
+                ->get()
+                ->pluck('total', 'dia'),
+        ];
 
         return view('reportes.index_reportes', compact('estadisticas'));
     }
+
 
     public function generarReporteMensual(Request $request)
     {
