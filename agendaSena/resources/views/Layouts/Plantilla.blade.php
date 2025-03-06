@@ -7,12 +7,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap"
+        rel="stylesheet">
     @vite('resources/css/app.css')
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <title>Agenda CDTI-SENA</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap"
-        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
 </head>
 

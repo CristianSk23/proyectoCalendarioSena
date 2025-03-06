@@ -59,21 +59,23 @@
             </div>
             <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div class="flex shrink-0 items-center">
-                    <h1 class="text-2xl text-white" >
+                    <h1 class="text-2xl text-white">
                         AgenSena
                     </h1>
                 </div>
                 <div class="hidden sm:ml-6 sm:block">
                     <div class="flex space-x-4">
                         <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                        <a href="{{route('calendario.index')}}" class="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
+                        <a href="{{route('calendario.index')}}"
+                            class="rounded-md px-3 py-2 text-sm font-medium text-white hover:bg-lime-700 hover:text-white"
                             aria-current="page">Inicio</a>
-                        <a href="#"
-                            class="rounded-md px-3 py-2 text-sm font-medium text-white hover:bg-gray-700 hover:text-white">Reportes</a>
-                      {{--   <a href="#"
+                        <a href="{{ route('evento.reportes.index') }}"
+                            class="rounded-md px-3 py-2 text-sm font-medium text-white hover:bg-lime-700 hover:text-white">Reportes</a>
+                        {{-- <a href="#"
                             class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
                         <a href="#"
-                            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</a> --}}
+                            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</a>
+                        --}}
                     </div>
                 </div>
             </div>

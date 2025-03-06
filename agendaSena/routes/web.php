@@ -35,6 +35,8 @@ Route::get("evento/crear", [EventoController::class, 'create'])->name('eventos.c
 Route::get("evento/editar/{idEvento}", [EventoController::class, 'edit'])->name('eventos.editarEvento');
 Route::post("evento/actualizar/{idEvento}", [EventoController::class, 'update'])->name('eventos.actualizarEvento');
 
+Route::get("evento/eliminar/{idEvento}", [EventoController::class, 'delete'])->name('eventos.eliminarEvento');
+
 Route::get("cargarParticipantes", [EventoController::class, 'cargarParticipantes'])->name('eventos.buscarParticipantes');
 
 // Route::get('/', function () {

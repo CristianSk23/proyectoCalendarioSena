@@ -79,6 +79,7 @@ class CalendarioController extends Controller
             $ultimoDia_delMes = $primerDia_delMes->copy()->endOfMonth();
 
             $eventos = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
+                ->where('estadoEvento', 1)
                 ->orderBy('fechaEvento', 'asc')
                 ->get();
 

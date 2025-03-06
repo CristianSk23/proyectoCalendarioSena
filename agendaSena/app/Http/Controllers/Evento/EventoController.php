@@ -12,6 +12,7 @@ use App\Models\Participante\Participante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Traits\CalendarTrait;
+use Illuminate\Container\Attributes\Log as AttributesLog;
 
 class EventoController extends Controller
 {
@@ -19,7 +20,9 @@ class EventoController extends Controller
     public function index()
     {
         // Carga eventos nuevos 
-        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])->get();
+        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
+            ->where('estadoEvento', 1) // Filtrar solo los eventos con estado 1
+            ->get();
         return view('Evento.inicioEvento', compact('eventos'));
     }
 
@@ -47,7 +50,7 @@ class EventoController extends Controller
             // Validar los datos enviados al controlador usando la función privada
             $validatedData = $this->validateRequest($request);
 
-            // Guardar la imagen en el sistema de archivos si se proporciona
+            //* Guardar la imagen en el sistema de archivos si se proporciona
             if ($request->hasFile('publicidad')) {
                 $rutaImagen = $request->file('publicidad')->store('imagenes', 'public');
                 $validatedData['publicidad'] = $rutaImagen; // Agregar la ruta de la imagen a los datos validados
@@ -129,7 +132,6 @@ class EventoController extends Controller
         $inicioEvento = $horario->inicio;
         $finalEvento = $horario->fin;
         if ($evento) {
-            # code...
             return view('Evento.crearEvento', compact('evento', 'categorias', 'fichas', 'participantes', 'dia', 'mes', 'anio', 'fecha', 'calendario', 'inicioEvento', 'finalEvento'));
         }
     }
@@ -142,15 +144,18 @@ class EventoController extends Controller
         $validatedData['nomSolicitante'] = $participante->par_nombres;
         $evento = Evento::findOrFail($idEvento);
 
+        if ($request->hasFile('publicidad')) {
+            $rutaImagen = $request->file('publicidad')->store('imagenes', 'public');
+            $validatedData['publicidad'] = $rutaImagen; // Agregar la ruta de la imagen a los datos validados
+        }
+
         $horario = Horario::find($evento->idHorario);
-
-
         if (!$horario) {
             return redirect()->back()->with('error', 'Error al crear el horario.');
         }
 
         $horario->update([
-            'inicio' => $request->input('horarioEventoInicio'), 
+            'inicio' => $request->input('horarioEventoInicio'),
             'fin' => $request->input('horarioEventoFin'),
         ]);
 
@@ -164,11 +169,11 @@ class EventoController extends Controller
         return redirect()->route('calendario.index')->with('success', 'Evento actualizado exitosamente.');
     }
 
-    public function destroy(Evento $evento)
+    /*     public function destroy(Evento $evento)
     {
         $evento->delete(); // Eliminar el evento
         return redirect()->route('eventos.index')->with('success', 'Evento eliminado exitosamente.');
-    }
+    } */
 
     public function buscarEventos(Request $request)
     {
@@ -181,7 +186,9 @@ class EventoController extends Controller
 
         // Buscar eventos para la fecha específica
         try {
-            $eventos = Evento::whereDate('fechaEvento', $fecha)->get();
+            $eventos = Evento::whereDate('fechaEvento', $fecha)
+                ->where('estadoEvento', 1)
+                ->get();
             $resultados = [];
             foreach ($eventos as $evento) {
                 $idAmbiente = $evento->pla_amb_id;
@@ -230,6 +237,24 @@ class EventoController extends Controller
             'items' => $participantes->items(),
             'more' => $participantes->hasMorePages()
         ]);
+    }
+
+
+    public function delete(Request $request)
+    {
+        $idEvento = $request->__get('idEvento');
+        //Log::error("El id del evento para eliminar ". $idEvento);
+
+        $eventoEncontrado = Evento::find($idEvento);
+
+        if ($eventoEncontrado) {
+            $eventoEncontrado->estadoEvento = false;
+            $eventoEncontrado->save();
+
+            return redirect()->route('calendario.index')->with('success', 'Evento eliminado exitosamente.');
+        } else {
+            return redirect()->route('calendario.index')->with('error', 'No se pudo eliminar el evento.');
+        }
     }
 
     private function validateRequest(Request $request)

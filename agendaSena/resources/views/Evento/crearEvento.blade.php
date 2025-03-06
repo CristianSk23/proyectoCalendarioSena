@@ -124,15 +124,6 @@
         </button>
     </form>
 
-    <div x-data="{ open: false }" class="mt-4">
-        <button @click="open = true" class="bg-gray-300 px-4 py-2 rounded">Show More...</button>
-        <ul x-show="open" @click.outside="open = false" class="mt-2 bg-gray-100 p-2 rounded shadow-md">
-            <li><button wire:click="archive" class="text-blue-600">Archive</button></li>
-            <li><button wire:click="delete" class="text-red-600">Delete</button></li>
-        </ul>
-    </div>
-
-
     <script>
         let page = 1;
 
