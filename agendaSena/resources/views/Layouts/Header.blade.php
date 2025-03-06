@@ -25,6 +25,6 @@
     </form>
 </header>
 
-@yield('contentReportes')
+    @yield('contentReportes')
 
 </html>

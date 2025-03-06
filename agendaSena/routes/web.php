@@ -63,7 +63,7 @@ Route::get('evento/reportes', [ReporteController::class, 'index_report'])->name(
 
 Route::post('/reportes/mensual', [ReporteController::class, 'generarReporteMensual'])->name('reportes.mensual');
 Route::post('/reportes/anual', [ReporteController::class, 'generarReporteAnual'])->name('reportes.anual');
-
+Route::get('/reportes/filtrar', [ReporteController::class, 'filtrarReportes'])->name('reportes.filtrar');
 
 
 

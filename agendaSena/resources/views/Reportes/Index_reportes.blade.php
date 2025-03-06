@@ -1,15 +1,52 @@
 @extends('Layouts.Header')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/estilo.css') }}"> <!-- Incluir el CSS específico -->
+    <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
 @endsection
 
 @section('contentReportes')
-<div class="container">
+<div class="container mx-auto p-4">
     <h1 class="text-3xl font-bold mb-4 text-center">Generar Reportes</h1>
 
-     <!-- Tablero de Eventos -->
-     <div class="bg-white p-6 rounded-lg shadow-md mb-4">
+
+    <div class="bg-white p-6 rounded-lg shadow-md mb-4">
+        <h2 class="text-xl font-semibold mb-4">Filtrar Reportes</h2>
+        <form action="{{ route('reportes.filtrar') }}" method="GET">
+            @csrf
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label for="mes" class="block text-gray-700">Mes:</label>
+                    <select name="mes" class="border rounded px-3 py-2 w-full">
+                        <option value="">Seleccione</option>
+                        @foreach (['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] as $index => $mes)
+                            <option value="{{ $index + 1 }}">{{ $mes }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="anio" class="block text-gray-700">Año:</label>
+                    <input type="number" name="anio" class="border rounded px-3 py-2 w-full" placeholder="Año">
+                </div>
+                <div>
+                    <label for="dia" class="block text-gray-700">Día:</label>
+                    <input type="number" name="dia" class="border rounded px-3 py-2 w-full" placeholder="Día">
+                </div>
+                <div>
+                    <label for="responsable_id" class="block text-gray-700">Encargado:</label>
+                    <select name="responsable_id" class="border rounded px-3 py-2 w-full">
+                        <option value="">Seleccione</option>
+                        @foreach ($participantes as $participante)
+                            <option value="{{ $participante->par_identificacion }}">{{ $participante->par_nombres }} {{ $participante->par_apellidos }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200 mt-4">Filtrar Reportes</button>
+        </form>
+    </div>
+
+    <!-- Tablero de Eventos -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-4">
         <h2 class="text-xl font-semibold mb-4">Eventos hasta la Fecha</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="bg-blue-100 p-4 rounded-lg text-center">
@@ -26,19 +63,6 @@
             </div>
         </div>
     </div>
-
-    <div class="flex flex-wrap justify-center mb-4">
-        <div class="chart-container" style="width: 300px; height: 200px;">
-            <canvas id="eventosPorCategoriaChart"></canvas>
-        </div>
-        <div class="chart-container" style="width: 300px; height: 200px;">
-            <canvas id="eventosMensualesChart"></canvas>
-        </div>
-        <div class="chart-container" style="width: 300px; height: 200px;">
-            <canvas id="eventosAnualesChart"></canvas>
-        </div>
-    </div>
-
 
     <div class="flex flex-wrap justify-center mb-4">
         <div class="chart-container" style="width: 300px; height: 200px;">
@@ -97,10 +121,10 @@
     var myChart1 = new Chart(ctx1, {
         type: 'bar',
         data: {
-            labels: {!! json_encode($estadisticas['eventosPorCategoria']->pluck('nombre')) !!}, // Obtener los nombres de las categorías
+            labels: {!! json_encode($estadisticas['eventosPorCategoria']->pluck('nombre')) !!},
             datasets: [{
                 label: 'Eventos por Categoría',
-                data: {!! json_encode($estadisticas['eventosPorCategoria']->pluck('total')) !!}, // Obtener los totales
+                data: {!! json_encode($estadisticas['eventosPorCategoria']->pluck('total')) !!},
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
@@ -111,16 +135,15 @@
                 x: {
                     title: {
                         display: true,
-                        text: 'Categorías' // Título del eje X
+                        text: 'Categorías'
                     }
                 },
                 y: {
                     beginAtZero: true,
-                    min: 0, // Establece el valor mínimo
-                    max: 20, // Establece el valor máximo
+                    min: 0,
                     title: {
                         display: true,
-                        text: 'Número de Eventos' // Título del eje Y
+                        text: 'Número de Eventos'
                     }
                 }
             }
@@ -146,16 +169,15 @@
                 x: {
                     title: {
                         display: true,
-                        text: 'Mes' // Etiqueta del eje X
+                        text: 'Mes'
                     }
                 },
                 y: {
                     beginAtZero: true,
-                    min: 0, // Establece el valor mínimo
-                    max: 20, // Establece el valor máximo
+                    min: 0,
                     title: {
                         display: true,
-                        text: 'Número de Eventos' // Cambia este texto por el que desees
+                        text: 'Número de Eventos'
                     }
                 }
             }
@@ -181,16 +203,15 @@
                 x: {
                     title: {
                         display: true,
-                        text: 'Año' // Etiqueta del eje X
+                        text: 'Año'
                     }
                 },
                 y: {
                     beginAtZero: true,
-                    min: 0, // Establece el valor mínimo
-                    max: 20, // Establece el valor máximo
+                    min: 0,
                     title: {
                         display: true,
-                        text: 'Número de Eventos' // Título del eje Y
+                        text: 'Número de Eventos'
                     }
                 }
             }

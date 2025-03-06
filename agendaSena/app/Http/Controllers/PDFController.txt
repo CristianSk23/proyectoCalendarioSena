@@ -30,4 +30,4 @@ class PDFController extends Controller
        
     //     return $pdf->download('itsolutionstuff.pdf');
     // }
-}
+//}
