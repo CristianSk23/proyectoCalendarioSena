@@ -3,16 +3,22 @@
 @section('content')
     <h1 class="text-2xl font-bold mb-4">Crear Evento</h1>
 
-    <form action="{{ route('eventos.store') }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow-md">
+    <form action="{{ isset($evento) ? route('eventos.actualizarEvento', $evento->idEvento) : route('eventos.store') }}"
+        method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow-md">
         @csrf
 
         <div class="mb-4">
             <label for="par_identificacion" class="block text-sm font-medium text-gray-700">Encargado del Evento:</label>
-            {{-- <input type="text" id="searchBox" placeholder="Buscar participante..." class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"> --}}
-            <select name="par_identificacion" id="par_identificacion" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+            {{-- <input type="text" id="searchBox" placeholder="Buscar participante..."
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+            --}}
+            <select name="par_identificacion" id="par_identificacion"
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                 <option value="">Seleccionar Encargado</option>
                 @foreach ($participantes as $participante)
-                    <option value="{{ $participante->par_identificacion }}">{{ $participante->par_nombres }}</option>
+                    <option value="{{ $participante->par_identificacion }}" {{ isset($evento) && $evento->par_identificacion == $participante->par_identificacion ? 'selected' : '' }}>
+                        {{ $participante->par_nombres }}
+                    </option>
                 @endforeach
             </select>
             <button class="bg-lime-500 rounded-md shadow-sm" id="cargarMas">Cargar más parcticipantes</button>
@@ -23,8 +29,8 @@
             <select name="pla_amb_id"
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                 <option value="">Seleccionar Espacio</option>
-                <option value="153">Biblioteca</option>
-                <option value="180">Auditorio</option>
+                <option value="153" {{ isset($evento) && $evento->pla_amb_id == 153 ? 'selected' : '' }}>Biblioteca</option>
+                <option value="180" {{ isset($evento) && $evento->pla_amb_id == 180 ? 'selected' : '' }}>Auditorio</option>
                 {{-- @foreach ($participantes as $participante)
                 @endforeach --}}
             </select>
@@ -34,35 +40,42 @@
             <label for="horarioEvento" class="block text-sm font-medium text-gray-700">Horario del Evento:</label>
             <label for="horarioEventoInicio" class="block text-sm font-medium text-gray-700">Inicio del Evento:</label>
             <input type="time" name="horarioEventoInicio" required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                value="{{ isset($evento) ? $inicioEvento : '' }}">
             <label for="horarioEventoFin" class="block text-sm font-medium text-gray-700">Fin del Evento:</label>
             <input type="time" name="horarioEventoFin" required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                value="{{ isset($evento) ? $finalEvento : '' }}">
 
         </div>
 
         <div class="mb-4">
             <label for="nomEvento" class="block text-sm font-medium text-gray-700">Nombre del Evento:</label>
             <input type="text" name="nomEvento" required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                value="{{ isset($evento) ? $evento->nomEvento : '' }}">
         </div>
 
         <div class="mb-4">
             <label for="descripcion" class="block text-sm font-medium text-gray-700 ">Descripción:</label>
             <textarea name="descripcion" required
-                class="mt-1 block w-full border-solid border-red-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"></textarea>
+                class="mt-1 block w-full border-solid border-red-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                                            {{ isset($evento) ? $evento->descripcion : '' }}
+                                </textarea>
         </div>
 
         <div class="mb-4">
             <label for="fechaEvento" class="block text-sm font-medium text-gray-700">Fecha:</label>
             <input type="date" data="{{ $fecha }}" value="{{ $fecha }}" readonly="disabled" name="fechaEvento" required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                value="{{ isset($evento) ? $evento->fechaEvento : '' }}">
         </div>
 
         <div class="mb-4">
             <label for="aforoEvento" class="block text-sm font-medium text-gray-700">Aforo del Evento:</label>
             <input type="number" name="aforoEvento" required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+                value="{{ isset($evento) ? $evento->aforoEvento : '' }}">
         </div>
 
 
@@ -72,7 +85,9 @@
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                 <option value="">Seleccionar Ficha</option>
                 @foreach ($fichas as $ficha)
-                    <option value="{{ $ficha->fic_numero }}">{{ $ficha->fic_numero }}</option>
+                    <option value="{{ $ficha->fic_numero }}" {{ isset($evento) && $evento->fic_numero == $ficha->fic_numero ? 'selected' : '' }}>
+                        {{ $ficha->fic_numero }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -82,7 +97,9 @@
                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
                 <option value="">Seleccionar Categoría</option>
                 @foreach ($categorias as $categoria)
-                    <option value="{{ $categoria->idCategoria }}">{{ $categoria->nomCategoria }}</option>
+                    <option value="{{ $categoria->idCategoria }}" {{ isset($evento) && $evento->idCategoria == $categoria->idCategoria ? 'selected' : '' }}>
+                        {{ $categoria->nomCategoria }}
+                    </option>
                 @endforeach
             </select>
         </div>
@@ -102,21 +119,14 @@
             </select>
         </div>
 
-        <button type="submit" class="bg-lime-500 text-white px-4 py-2 rounded">Crear Evento</button>
+        <button type="submit" class="bg-lime-500 text-white px-4 py-2 rounded">
+            {{ isset($evento) ? 'Actualizar Evento' : 'Crear Evento' }}
+        </button>
     </form>
-
-    <div x-data="{ open: false }" class="mt-4">
-        <button @click="open = true" class="bg-gray-300 px-4 py-2 rounded">Show More...</button>
-        <ul x-show="open" @click.outside="open = false" class="mt-2 bg-gray-100 p-2 rounded shadow-md">
-            <li><button wire:click="archive" class="text-blue-600">Archive</button></li>
-            <li><button wire:click="delete" class="text-red-600">Delete</button></li>
-        </ul>
-    </div>
-
 
     <script>
         let page = 1;
-    
+
         function cargarParticipantes() {
             fetch(`/cargarParticipantes?page=${page}`)
                 .then(response => response.json())
@@ -131,9 +141,9 @@
                     page++;
                 });
         }
-    
+
         document.getElementById('cargarMas').addEventListener('click', cargarParticipantes);
-    
+
         // Cargar la primera página al inicio
         cargarParticipantes();
     </script>

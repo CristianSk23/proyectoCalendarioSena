@@ -12,6 +12,7 @@ use App\Models\Participante\Participante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Traits\CalendarTrait;
+use Illuminate\Container\Attributes\Log as AttributesLog;
 
 class EventoController extends Controller
 {
@@ -19,7 +20,9 @@ class EventoController extends Controller
     public function index()
     {
         // Carga eventos nuevos 
-        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])->get();
+        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
+            ->where('estadoEvento', 1) // Filtrar solo los eventos con estado 1
+            ->get();
         return view('Evento.inicioEvento', compact('eventos'));
     }
 
@@ -42,87 +45,135 @@ class EventoController extends Controller
     }
 
     public function store(Request $request)
-{
-    try {
-        // Validar los datos enviados al controlador usando la función privada
-        $validatedData = $this->validateRequest($request);
+    {
+        try {
+            // Validar los datos enviados al controlador usando la función privada
+            $validatedData = $this->validateRequest($request);
 
-        // Guardar la imagen en el sistema de archivos si se proporciona
+            //* Guardar la imagen en el sistema de archivos si se proporciona
+            if ($request->hasFile('publicidad')) {
+                $rutaImagen = $request->file('publicidad')->store('imagenes', 'public');
+                $validatedData['publicidad'] = $rutaImagen; // Agregar la ruta de la imagen a los datos validados
+            }
+
+            // Buscar al participante
+            $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
+
+            if (!$participante) {
+                return redirect()->back()->with('error', 'Participante no encontrado.');
+            }
+
+            // Agregar el nombre del participante a los datos validados
+            $validatedData['nomSolicitante'] = $participante->par_nombres;
+
+            // Crear el horario
+            $horario = Horario::create([
+                'pla_amb_id' => $request->pla_amb_id,
+                'inicio' => $request->horarioEventoInicio,
+                'fin' => $request->horarioEventoFin,
+            ]);
+
+            if (!$horario) {
+                return redirect()->back()->with('error', 'Error al crear el horario.');
+            }
+
+            // Agregar el ID del horario a los datos validados
+            $validatedData['idHorario'] = $horario->idHora;
+
+            // Crear el evento utilizando los datos validados
+            Evento::create([
+                'par_identificacion' => $validatedData['par_identificacion'],
+                'pla_amb_id' => $validatedData['pla_amb_id'],
+                'idHorario' => $validatedData['idHorario'],
+                'nomEvento' => $validatedData['nomEvento'],
+                'descripcion' => $validatedData['descripcion'],
+                'fechaEvento' => $validatedData['fechaEvento'],
+                'aforoEvento' => $validatedData['aforoEvento'],
+                'fic_numero' => $validatedData['fic_numero'],
+                'idCategoria' => $validatedData['idCategoria'],
+                'publicidad' => $validatedData['publicidad'] ?? null, // Usar null si no se proporciona una imagen
+                'estadoEvento' => $validatedData['estadoEvento'],
+                'nomSolicitante' => $validatedData['nomSolicitante'], // Agregado desde la búsqueda del participante
+            ]);
+
+            // Redirigir con un mensaje de éxito
+            return redirect()->route('calendario.index')->with('success', 'Evento creado exitosamente.');
+        } catch (\Exception $e) {
+            // Registrar el error en los logs y devolver un mensaje
+            Log::error('Error al crear evento: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Ocurrió un error: ' . $e->getMessage());
+        }
+    }
+
+
+    public function edit(Request $request)
+    {
+        // Cargar categorías y fichas para el formulario de edición
+        $calendario = $this->calendarioGenerado();
+        $idEvento = $request->__get('idEvento');
+        //*BUSCO EL EVENTO CON EL ID QUE SE ENVÍA DEL FRONTEND
+        $evento = Evento::where('idEvento', $idEvento)->first();
+        $fechaEvento = $evento->fechaEvento;
+        $timestamp = strtotime($fechaEvento);
+        $fechaArray = getdate($timestamp);
+        //*OBTENER LOS DATOS DE LA FECHA INDIVIDUALMENTE
+        $dia = $fechaArray['mday']; // Día
+        $mes = $fechaArray['mon']; // Mes
+        $anio = $fechaArray['year']; // Año
+
+        $fecha = sprintf('%04d-%02d-%02d', $anio, $mes, $dia);
+        $categorias = Categoria::all();
+        //*BUSCO LOS PARTICIPANTES
+        $participantes = Participante::where('est_apr_id',  2)->select('par_identificacion', 'par_nombres')->paginate(10);
+        $fichas = Ficha::all();
+
+        $idHorario = $evento->idHorario;
+        $horario = Horario::find($idHorario);
+        $inicioEvento = $horario->inicio;
+        $finalEvento = $horario->fin;
+        if ($evento) {
+            return view('Evento.crearEvento', compact('evento', 'categorias', 'fichas', 'participantes', 'dia', 'mes', 'anio', 'fecha', 'calendario', 'inicioEvento', 'finalEvento'));
+        }
+    }
+
+    public function update(Request $request, Evento $evento)
+    {
+        $validatedData = $this->validateRequest($request);
+        $idEvento = $request->__get('idEvento');
+        $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
+        $validatedData['nomSolicitante'] = $participante->par_nombres;
+        $evento = Evento::findOrFail($idEvento);
+
         if ($request->hasFile('publicidad')) {
             $rutaImagen = $request->file('publicidad')->store('imagenes', 'public');
             $validatedData['publicidad'] = $rutaImagen; // Agregar la ruta de la imagen a los datos validados
         }
 
-        // Buscar al participante
-        $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
-
-        if (!$participante) {
-            return redirect()->back()->with('error', 'Participante no encontrado.');
-        }
-
-        // Agregar el nombre del participante a los datos validados
-        $validatedData['nomSolicitante'] = $participante->par_nombres;
-
-        // Crear el horario
-        $horario = Horario::create([
-            'pla_amb_id' => $request->pla_amb_id,
-            'inicio' => $request->horarioEventoInicio,
-            'fin' => $request->horarioEventoFin,
-        ]);
-
+        $horario = Horario::find($evento->idHorario);
         if (!$horario) {
             return redirect()->back()->with('error', 'Error al crear el horario.');
         }
 
-        // Agregar el ID del horario a los datos validados
-        $validatedData['idHorario'] = $horario->idHora;
-
-        // Crear el evento utilizando los datos validados
-        Evento::create([
-            'par_identificacion' => $validatedData['par_identificacion'],
-            'pla_amb_id' => $validatedData['pla_amb_id'],
-            'idHorario' => $validatedData['idHorario'],
-            'nomEvento' => $validatedData['nomEvento'],
-            'descripcion' => $validatedData['descripcion'],
-            'fechaEvento' => $validatedData['fechaEvento'],
-            'aforoEvento' => $validatedData['aforoEvento'],
-            'fic_numero' => $validatedData['fic_numero'],
-            'idCategoria' => $validatedData['idCategoria'],
-            'publicidad' => $validatedData['publicidad'] ?? null, // Usar null si no se proporciona una imagen
-            'estadoEvento' => $validatedData['estadoEvento'],
-            'nomSolicitante' => $validatedData['nomSolicitante'], // Agregado desde la búsqueda del participante
+        $horario->update([
+            'inicio' => $request->input('horarioEventoInicio'),
+            'fin' => $request->input('horarioEventoFin'),
         ]);
 
-        // Redirigir con un mensaje de éxito
-        return redirect()->route('calendario.index')->with('success', 'Evento creado exitosamente.');
-    } catch (\Exception $e) {
-        // Registrar el error en los logs y devolver un mensaje
-        Log::error('Error al crear evento: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Ocurrió un error: ' . $e->getMessage());
-    }
-}
+        // Actualizar el evento
+        $evento->update($validatedData);
 
-
-    public function edit(Evento $evento)
-    {
-        // Cargar categorías y fichas para el formulario de edición
-        $categorias = Categoria::all();
-        $fichas = Ficha::all();
-        return view('Evento.editarEvento', compact('evento', 'categorias', 'fichas'));
+        if (!$participante) {
+            return redirect()->back()->with('error', 'Participante no encontrado.');
+        }
+        $evento->update($validatedData);
+        return redirect()->route('calendario.index')->with('success', 'Evento actualizado exitosamente.');
     }
 
-    public function update(Request $request, Evento $evento)
-    {
-        $this->validateRequest($request);
-        $evento->update($request->all());
-        return redirect()->route('eventos.index')->with('success', 'Evento actualizado exitosamente.');
-    }
-
-    public function destroy(Evento $evento)
+    /*     public function destroy(Evento $evento)
     {
         $evento->delete(); // Eliminar el evento
         return redirect()->route('eventos.index')->with('success', 'Evento eliminado exitosamente.');
-    }
+    } */
 
     public function buscarEventos(Request $request)
     {
@@ -135,7 +186,9 @@ class EventoController extends Controller
 
         // Buscar eventos para la fecha específica
         try {
-            $eventos = Evento::whereDate('fechaEvento', $fecha)->get();
+            $eventos = Evento::whereDate('fechaEvento', $fecha)
+                ->where('estadoEvento', 1)
+                ->get();
             $resultados = [];
             foreach ($eventos as $evento) {
                 $idAmbiente = $evento->pla_amb_id;
@@ -184,6 +237,24 @@ class EventoController extends Controller
             'items' => $participantes->items(),
             'more' => $participantes->hasMorePages()
         ]);
+    }
+
+
+    public function delete(Request $request)
+    {
+        $idEvento = $request->__get('idEvento');
+        //Log::error("El id del evento para eliminar ". $idEvento);
+
+        $eventoEncontrado = Evento::find($idEvento);
+
+        if ($eventoEncontrado) {
+            $eventoEncontrado->estadoEvento = false;
+            $eventoEncontrado->save();
+
+            return redirect()->route('calendario.index')->with('success', 'Evento eliminado exitosamente.');
+        } else {
+            return redirect()->route('calendario.index')->with('error', 'No se pudo eliminar el evento.');
+        }
     }
 
     private function validateRequest(Request $request)

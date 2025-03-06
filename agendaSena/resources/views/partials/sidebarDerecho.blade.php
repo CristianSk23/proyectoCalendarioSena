@@ -1,6 +1,4 @@
 <aside class="bg-gwhite w-1/4 p-4 border-l-4">
-    <h2 class="font-bold">Información Adicional</h2>
-
     <!-- Sección de Eventos Próximos -->
     <div class="container bg-lime-700 mx-auto mt-10 h-[70vh] rounded-md">
         <h1 class="text-lg font-bold text-white text-center">Bienvenido a la Gestión de Eventos</h1>
