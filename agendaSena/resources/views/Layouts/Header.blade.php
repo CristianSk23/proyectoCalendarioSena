@@ -101,6 +101,6 @@
 
 
 
-@yield('contentReportes')
+    @yield('contentReportes')
 
 </html>
