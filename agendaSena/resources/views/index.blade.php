@@ -167,10 +167,10 @@
                             });
 
                             if (eventoEnEsteDia) {
-                                // Si hay un evento, resaltar el día
+                                //* Si hay un evento, resaltar el día
                                 console.log("Dia con evento " + eventoEnEsteDia);
                                 
-                                celda.classList.add('bg-lime-900', 'text-white'); // Resaltar el día con evento
+                                celda.classList.add('bg-lime-900', 'text-white'); 
                                 let icon = document.createElement('box-icon');
                                 icon.setAttribute('name', 'calendar-check');
                                 icon.setAttribute('type', 'solid');
@@ -179,11 +179,11 @@
                                 icon.classList.add('icono-ajustado');
                                 celda.appendChild(icon);
                             } else {
-                                // Si no hay evento, eliminar las clases que se agregaron anteriormente
-                                celda.classList.remove('bg-lime-900', 'text-white', 'celda-con-icono'); // Eliminar clases de evento
-                                celda.classList.add('bg-white', 'text-black'); // Asegurarse de que la celda vuelva a su estado original
+                                
+                                celda.classList.remove('bg-lime-900', 'text-white', 'celda-con-icono'); 
+                                celda.classList.add('bg-white', 'text-black'); 
 
-                                // Si deseas eliminar el icono también, puedes hacerlo así:
+                             
                                 const iconoExistente = celda.querySelector('box-icon');
                                 if (iconoExistente) {
                                     celda.removeChild(iconoExistente); // Eliminar el icono si existe
@@ -208,31 +208,31 @@
                         console.error("Error al obtener los eventos:", error);
                     });
             }
-            //* Trabajando
+       
             function agregarEvento(dia, mes, anio) {
-                // Construir la URL para la consulta
-                const baseRuta = "{{ route('eventos.buscar') }}"; // Genera la base de la ruta
+              
+                const baseRuta = "{{ route('eventos.buscar') }}"; // Genero la base de la ruta
                 const ruta = `${baseRuta}?dia=${dia}&mes=${mes}&anio=${anio}`;
 
                 // Obtener el contenedor del sidebar
                 const sidebar = document.querySelector('aside');
 
-                // Mostrar un indicador de carga
+             
                 sidebar.innerHTML = `<p class="text-gray-500">Cargando...</p>`;
 
-                // Realizar la petición al servidor
+                // Realizo la petición al servidor
                 fetch(ruta)
                     .then(response => response.json())
                     .then(data => {
 
 
-                        // Limpiar el contenido del sidebar
+                        // Limpio el contenido del sidebar
                         const formatoMes = new Intl.DateTimeFormat('es-ES', {
                             month: 'long'
-                        }); // 'es-ES' para español
+                        }); 
                         const nuevoMes = mes - 1;
                         let nombreMes = formatoMes.format(new Date(anio, nuevoMes, dia));
-                        nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toLowerCase();
+                        nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toUpperCase();
                         sidebar.innerHTML = '';
 
                         const contenedorEventos = `
@@ -247,14 +247,13 @@
 
                         sidebar.innerHTML = contenedorEventos;
 
-                        // Obtener referencias a los elementos
+                        // Obtengo referenci de los elementos
                         const tituloEventos = document.getElementById('tituloEventos');
                         const eventosList = document.getElementById('eventosList');
                         const botonAgregar = document.getElementById('agregarEvento');
 
                         if (data.data.length > 0) {
                             const eventosHTML = data.data.map(item => {
-                                // Acceder a las propiedades anidadas
                                 const evento = item.evento;
                                 const categoria = item.categoria;
                                 const horario = item.horario;
@@ -305,25 +304,23 @@
                             const cancelDelete = document.getElementById('cancelDelete');
 
                             eliminarEventoBtn.addEventListener('click', function () {
-                                // Mostrar el modal
+                              
                                 modalMessage.innerHTML = 'Está seguro que desea eliminar el evento de: <strong>' + "<br>" + nombreEvento + '</strong>?';
-                                confirmModal.classList.remove('hidden'); // Mostrar el modal
+                                confirmModal.classList.remove('hidden'); 
                             });
 
-                            //* Manejar el clic en el botón de confirmar
+                         
                             confirmDelete.addEventListener('click', function () {
                                 eliminarEvento(idEvento);
                                 confirmModal.classList.add('hidden');
                             });
 
-                            //* Manejar el clic en el botón de cancelar
+                           
                             cancelDelete.addEventListener('click', function () {
-                                confirmModal.classList.add('hidden'); // Ocultar el modal si se cancela
+                                confirmModal.classList.add('hidden'); 
                                 notyf.info('Eliminación cancelada.'); // Notificación de cancelación
                             });
 
-
-                            // Manejadores de eventos
 
                         } else {
                             tituloEventos.className = "text-white px-4 text-center";
@@ -370,11 +367,10 @@
             function eliminarEvento(idEvento) {
                 console.log("Tendría que eliminar el evento");
                 const baseRutaEliminarEvento = "{{ route('eventos.eliminarEvento', '') }}"; // Ruta base
-                // Agregar el ID del evento a la URL
                 const urlEliminar = `${baseRutaEliminarEvento}/${idEvento}`;
 
-                // Redirigir a la URL de eliminación
-                window.location.href = urlEliminar; // Redirigir a la URL de eliminación
+               
+                window.location.href = urlEliminar; 
                 generarCalendario(fechaActual);
             }
 

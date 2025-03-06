@@ -3,7 +3,7 @@
     <div class="container mx-1 px-1 ">
         <div class="border rounded-lg p-4 bg-lime-700 border-lime-500">
             <div class="border rounded-lg p-4 text-white ">
-                <h1 class="text-3xl font-bold font-sans text-center ">{{ \Carbon\Carbon::now()->locale('es')->monthName }}</h1>
+                <h1 class="text-3xl font-bold font-sans text-center text-white">{{ strtoupper(\Carbon\Carbon::now()->locale('es')->monthName) }}</h1>
             </div>
 
             <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md table-auto">
