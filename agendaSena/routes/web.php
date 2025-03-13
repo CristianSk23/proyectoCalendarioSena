@@ -8,6 +8,8 @@ use App\Http\Controllers\Login\LoginController;
 use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\Evento\ReporteController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\Evento\ResponsableController;
+
 
 //index
 
@@ -72,3 +74,15 @@ Route::get('/reportes/filtrar', [ReporteController::class, 'filtrarReportes'])->
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 
 
+
+//********+responsable**** */
+
+Route::get('/api/responsables', [ResponsableController::class, 'index']);
+
+
+
+//******PDF REPORTES *************/
+
+
+
+Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensual'])->name('reportes.pdf.mensual');

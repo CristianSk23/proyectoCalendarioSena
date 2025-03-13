@@ -256,55 +256,85 @@ body {
 /* REPORTES  GRAFICAS ESTILOS */
 /* estilo.css */
 
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f8f9fa; /* Color de fondo suave */
-}
 
-.container {
-    max-width: 1200px; /* Ancho máximo para la contenedor */
-    margin: 0 auto; /* Centrar el contenedor */
+/* Estilos específicos para la vista de reportes y gráficas */
+.reportes-container {
+    background-color: #ffffff; /* Color de fondo blanco para el contenedor de reportes */
     padding: 20px; /* Espaciado interno */
-}
-
-.chart-container {
-    background-color: #ffffff; /* Fondo blanco para los gráficos */
     border-radius: 8px; /* Bordes redondeados */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    margin-top: 20px; /* Espaciado superior */
+}
+
+.reportes-title {
+    color: #2c3e50; /* Color del título específico */
+    font-size: 2rem; /* Tamaño de fuente del título */
     margin-bottom: 20px; /* Espaciado inferior */
+    text-align: center; /* Centrar el título */
+}
+
+.reportes-table {
+    width: 100%; /* Ancho completo */
+    border-collapse: collapse; /* Colapsar bordes */
+    margin-top: 20px; /* Espaciado superior */
+}
+
+.reportes-table th, .reportes-table td {
+    border: 1px solid #dee2e6; /* Bordes de las celdas */
+    padding: 10px; /* Espaciado interno */
+    text-align: center; /* Alinear texto al centro */
+}
+
+.reportes-table th {
+    background-color: #007bff; /* Color de fondo de los encabezados */
+    color: white; /* Color del texto de los encabezados */
+}
+
+.reportes-table tr:nth-child(even) {
+    background-color: #f2f2f2; /* Color de fondo para filas pares */
+}
+
+.reportes-button {
+    background-color: #28a745; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    padding: 10px 15px; /* Espaciado interno del botón */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cambiar cursor al pasar el mouse */
+    margin-top: 10px; /* Espaciado superior */
+}
+
+.reportes-button:hover {
+    background-color: #218838; /* Color de fondo al pasar el mouse */
+}
+
+/* Estilos para gráficas */
+.grafica-container {
+    background-color: #ffffff; /* Color de fondo blanco para el contenedor de gráficas */
     padding: 20px; /* Espaciado interno */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    margin-top: 20px; /* Espaciado superior */
 }
 
-h1, h2, h3 {
-    color: #333; /* Color de texto */
+.grafica-title {
+    color: #2c3e50; /* Color del título específico */
+    font-size: 2rem; /* Tamaño de fuente del título */
+    margin-bottom: 20px; /* Espaciado inferior */
+    text-align: center; /* Centrar el título */
 }
 
-button {
-    transition: background-color 0.3s ease; /* Transición suave para el botón */
+/* Estilos para el botón de descarga de gráficas */
+.grafica-download-button {
+    background-color: #007bff; /* Color de fondo del botón de descarga */
+    color: white; /* Color del texto del botón */
+    padding: 10px 15px; /* Espaciado interno del botón */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    cursor: pointer; /* Cambiar cursor al pasar el mouse */
+    margin-top: 10px; /* Espaciado superior */
 }
 
-button:hover {
+.grafica-download-button:hover {
     background-color: #0056b3; /* Color de fondo al pasar el mouse */
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-}
-
-th, td {
-    border: 1px solid #dee2e6; /* Borde de las celdas */
-    padding: 12px; /* Espaciado interno */
-    text-align: left; /* Alinear texto a la izquierda */
-}
-
-th {
-    background-color: #007bff; /* Color de fondo para encabezados */
-    color: white; /* Color de texto para encabezados */
-}
-
-ul {
-    list-style-type: disc; /* Estilo de lista */
-    padding-left: 20px; /* Espaciado a la izquierda */
 }
