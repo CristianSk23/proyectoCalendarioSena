@@ -1,19 +1,16 @@
-<aside class="bg-gwhite w-1/4 p-4 border-l-4">
+<aside class=" col-12 col-md-3 p-4 border-start">
     <!-- Sección de Eventos Próximos -->
-    <div class="container bg-lime-700 mx-auto mt-10 h-[70vh] rounded-md">
-        <h1 class="text-lg font-bold text-white text-center">Bienvenido a la Gestión de Eventos</h1>
+    <div class="container bg-success mx-auto mt-3 rounded">
+        <h1 class="h5 font-weight-bold text-white text-center">Bienvenido a la Gestión de Eventos</h1>
         {{-- <p class="mt-4">Selecciona una opción para continuar:</p>
 
         <div class="mt-6">
-            <a href="{{ route('eventos.index') }}" class="bg-blue-500 text-white px-4 py-2 rounded mr-4">Ver
-                Eventos</a>
-            <a href="{{ route('horarios.index') }}" class="bg-green-500 text-white px-4 py-2 rounded">Ver
-                Horarios</a>
+            <a href="{{ route('eventos.index') }}" class="btn btn-primary mr-2">Ver Eventos</a>
+            <a href="{{ route('horarios.index') }}" class="btn btn-success">Ver Horarios</a>
         </div> --}}
         <div class="mt-4">
-            <h5 class="font-bold text-white text-lg text-center">Notas Importantes</h5>
-            <p class="text-white text-center text-sm">Asegúrate de revisar los horarios de las clases y eventos.</p>
-
+            <h5 class="font-weight-bold text-white text-lg text-center">Notas Importantes</h5>
+            <p class="text-white text-center small">Asegúrate de revisar los horarios de las clases y eventos.</p>
         </div>
     </div>
 

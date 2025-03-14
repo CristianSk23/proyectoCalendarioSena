@@ -1,19 +1,15 @@
 @extends('Layouts.Plantilla')
 
 @section('content')
-    <h1 class="text-2xl font-bold mb-4">Crear Evento</h1>
+    <h1 class="h2 font-weight-bold mb-4">Crear Evento</h1>
 
     <form action="{{ isset($evento) ? route('eventos.actualizarEvento', $evento->idEvento) : route('eventos.store') }}"
-        method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow-md">
+        method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded shadow">
         @csrf
 
-        <div class="mb-4">
-            <label for="par_identificacion" class="block text-sm font-medium text-gray-700">Encargado del Evento:</label>
-            {{-- <input type="text" id="searchBox" placeholder="Buscar participante..."
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-            --}}
-            <select name="par_identificacion" id="par_identificacion"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+        <div class="mb-3">
+            <label for="par_identificacion" class="form-label">Encargado del Evento:</label>
+            <select name="par_identificacion" id="par_identificacion" class="form-select">
                 <option value="">Seleccionar Encargado</option>
                 @foreach ($participantes as $participante)
                     <option value="{{ $participante->par_identificacion }}" {{ isset($evento) && $evento->par_identificacion == $participante->par_identificacion ? 'selected' : '' }}>
@@ -21,68 +17,55 @@
                     </option>
                 @endforeach
             </select>
-            <button class="bg-lime-500 rounded-md shadow-sm" id="cargarMas">Cargar más parcticipantes</button>
+            <button type="button" class="btn btn-success mt-2" id="cargarMas">Cargar más participantes</button>
         </div>
 
-        <div class="mb-4">
-            <label for="pla_amb_id" class="block text-sm font-medium text-gray-700">Espacio del Evento:</label>
-            <select name="pla_amb_id"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+        <div class="mb-3">
+            <label for="pla_amb_id" class="form-label">Espacio del Evento:</label>
+            <select name="pla_amb_id" class="form-select">
                 <option value="">Seleccionar Espacio</option>
                 <option value="153" {{ isset($evento) && $evento->pla_amb_id == 153 ? 'selected' : '' }}>Biblioteca</option>
                 <option value="180" {{ isset($evento) && $evento->pla_amb_id == 180 ? 'selected' : '' }}>Auditorio</option>
-                {{-- @foreach ($participantes as $participante)
-                @endforeach --}}
             </select>
         </div>
 
-        <div class="mb-4">
-            <label for="horarioEvento" class="block text-sm font-medium text-gray-700">Horario del Evento:</label>
-            <label for="horarioEventoInicio" class="block text-sm font-medium text-gray-700">Inicio del Evento:</label>
-            <input type="time" name="horarioEventoInicio" required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+        <div class="mb-3">
+            <label for="horarioEvento" class="form-label">Horario del Evento:</label>
+            <label for="horarioEventoInicio" class="form-label">Inicio del Evento:</label>
+            <input type="time" name="horarioEventoInicio" required class="form-control"
                 value="{{ isset($evento) ? $inicioEvento : '' }}">
-            <label for="horarioEventoFin" class="block text-sm font-medium text-gray-700">Fin del Evento:</label>
-            <input type="time" name="horarioEventoFin" required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+            <label for="horarioEventoFin" class="form-label">Fin del Evento:</label>
+            <input type="time" name="horarioEventoFin" required class="form-control"
                 value="{{ isset($evento) ? $finalEvento : '' }}">
-
         </div>
 
-        <div class="mb-4">
-            <label for="nomEvento" class="block text-sm font-medium text-gray-700">Nombre del Evento:</label>
-            <input type="text" name="nomEvento" required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+        <div class="mb-3">
+            <label for="nomEvento" class="form-label">Nombre del Evento:</label>
+            <input type="text" name="nomEvento" required class="form-control"
                 value="{{ isset($evento) ? $evento->nomEvento : '' }}">
         </div>
 
-        <div class="mb-4">
-            <label for="descripcion" class="block text-sm font-medium text-gray-700 ">Descripción:</label>
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción:</label>
             <textarea name="descripcion" required
-                class="mt-1 block w-full border-solid border-red-800 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                                            {{ isset($evento) ? $evento->descripcion : '' }}
-                                </textarea>
+                class="form-control">{{ isset($evento) ? $evento->descripcion : '' }}</textarea>
         </div>
 
-        <div class="mb-4">
-            <label for="fechaEvento" class="block text-sm font-medium text-gray-700">Fecha:</label>
-            <input type="date" data="{{ $fecha }}" value="{{ $fecha }}" readonly="disabled" name="fechaEvento" required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+        <div class="mb-3">
+            <label for="fechaEvento" class="form-label">Fecha:</label>
+            <input type="date" name="fechaEvento" required class="form-control"
                 value="{{ isset($evento) ? $evento->fechaEvento : '' }}">
         </div>
 
-        <div class="mb-4">
-            <label for="aforoEvento" class="block text-sm font-medium text-gray-700">Aforo del Evento:</label>
-            <input type="number" name="aforoEvento" required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+        <div class="mb-3">
+            <label for="aforoEvento" class="form-label">Aforo del Evento:</label>
+            <input type="number" name="aforoEvento" required class="form-control"
                 value="{{ isset($evento) ? $evento->aforoEvento : '' }}">
         </div>
 
-
-        <div class="mb-4">
-            <label for="idFicha" class="block text-sm font-medium text-gray-700">Ficha:</label>
-            <select name="fic_numero"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+        <div class="mb-3">
+            <label for="idFicha" class="form-label">Ficha:</label>
+            <select name="fic_numero" class="form-select">
                 <option value="">Seleccionar Ficha</option>
                 @foreach ($fichas as $ficha)
                     <option value="{{ $ficha->fic_numero }}" {{ isset($evento) && $evento->fic_numero == $ficha->fic_numero ? 'selected' : '' }}>
@@ -91,10 +74,10 @@
                 @endforeach
             </select>
         </div>
-        <div class="mb-4">
-            <label for="idCategoria" class="block text-sm font-medium text-gray-700">Categoría:</label>
-            <select name="idCategoria"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+
+        <div class="mb-3">
+            <label for="idCategoria" class="form-label">Categoría:</label>
+            <select name="id Categoria" class="form-select">
                 <option value="">Seleccionar Categoría</option>
                 @foreach ($categorias as $categoria)
                     <option value="{{ $categoria->idCategoria }}" {{ isset($evento) && $evento->idCategoria == $categoria->idCategoria ? 'selected' : '' }}>
@@ -104,22 +87,21 @@
             </select>
         </div>
 
-        <div class="mb-4">
-            <label for="publicidad" class="block text-sm font-medium text-gray-700">Publicidad:</label>
-            <input type="file" name="publicidad" accept="image/*"
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+        <div class="mb-3">
+            <label for="publicidad" class="form-label">Publicidad:</label>
+            <input type="file" name="publicidad" accept="image/*" class="form-control">
         </div>
 
-        <div class="mb-4">
-            <label for="estadoEvento" class="block text-sm font-medium text-gray-700">Estado del Evento:</label>
-            <select name="estadoEvento" required
-                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                <option value="1">Activo</option>
-                <option value="0">Inactivo</option>
+        <div class="mb-3">
+            <label for="estadoEvento" class="form-label">Estado del Evento:</label>
+            <select name="estadoEvento" required class="form-select">
+                <option value="1">Agendado</option>
+                <option value="2">Separado</option>
+                <option value="3">Completado</option>
             </select>
         </div>
 
-        <button type="submit" class="bg-lime-500 text-white px-4 py-2 rounded">
+        <button type="submit" class="btn btn-success">
             {{ isset($evento) ? 'Actualizar Evento' : 'Crear Evento' }}
         </button>
     </form>
@@ -147,6 +129,4 @@
         // Cargar la primera página al inicio
         cargarParticipantes();
     </script>
-
-
 @endsection

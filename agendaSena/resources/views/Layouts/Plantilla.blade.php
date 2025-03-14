@@ -3,18 +3,6 @@
 
 <head>
 
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap"
-        rel="stylesheet">
-    @vite('resources/css/app.css')
-    <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <title>Agenda CDTI-SENA</title>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
 </head>
 
@@ -22,37 +10,25 @@
 <body>
 
     @include('Layouts.Header')
-    <div class="flex flex-col bg-texture h-screen">
+    <div class="d-flex flex-column vh-100 bg-textureFondo">
 
         <!-- Header -->
 
-
-
-
-
-        <div class="flex flex-1">
-
-
-
+        <div class="d-flex flex-fill">
 
             <!-- Sidebar Izquierda -->
-            @include ('partials.sidebarIzquierdo')
+            @include('partials.sidebarIzquierdo')
 
             <!-- Contenido Principal -->
-            <main class="flex-1 p-4">
+            <main class="flex-fill p-4">
                 @yield('content')
             </main>
 
-
-
             <!-- Aside Derecho -->
-            @include ('partials.sidebarDerecho')
+            @include('partials.sidebarDerecho')
 
         </div>
     </div>
-
-
-
 
     <script>
         const calendarEl = document.getElementById('calendar');
@@ -64,17 +40,17 @@
 
             // Crear el encabezado
             const header = document.createElement('div');
-            header.classList.add('flex', 'justify-between', 'items-center', 'mb-4');
+            header.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-4');
             header.innerHTML = `
-            <button id="prev" class="bg-blue-500 text-white px-2 py-1 rounded">Prev</button>
-            <h2 class="text-lg font-bold">${currentDate.toLocaleDateString()}</h2>
-            <button id="next" class="bg-blue-500 text-white px-2 py-1 rounded">Next</button>
+            <button id="prev" class="btn btn-primary">Prev</button>
+            <h2 class="h5 font-weight-bold">${currentDate.toLocaleDateString()}</h2>
+            <button id="next" class="btn btn-primary">Next</button>
         `;
             calendarEl.appendChild(header);
 
             // Mostrar la fecha actual
             const dateDisplay = document.createElement('div');
-            dateDisplay.classList.add('text-xl', 'font-bold', 'my-4');
+            dateDisplay.classList.add('h5', 'font-weight-bold', 'my-4');
             dateDisplay.innerText = currentDate.toLocaleDateString();
             calendarEl.appendChild(dateDisplay);
         }

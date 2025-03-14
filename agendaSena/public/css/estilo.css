@@ -1,76 +1,26 @@
-/* body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
+.bg-textureFondo {
+    background-image: url('../images/inicio/Texturas.png');
 }
 
-.container {
-    max-width: 800px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.celda-con-icono {
+    position: relative;
 }
 
-h1 {
-    text-align: center;
-    color: #333;
+/* Estilo para el icono */
+.icono-ajustado {
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+.hover-cell {
+    transition: background-color 0.3s, color 0.3s; /* Transición suave */
 }
 
-table, th, td {
-    border: 1px solid #ddd;
+.hover-cell:hover {
+    background-color: #28a745; /* Color de fondo al hacer hover */
+    color: white; /* Color del texto al hacer hover */
 }
-
-th, td {
-    padding: 10px;
-    text-align: left;
-}
-
-th {
-    background-color: #f2f2f2;
-}
-
-a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-button {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #c82333;
-}
-
-.alert {
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid transparent;
-    border-radius: 5px;
-}
-
-.alert-success {
-    color: #155724;
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-} */
 
 body {
     margin: 0;
@@ -279,13 +229,13 @@ h1, h2, h3 {
     color: #333; /* Color de texto */
 }
 
-button {
-    transition: background-color 0.3s ease; /* Transición suave para el botón */
-}
+/* button {
+    transition: background-color 0.3s ease; /* Transición suave para el botón 
+} */
 
-button:hover {
-    background-color: #0056b3; /* Color de fondo al pasar el mouse */
-}
+/* button:hover {
+    background-color: #0056b3; /* Color de fondo al pasar el mouse 
+} */
 
 table {
     width: 100%;
@@ -299,10 +249,10 @@ th, td {
     text-align: left; /* Alinear texto a la izquierda */
 }
 
-th {
-    background-color: #007bff; /* Color de fondo para encabezados */
-    color: white; /* Color de texto para encabezados */
-}
+/* th {
+    background-color: #007bff; /* Color de fondo para encabezados 
+    color: white; /* Color de texto para encabezados 
+} */
 
 ul {
     list-style-type: disc; /* Estilo de lista */

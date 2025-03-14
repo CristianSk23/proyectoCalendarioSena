@@ -169,12 +169,6 @@ class EventoController extends Controller
         return redirect()->route('calendario.index')->with('success', 'Evento actualizado exitosamente.');
     }
 
-    /*     public function destroy(Evento $evento)
-    {
-        $evento->delete(); // Eliminar el evento
-        return redirect()->route('eventos.index')->with('success', 'Evento eliminado exitosamente.');
-    } */
-
     public function buscarEventos(Request $request)
     {
 
@@ -239,6 +233,16 @@ class EventoController extends Controller
         ]);
     }
 
+    public function eventosPorConfirmar()
+    {
+        $eventos = Evento::where('estadoEvento', 2)->get(); //* Filtrar solo los eventos con estado 2 SERIA EL ESTADO POR CONFIRMAR
+        $cantidadEventos = count($eventos);
+        return response()->json([
+            'eventos' => $eventos,
+            'cantidadEventos' => $cantidadEventos
+        ]);
+    }
+
 
     public function delete(Request $request)
     {
@@ -270,7 +274,7 @@ class EventoController extends Controller
             'fic_numero' => 'nullable|string|max:20',
             'idCategoria' => 'nullable|integer',
             'publicidad' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'estadoEvento' => 'required|boolean',
+            'estadoEvento' => 'required|integer',
         ]);
     }
 }

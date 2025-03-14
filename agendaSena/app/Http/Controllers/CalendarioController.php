@@ -6,6 +6,8 @@ use App\Models\Evento\Evento;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+use function Illuminate\Log\log;
+
 class CalendarioController extends Controller
 {
 
@@ -62,21 +64,30 @@ class CalendarioController extends Controller
         } else {
             return view('index', compact('calendario', 'mes', 'anio'));
         }
-        //return $calendario;
 
     }
 
 
     public function buscarEventosPorMes(Request $request)
     {
-
-        $mesConvertir = $request->query('mes');
-        $mes = $mesConvertir + 1;
-        $anio = $request->query('anio');
-        try {
-
+        if ($request->query("mes") != null && $request->query("anio") != null) {
+            $mesActual = Carbon::now()->month;
+            $mesConvertir = $request->query('mes');
+            $mes = $mesConvertir + 1;
+            $anio = $request->query('anio');
             $primerDia_delMes = Carbon::createFromDate($anio, $mes, 1);
             $ultimoDia_delMes = $primerDia_delMes->copy()->endOfMonth();
+            //dd($primerDia_delMes, $ultimoDia_delMes);
+        } else {
+
+            $mesActual = Carbon::now()->month;
+            $anioActual = Carbon::now()->year;
+
+            $primerDia_delMes = Carbon::createFromDate($anioActual, $mesActual, 1);
+            $ultimoDia_delMes = $primerDia_delMes->copy()->endOfMonth();
+        }
+        try {
+
 
             $eventos = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
                 ->where('estadoEvento', 1)

@@ -26,24 +26,17 @@ Route::resource('horarios', HorarioController::class);
 
 
 //+++++ === EVENTO  ===  +++++
-
-//Route::resource('eventos', EventoController::class)/* ->middleware('auth') */;
-Route::get('evento/index', [EventoController::class, 'index'])->name('eventos.index')/* ->middleware('auth') */;
 Route::post('evento/crearPost', [EventoController::class, 'store'])->name('eventos.store')/* ->middleware('auth') */;
 Route::get('evento/buscar', [EventoController::class, 'buscarEventos'])->name('eventos.buscar')/* ->middleware('auth') */;
 Route::get("evento/crear", [EventoController::class, 'create'])->name('eventos.crearEvento');
 
 Route::get("evento/editar/{idEvento}", [EventoController::class, 'edit'])->name('eventos.editarEvento');
 Route::post("evento/actualizar/{idEvento}", [EventoController::class, 'update'])->name('eventos.actualizarEvento');
-
 Route::get("evento/eliminar/{idEvento}", [EventoController::class, 'delete'])->name('eventos.eliminarEvento');
 
+Route::get("evento/PorConfirmar",[EventoController::class, 'eventosPorConfirmar'])->name('eventos.porConfirmar');
+
 Route::get("cargarParticipantes", [EventoController::class, 'cargarParticipantes'])->name('eventos.buscarParticipantes');
-
-// Route::get('/', function () {
-//     return redirect()->route('eventos.index');
-// });
-
 
 //  ++++ CALENDARIO  ++++++
 //Route::resource('eventos', EventoController::class)->middleware('auth');;
@@ -75,7 +68,5 @@ Route::get('/reportes/filtrar', [ReporteController::class, 'filtrarReportes'])->
 
 
 // ************* PDF ********************
-    
+
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
-
-

@@ -3,104 +3,104 @@
 
 <head>
 
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
-    @vite('resources/css/app.css')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-    <title>Agenda CDTI-SENA</title>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+    {{-- Estilos BOOTSTRAP --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <title>Agenda CDTI-SENA</title>
 
 </head>
 
-
-{{-- <header class="bg-lime-500 text-white p-4">
-    <h1 class="text-2xl font-bold">Agenda SENA CDTI</h1>
-    <form method="POST" action="{{ route('login.logout') }}">
-        @csrf
-        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-            Cerrar Sesión
+<nav class="navbar navbar-expand-lg" style="background-color: #4caf50;">
+    <div class="container-fluid">
+        <a class="navbar-brand text-white" href="#">
+            <h1 class="h4">AgenSena</h1>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
         </button>
-    </form>
-</header> --}}
-
-
-<nav class="bg-lime-500">
-    <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-        <div class="relative flex h-16 items-center justify-between">
-            <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                <!-- Mobile menu button-->
-                <button type="button"
-                    class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset"
-                    aria-controls="mobile-menu" aria-expanded="false">
-                    <span class="absolute -inset-0.5"></span>
-                    <span class="sr-only">Open main menu</span>
-                    <!--
-              Icon when menu is closed.
-  
-              Menu open: "hidden", Menu closed: "block"
-            -->
-                    <svg class="block size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        aria-hidden="true" data-slot="icon">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                    </svg>
-                    <!--
-              Icon when menu is open.
-  
-              Menu open: "block", Menu closed: "hidden"
-            -->
-                    <svg class="hidden size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                        aria-hidden="true" data-slot="icon">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-                <div class="flex shrink-0 items-center">
-                    <h1 class="text-2xl text-white">
-                        AgenSena
-                    </h1>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a href="{{route('calendario.index')}}" class="nav-link text-white" aria-current="page">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('evento.reportes.index') }}" class="nav-link text-white">Reportes</a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <div class="position-relative">
+                    <a id="icono-notificacion" href="http://">
+                        <box-icon id="icono-campana" name='bell' type='solid' color='#ffffff'></box-icon>
+                        <box-icon id="icono-notificacion-activa" name='bell-ring' type='solid' color='#ffffff'
+                            style="display: none;"></box-icon>
+                    </a>
+                    <span id="cantidad-eventos"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        0
+                    </span>
                 </div>
-                <div class="hidden sm:ml-6 sm:block">
-                    <div class="flex space-x-4">
-                        <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                        <a href="{{route('calendario.index')}}"
-                            class="rounded-md px-3 py-2 text-sm font-medium text-white hover:bg-lime-700 hover:text-white"
-                            aria-current="page">Inicio</a>
-                        <a href="{{ route('evento.reportes.index') }}"
-                            class="rounded-md px-3 py-2 text-sm font-medium text-white hover:bg-lime-700 hover:text-white">Reportes</a>
-                        {{-- <a href="#"
-                            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
-                        <a href="#"
-                            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</a>
-                        --}}
-                    </div>
-                </div>
+                <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">
+                        <box-icon name='power-off' color='#ffffff'></box-icon>
+                    </button>
+                </form>
             </div>
-
-        </div>
-    </div>
-
-    <!-- Mobile menu, show/hide based on menu state. -->
-    <div class="sm:hidden" id="mobile-menu">
-        <div class="space-y-1 px-2 pt-2 pb-3">
-            <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-            <a href="#" class="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-                aria-current="page">Dashboard</a>
-            <a href="#"
-                class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Team</a>
-            <a href="#"
-                class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
-            <a href="#"
-                class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</a>
         </div>
     </div>
 </nav>
 
+<script>
+    function cargarEventosSinResponder() {
+        const ruta = "{{ route('eventos.porConfirmar') }}";
+
+        fetch(ruta)
+            .then(response => response.json())
+            .then(data => {
+                const cantidadEventos = data.cantidadEventos;
+
+                // Actualizar el contenido del span con la cantidad de eventos
+                const cantidadEventosSpan = document.getElementById('cantidad-eventos');
+                const iconoCampana = document.getElementById('icono-campana');
+                const iconoNotificacionActiva = document.getElementById('icono-notificacion-activa');
+
+                cantidadEventosSpan.textContent = cantidadEventos;
+
+                if (cantidadEventos > 0) {
+                    // Cambiar a icono de notificación activa
+                    iconoCampana.style.display = 'none'; // Ocultar el icono de campana
+                    iconoNotificacionActiva.style.display = 'block'; // Mostrar el icono de notificación activa
+                } else {
+                    // Volver al icono de campana
+                    iconoCampana.style.display = 'block'; // Mostrar el icono de campana
+                    iconoNotificacionActiva.style.display = 'none'; // Ocultar el icono de notificación activa
+                }
+            })
+            .catch(error => {
+                console.error("Error al cargar eventos:", error);
+            });
+    }
+
+    // Llama a la función para cargar los eventos al cargar la página
+    document.addEventListener('DOMContentLoaded', cargarEventosSinResponder);
+</script>
 
 
-    @yield('contentReportes')
+@yield('contentReportes')
 
 </html>

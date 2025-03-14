@@ -1,61 +1,24 @@
-<nav class=" w-1/4 p-4 border-r-4">
+<nav class="col-12 col-md-3 p-1 border-end bg-white">
 
-    <div class="container mx-1 px-1 ">
-        <div class="border rounded-lg p-4 bg-lime-700 border-lime-500">
-            <div class="border rounded-lg p-4 text-white ">
-                <h1 class="text-3xl font-bold font-sans text-center text-white">{{ strtoupper(\Carbon\Carbon::now()->locale('es')->monthName) }}</h1>
-            </div>
-
-            <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-md table-auto">
-                <thead>
-                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                        <th>Dom</th>
-                        <th>Lun</th>
-                        <th>Mar</th>
-                        <th>Mié</th>
-                        <th>Jue</th>
-                        <th>Vie</th>
-                        <th>Sáb</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-600 text-sm font-light">
-                    @foreach ($calendario as $semana)
-                        <tr>
-                            @foreach ($semana as $dia)
-                                <td class="py-4 px-4 text-center border border-gray-300 text-zinc-950">
-                                    {{ $dia ? $dia : '' }}
-                                </td>
-                            @endforeach
-                        </tr>
-                    @endforeach
-                </tbody>
-
-            </table>
-        </div>
-    </div>
-   {{--  <x-calendario /> --}}
-
-
-
-<!-- segmento eventos del dia actual yaque -->
-
-
-   <!-- Contenedor para el listado de eventos -->
-   <div class="mt-4 border rounded-lg p-4 bg-gray-50">
-        <h3 class="font-bold text-lg">Eventos del {{ \Carbon\Carbon::now()->locale('es')->day }} de {{ \Carbon\Carbon::now()->locale('es')->monthName }}</h3>
-        <ul id="event-list" class="list-disc pl-5">
+    <!-- Contenedor para el listado de eventos -->
+    <div class="mt-4 border rounded-lg p-4 bg-light">
+        <h3 class="font-weight-bold">Eventos del {{ \Carbon\Carbon::now()->locale('es')->day }} de
+            {{ \Carbon\Carbon::now()->locale('es')->monthName }}
+        </h3>
+        <ul id="event-list" class="list-unstyled">
             <!-- Aquí se llenarán los eventos -->
         </ul>
-        <p id="no-events" class="hidden">No hay nada agendado.</p>
+        <p id="no-events" class="d-none">No hay nada agendado.</p>
     </div>
+
 </nav>
 
-   
-    <script>
+
+<script>
     // Simulación de eventos agendados
     const eventos = [
         { fecha: '2025-02-12', nombre: 'Reunión de Proyecto' },
-        { fecha: '2025-01-17', nombre: 'Taller de Desarrollo' }
+        { fecha: '2025-03-13', nombre: 'Taller de Desarrollo' }
     ];
 
     const hoy = new Date().toISOString().split('T')[0]; // Obtener la fecha de hoy en formato YYYY-MM-DD
@@ -73,6 +36,15 @@
     } else {
         noEventos.classList.remove('hidden');
     }
+
+
+
+    let fechaActual = new Date();
+    const calendarioTabla = document.getElementById('calendarioSideBarIzquierdo');
+
+
+    //* Cristian Castaño
+
 
 </script>
 </nav>

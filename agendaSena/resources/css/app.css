@@ -1,11 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 
 .bg-texture {
     background-image: url('../../public/images/inicio/Texturas.png');
-  /*   background-repeat: repeat; */ /* Para que la textura se repita */
 }
 
 .celda-con-icono {
