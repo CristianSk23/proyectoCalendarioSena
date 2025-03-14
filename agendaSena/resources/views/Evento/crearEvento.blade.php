@@ -77,7 +77,7 @@
 
         <div class="mb-3">
             <label for="idCategoria" class="form-label">Categoría:</label>
-            <select name="id Categoria" class="form-select">
+            <select name="idCategoria" class="form-select">
                 <option value="">Seleccionar Categoría</option>
                 @foreach ($categorias as $categoria)
                     <option value="{{ $categoria->idCategoria }}" {{ isset($evento) && $evento->idCategoria == $categoria->idCategoria ? 'selected' : '' }}>
