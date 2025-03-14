@@ -86,19 +86,19 @@
 
                 // Limpiar tabla
                 calendarioTabla.innerHTML = `
-                    <thead>
-                        <tr class="table-light table-bordered">
-                            <th class="text-center">Dom</th>
-                            <th class="text-center">Lun</th>
-                            <th class="text-center">Mar</th>
-                            <th class="text-center">Mié</th>
-                            <th class="text-center">Jue</th>
-                            <th class="text-center">Vie</th>
-                            <th class="text-center">Sáb</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                `;
+                                        <thead>
+                                            <tr class="table-light table-bordered">
+                                                <th class="text-center">Dom</th>
+                                                <th class="text-center">Lun</th>
+                                                <th class="text-center">Mar</th>
+                                                <th class="text-center">Mié</th>
+                                                <th class="text-center">Jue</th>
+                                                <th class="text-center">Vie</th>
+                                                <th class="text-center">Sáb</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    `;
 
                 const tbody = calendarioTabla.querySelector('tbody');
                 let fila = document.createElement('tr');
@@ -171,6 +171,9 @@
 
                 const sidebar = document.querySelector('aside');
                 sidebar.innerHTML = `<p class="text-gray-500">Cargando...</p>`;
+                sidebar.classList.remove('d-none');
+                sidebar.classList.remove('boounce-out');
+                sidebar.classList.add('bounce');
 
                 fetch(ruta)
                     .then(response => response.json())
@@ -184,13 +187,16 @@
                         sidebar.innerHTML = '';
 
                         const contenedorEventos = `
-                            <div class="container bg-success mx-auto mt-4 rounded-lg p-4">
-                                <h1 class="display-4 text-white text-center">Bienvenido a la Gestión de Eventos</h1>
-                                <h2 class="font-weight-bold text-white mb-4" id="tituloEventos"></h2>
-                                <div id="eventosList"></div>
-                                <button id="agregarEvento" class="btn btn-light mt-4">Agregar Evento</button>
-                            </div>
-                        `;
+                                                <div class="container bg-success mx-auto mt-4 rounded-lg p-4">
+                                                    <button id="closeSidebar" class="btn btn-dark ">
+                                                    <box-icon name='x-circle' type='solid' color='#ffffff' ></box-icon>    
+                                                    </button>
+                                                    <h1 class="display-4 text-white text-center">Bienvenido a la Gestión de Eventos</h1>
+                                                    <h2 class="font-weight-bold text-white mb-4" id="tituloEventos"></h2>
+                                                    <div id="eventosList"></div>
+                                                    <button id="agregarEvento" class="btn btn-light mt-4">Agregar Evento</button>
+                                                </div>
+                                            `;
 
                         sidebar.innerHTML = contenedorEventos;
 
@@ -209,22 +215,22 @@
                                 const imagenURL = `/storage/${imagenPublicidad}`;
 
                                 return `
-                                    <div class="card mb-4">
-                                        <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento">
-                                        <div class="card-body">
-                                            <h5 class="card-title text-success">${evento.nomEvento}</h5>
-                                            <p class="card-text"><b>Descripción:</b> ${evento.descripcion}</p>
-                                            <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
-                                            <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
-                                            <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
-                                            <p class="card-text"><b>Encargado:</b> ${encargado.par_nombres}</p>
-                                            <div class="d-flex justify-content-between">
-                                                <a href="{{ route('eventos.editarEvento', '') }}/${evento.idEvento}" class="btn btn-warning">Actualizar</a>
-                                                <button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `;
+                                                        <div class="card mb-4">
+                                                            <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento">
+                                                            <div class="card-body">
+                                                                <h5 class="card-title text-success">${evento.nomEvento}</h5>
+                                                                <p class="card-text"><b>Descripción:</b> ${evento.descripcion}</p>
+                                                                <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
+                                                                <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
+                                                                <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
+                                                                <p class="card-text"><b>Encargado:</b> ${encargado.par_nombres}</p>
+                                                                <div class="d-flex justify-content-between">
+                                                                    <a href="{{ route('eventos.editarEvento', '') }}/${evento.idEvento}" class="btn btn-warning">Actualizar</a>
+                                                                    <button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    `;
                             }).join('');
 
                             tituloEventos.className = "text-white text-center";
@@ -254,6 +260,16 @@
                         const baseRutaCrearEvento = "{{ route('eventos.crearEvento') }}";
                         botonAgregar.addEventListener('click', () => {
                             window.location.href = `${baseRutaCrearEvento}?dia=${dia}&mes=${mes}&anio=${anio}`;
+                        });
+
+                        const btnCerrarSidebar = document.getElementById('closeSidebar');
+                        btnCerrarSidebar.addEventListener('click', function () {
+                            const sidebar = document.querySelector('aside');
+                            sidebar.classList.add('boounce-out');
+                            sidebar.addEventListener('animationend', function () {
+                                sidebar.classList.add('d-none');
+                                sidebar.classList.remove('slide-out');
+                            }, { once: true });
                         });
                     })
                     .catch(error => {
@@ -287,6 +303,14 @@
                 window.location.href = urlEliminar;
                 generarCalendario(fechaActual);
             }
+
+
+            /*            document.getElementById('closeSidebar').addEventListener('click', function () {
+                           const sidebar = document.querySelector('aside');
+                           console.log("Cerrando sidebar");
+
+                           sidebar.classList.add('d-none'); // Ocultar el sidebar
+                       }); */
 
             @if(session('success'))
                 notyf.success('{{ session('success') }}');

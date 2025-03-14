@@ -138,7 +138,38 @@ body {
     background-color: #218838; /* Color de fondo al pasar el mouse */
 }
 
+@keyframes slideIn {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    60% {
+        transform: translateX(-10%);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
 
+.bounce {
+    animation: slideIn 0.5s ease forwards;
+}
+
+@keyframes slideOut {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%); /* Mueve el sidebar fuera de la pantalla */
+        opacity: 0; /* Desvanece el sidebar */
+    }
+}
+
+.boounce-out {
+    animation: slideOut 0.5s ease forwards;
+}
 
 
 

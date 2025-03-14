@@ -1,4 +1,4 @@
-<aside class=" col-12 col-md-3 p-4 border-start">
+<aside class=" col-12 col-md-3 p-4 border-start d-none">
     <!-- Sección de Eventos Próximos -->
     <div class="container bg-success mx-auto mt-3 rounded">
         <h1 class="h5 font-weight-bold text-white text-center">Bienvenido a la Gestión de Eventos</h1>

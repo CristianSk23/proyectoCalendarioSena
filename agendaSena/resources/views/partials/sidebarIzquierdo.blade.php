@@ -1,4 +1,4 @@
-<nav class="col-12 col-md-3 p-1 border-end bg-white">
+<nav class="col-12 col-md-3 p-1 border-end bg-white shadow-lg">
 
     <!-- Contenedor para el listado de eventos -->
     <div class="mt-4 border rounded-lg p-4 bg-light">
@@ -9,6 +9,46 @@
             <!-- Aquí se llenarán los eventos -->
         </ul>
         <p id="no-events" class="d-none">No hay nada agendado.</p>
+    </div>
+
+    <div class=" d-flex flex-column justify-content-end mt-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="bg-success text-white p-2 rounded w-75 mx-auto">
+                    <h5 class="text-center">Buscar eventos por nombre.</h5>
+                </div>
+                <br>
+                <form class="form-control-sm">
+                    <div class="d-flex align-items-center ">
+                        <div class="flex-grow-1">
+                            <label for="eventName" class="form-label">Nombre del evento</label>
+                            <input type="text" class="form-control form-control-sm " id="nombreEvento"
+                                placeholder="Buscar Evento">
+                        </div>
+                        <button type="submit" class="btn btn-success ms-2 mt-4 btn-sm">
+                            <box-icon name='search-alt-2' color='#ffffff'></box-icon>
+                        </button>
+                </form>
+            </div>
+            <br>
+
+            <div class="card-body">
+                <div class="bg-success text-white p-2 rounded w-75 mx-auto">
+                    <h5 class="text-center">Buscar eventos por Fecha.</h5>
+                </div>
+                <br>
+                <form class="form-control-sm">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <label for="eventName" class="form-label">Fecha del evento</label>
+                            <input type="date" class="form-control" id="fechaEvento" placeholder="Buscar Evento">
+                        </div>
+                        <button type="submit" class="btn btn-success ms-2 mt-4 btn-sm">
+                            <box-icon name='search-alt-2' color='#ffffff'></box-icon>
+                        </button>
+                </form>
+            </div>
+        </div>
     </div>
 
 </nav>
@@ -34,7 +74,7 @@
             listaEventos.appendChild(li);
         });
     } else {
-        noEventos.classList.remove('hidden');
+        noEventos.classList.remove('d-none');
     }
 
 
