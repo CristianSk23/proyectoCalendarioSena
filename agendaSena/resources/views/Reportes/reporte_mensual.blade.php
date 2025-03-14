@@ -1,7 +1,7 @@
-@extends('Layouts.Header') <!-- Asegúrate de que esta plantilla exista -->
-<!-- views/Reportes/reporte_mensual -->
+@extends('Layouts.Header')
+
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/estilo.css') }}"> <!-- Incluir el CSS específico -->
+    <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
 @endsection
 
 @section('contentReportes')
@@ -31,8 +31,4 @@
             @endforeach
         </ul>
     </div>
-
-
-
-    
 @endsection

@@ -6,11 +6,25 @@
 
 @section('contentReportes')
 <div class="container mx-auto p-4">
+    <!-- Encabezado -->
     <h1 class="text-3xl font-bold mb-4 text-center">Generar Reportes</h1>
 
-
+    <!-- Contenido Principal -->
     <div class="bg-white p-6 rounded-lg shadow-md mb-4">
         <h2 class="text-xl font-semibold mb-4">Filtrar Reportes</h2>
+        
+        <!-- Manejo de Errores -->
+        @if ($errors->any())
+            <div class="bg-red-500 text-white p-4 rounded mb-4">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <!-- Formulario para Filtrar Reportes -->
         <form action="{{ route('reportes.filtrar') }}" method="GET">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -64,7 +78,8 @@
         </div>
     </div>
 
-    <div class="flex flex-wrap justify-center mb-4">
+        <!-- Gráficos -->
+        <div class="flex flex-wrap justify-center mb-4">
         <div class="chart-container" style="width: 300px; height: 200px;">
             <canvas id="eventosPorCategoriaChart"></canvas>
         </div>
@@ -76,6 +91,7 @@
         </div>
     </div>
 
+    <!-- Reportes -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <!-- Formulario para Reporte Mensual -->
         <div class="bg-white p-6 rounded-lg shadow-md">
@@ -101,22 +117,64 @@
         <!-- Formulario para Reporte Anual -->
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-xl font-semibold mb-4">Reporte Anual</h2>
-            <form action="{{ route('reportes.anual') }}" method="POST">
-                @csrf
-                <div class="mb-4">
-                    <label for="anio" class="block text-gray-700">Año:</label>
-                    <input type="number" name="anio" required class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-green-500">
-                </div>
-                <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-200">Generar Reporte Anual</button>
-            </form>
+            <!-- Formulario para Reporte Anual -->
+                <form action="{{ route('reportes.anual') }}" method="POST">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="anio" class="block text-gray-700">Año:</label>
+                        <input type="number" name="anio" required class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-200">Generar Reporte Anual</button>
+                </form>
         </div>
     </div>
 
     <h2 class="text-2xl font-semibold mb-4 text-center">Estadísticas de Eventos</h2>
 </div>
 
+<!-- Scripts para Gráficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+
+<!-- <script>
+    $(document).ready(function() {
+        $('#responsableSelect').select2();
+    });
+</script> -->
+
+
+<!-- responsable -->
 <script>
+    $(document).ready(function() {
+        $('#responsableSelect').select2({
+            ajax: {
+                url: '/api/responsables', // Cambia esta URL a la ruta de tu API
+                dataType: 'json',
+                delay: 250, // Retraso en milisegundos para evitar demasiadas solicitudes
+                processResults: function(data) {
+                    return {
+                        results: data.map(function(item) {
+                            return {
+                                id: item.par_identificacion,
+                                text: item.par_nombres + ' ' + item.par_apellidos
+                            };
+                        })
+                    };
+                },
+                cache: true
+            },
+            minimumInputLength: 1 // Mínimo de caracteres para iniciar la búsqueda
+        });
+    });
+</script>
+
+
+
+<script>
+    // Gráfico de Eventos por Categoría
     var ctx1 = document.getElementById('eventosPorCategoriaChart').getContext('2d');
     var myChart1 = new Chart(ctx1, {
         type: 'bar',
@@ -140,17 +198,18 @@
                 },
                 y: {
                     beginAtZero: true,
-                    min: 0,
+                    min: 0, // Establece el valor mínimo
+                    max: 20, // Establece el valor máximo
                     title: {
                         display: true,
-                        text: 'Número de Eventos'
+                        text: 'Número de Eventos' // Título del eje Y
                     }
                 }
             }
         }
     });
 
-    // Gráfica de eventos mensuales
+    // Gráfico de Eventos Mensuales
     var ctx2 = document.getElementById('eventosMensualesChart').getContext('2d');
     var myChart2 = new Chart(ctx2, {
         type: 'bar',
@@ -174,17 +233,18 @@
                 },
                 y: {
                     beginAtZero: true,
-                    min: 0,
+                    min: 0, // Establece el valor mínimo
+                    max: 20, // Establece el valor máximo
                     title: {
                         display: true,
-                        text: 'Número de Eventos'
+                        text: 'Número de Eventos' // Título del eje Y
                     }
                 }
             }
         }
     });
 
-    // Gráfica de eventos anuales
+    // Gráfico de Eventos Anuales
     var ctx3 = document.getElementById('eventosAnualesChart').getContext('2d');
     var myChart3 = new Chart(ctx3, {
         type: 'bar',
@@ -208,10 +268,11 @@
                 },
                 y: {
                     beginAtZero: true,
-                    min: 0,
+                    min: 0, // Establece el valor mínimo
+                    max: 20, // Establece el valor máximo
                     title: {
                         display: true,
-                        text: 'Número de Eventos'
+                        text: 'Número de Eventos' // Título del eje Y
                     }
                 }
             }

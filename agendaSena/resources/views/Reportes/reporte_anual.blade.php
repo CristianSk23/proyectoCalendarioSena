@@ -1,7 +1,7 @@
-@extends('Layouts.Header') <!-- Asegúrate de que esta plantilla exista -->
-<!-- views/Reportes/reporte_anual -->
+@extends('Layouts.Header')
+
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/estilo.css') }}"> <!-- Incluir el CSS específico -->
+    <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
 @endsection
 
 @section('contentReportes')
@@ -25,8 +25,7 @@
             text-align: left;
         }
     </style>
-</head>
-<body>
+
     <h1>Reporte Anual</h1>
     <h2>Año: {{ $anio }}</h2>
 
