@@ -1,3 +1,7 @@
+
+
+@import '~bootstrap/scss/bootstrap';
+
 .bg-textureFondo {
     background-image: url('../images/inicio/Texturas.png');
 }
@@ -287,4 +291,97 @@ body {
 
 .grafica-download-button:hover {
     background-color: #0056b3; /* Color de fondo al pasar el mouse */
+}
+
+
+
+
+
+
+
+
+
+/* estilos nuevos para pagina principal publica */
+
+/* Estilos generales */
+body {
+    margin: 0; /* Elimina el margen por defecto */
+    font-family: Arial, sans-serif; /* Define la fuente */
+    height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
+    overflow: hidden; /* Evita el scroll en el body si no es necesario */
+}
+
+/* Barra lateral izquierda */
+
+
+.fixed-sidebar {
+    position: fixed;
+    top: 56px; /* Ajusta según la altura del navbar */
+    left: 0;
+    width: 25%; /* Cambia el ancho al 15% para que sea más delgada */
+    height: calc(100vh - 60px); /* Mantiene la altura total menos la altura del navbar */
+    overflow-y: auto; /* Permite scroll vertical si el contenido es largo */
+    overflow-x: auto; /* Permite scroll horizontal si el contenido es ancho */
+    background-color: #f8f9fa; /* Color de fondo */
+    padding: 10px; /* Reduce el padding para ocupar menos espacio */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sombra para separación visual */
+    z-index: 1080; /* Asegura que esté por encima de otros elementos */
+}
+.fixed-sidebar > * {
+    margin: 0; /* Elimina márgenes de los elementos hijos */
+    padding: 0; /* Elimina padding de los elementos hijos */
+}
+
+/* Contenido principal */
+.main-content {
+    margin-left: 25%; /* Margen izquierdo igual al ancho de la barra lateral */
+    width: 75%; /* Ocupa el 75% del ancho de la pantalla */
+    padding: 20px; /* Espaciado interno */
+    background-color: #ebefeb; /* Color de fondo del contenido principal */
+}
+
+/* Estilos para las tarjetas de eventos */
+
+.card {
+    border: 1px solid #e0e0e0; /* Borde sutil */
+    border-radius: 10px; /* Bordes redondeados */
+    transition: transform 0.3s, box-shadow 0.3s; /* Transición suave */
+    background-color: #ffffff; /* Fondo blanco */
+    overflow: hidden; /* Para que el borde redondeado funcione correctamente */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Efecto de levitación al pasar el mouse */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada al pasar el mouse */
+}
+
+/* Estilos para el título del evento */
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 0;
+}
+
+/* Estilos para las etiquetas (badges) */
+.badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 20px;
+    background-color: #bfe0c4;
+    color: white;
+}
+
+/* Estilos para los iconos */
+.bi {
+    font-size: 1.2rem;
+    color:  #15bd2c;
+}
+
+/* Estilos para los textos */
+.card-text {
+    font-size: 0.9rem;
+    color: #05a131;
+    margin-bottom: 0.5rem;
 }
