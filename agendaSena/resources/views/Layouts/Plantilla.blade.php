@@ -17,7 +17,7 @@
         <div class="d-flex flex-fill">
 
             <!-- Sidebar Izquierda -->
-            @include('partials.sidebarIzquierdo')
+            @include('partials.sideBarIzquierdo')
 
             <!-- Contenido Principal -->
             <main class="flex-fill p-4">
@@ -25,7 +25,7 @@
             </main>
 
             <!-- Aside Derecho -->
-            @include('partials.sidebarDerecho')
+            @include('partials.modalEventos')
 
         </div>
     </div>

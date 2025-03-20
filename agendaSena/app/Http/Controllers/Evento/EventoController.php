@@ -177,12 +177,11 @@ class EventoController extends Controller
         $anio = $request->input('anio');
         // Construir la fecha en formato YYYY-MM-DD
         $fecha = sprintf('%04d-%02d-%02d', $anio, $mes, $dia);
+        log::info("El dia es: " . $fecha);
 
         // Buscar eventos para la fecha específica
         try {
-            $eventos = Evento::whereDate('fechaEvento', $fecha)
-                ->where('estadoEvento', 1)
-                ->get();
+            $eventos = Evento::whereDate('fechaEvento', $fecha)->get();
             $resultados = [];
             foreach ($eventos as $evento) {
                 $idAmbiente = $evento->pla_amb_id;
