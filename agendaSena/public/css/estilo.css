@@ -314,19 +314,19 @@ body {
 /* Barra lateral izquierda */
 
 
+/* Estilos para el sidebar */
 .fixed-sidebar {
     position: fixed;
-    top: 56px; /* Ajusta según la altura del navbar */
+    top: 0;
     left: 0;
-    width: 25%; /* Cambia el ancho al 15% para que sea más delgada */
-    height: calc(100vh - 60px); /* Mantiene la altura total menos la altura del navbar */
-    overflow-y: auto; /* Permite scroll vertical si el contenido es largo */
-    overflow-x: auto; /* Permite scroll horizontal si el contenido es ancho */
-    background-color: #f8f9fa; /* Color de fondo */
-    padding: 10px; /* Reduce el padding para ocupar menos espacio */
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sombra para separación visual */
-    z-index: 1080; /* Asegura que esté por encima de otros elementos */
+    height: 100vh; /* Altura completa de la ventana */
+    width: 25%; /* Ancho del sidebar */
+    overflow-y: auto; /* Scroll vertical si el contenido es largo */
+    background-color: #f7fafc; /* Color de fondo */
+    padding: 1rem;
+    z-index: 1000; /* Asegura que esté por encima del contenido principal */
 }
+
 .fixed-sidebar > * {
     margin: 0; /* Elimina márgenes de los elementos hijos */
     padding: 0; /* Elimina padding de los elementos hijos */
