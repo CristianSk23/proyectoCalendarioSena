@@ -64,7 +64,6 @@ class CalendarioController extends Controller
         } else {
             return view('index', compact('calendario', 'mes', 'anio'));
         }
-
     }
 
 
@@ -89,12 +88,24 @@ class CalendarioController extends Controller
         try {
 
 
-            $eventos = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
+            $eventosConfirmados = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
                 ->where('estadoEvento', 1)
                 ->orderBy('fechaEvento', 'asc')
                 ->get();
+            $eventosReservados = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
+                ->where('estadoEvento', 2)
+                ->orderBy('fechaEvento', 'asc')
+                ->get();
 
-            $eventosEncontrados = $eventos->map(function ($evento) {
+
+            $eventosEncontradosConfirmados = $eventosConfirmados->map(function ($evento) {
+                return [
+                    'id' => $evento->idEvento,
+                    'nombre' => $evento->nomEvento,
+                    'fecha' => $evento->fechaEvento,
+                ];
+            });
+            $eventosEncontradosReservados = $eventosReservados->map(function ($evento) {
                 return [
                     'id' => $evento->idEvento,
                     'nombre' => $evento->nomEvento,
@@ -104,7 +115,8 @@ class CalendarioController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $eventosEncontrados,
+                'eventosConfirmados' => $eventosEncontradosConfirmados,
+                'eventosReservados' => $eventosEncontradosReservados,
             ]);
         } catch (\Exception $e) {
             return response()->json([
