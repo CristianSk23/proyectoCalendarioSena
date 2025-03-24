@@ -304,84 +304,225 @@ body {
 /* estilos nuevos para pagina principal publica */
 
 /* Estilos generales */
-body {
-    margin: 0; /* Elimina el margen por defecto */
-    font-family: Arial, sans-serif; /* Define la fuente */
-    height: 100vh; /* Asegura que el body ocupe toda la altura de la ventana */
-    overflow: hidden; /* Evita el scroll en el body si no es necesario */
-}
-
-/* Barra lateral izquierda */
-
-
-/* Estilos para el sidebar */
-.fixed-sidebar {
+.sidebar {
+    height: 100vh;
+    background-color:rgb(255, 255, 255); /* Verde suave */
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh; /* Altura completa de la ventana */
-    width: 25%; /* Ancho del sidebar */
-    overflow-y: auto; /* Scroll vertical si el contenido es largo */
-    background-color: #f7fafc; /* Color de fondo */
-    padding: 1rem;
-    z-index: 1000; /* Asegura que esté por encima del contenido principal */
+    width: 410px; /* Ampliamos el sidebar */
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    transition: width 0.3s ease; /* Animación para el cambio de tamaño */
 }
 
-.fixed-sidebar > * {
-    margin: 0; /* Elimina márgenes de los elementos hijos */
-    padding: 0; /* Elimina padding de los elementos hijos */
+.sidebar a {
+    display: block;
+    color: #333;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
 }
 
-/* Contenido principal */
-.main-content {
-    margin-left: 25%; /* Margen izquierdo igual al ancho de la barra lateral */
-    width: 75%; /* Ocupa el 75% del ancho de la pantalla */
-    padding: 20px; /* Espaciado interno */
-    background-color: #ebefeb; /* Color de fondo del contenido principal */
-}
-
-/* Estilos para las tarjetas de eventos */
-
-.card {
-    border: 1px solid #e0e0e0; /* Borde sutil */
-    border-radius: 10px; /* Bordes redondeados */
-    transition: transform 0.3s, box-shadow 0.3s; /* Transición suave */
-    background-color: #ffffff; /* Fondo blanco */
-    overflow: hidden; /* Para que el borde redondeado funcione correctamente */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
-}
-
-.card:hover {
-    transform: translateY(-5px); /* Efecto de levitación al pasar el mouse */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada al pasar el mouse */
-}
-
-/* Estilos para el título del evento */
-.card-title {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: #2c3e50;
-    margin-bottom: 0;
-}
-
-/* Estilos para las etiquetas (badges) */
-.badge {
-    font-size: 0.9rem;
-    padding: 0.5rem 0.75rem;
-    border-radius: 20px;
-    background-color: #bfe0c4;
+.sidebar a:hover {
+    background-color: #007bff;
     color: white;
 }
 
-/* Estilos para los iconos */
-.bi {
-    font-size: 1.2rem;
-    color:  #15bd2c;
+.content-area {
+    margin-left: 420px; /* Ajustamos el margen para que se adapte al nuevo tamaño del sidebar */
+    padding: 20px;
 }
 
-/* Estilos para los textos */
-.card-text {
-    font-size: 0.9rem;
-    color: #05a131;
-    margin-bottom: 0.5rem;
+.calendar-table th, .calendar-table td {
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.calendar-table td:hover {
+    background-color:rgb(255, 255, 255);
+}
+
+/* Cambiar los colores a verde Shamrock */
+.calendar-table th {
+    background-color: #2ecc71; /* Verde Shamrock */
+    color: white;
+}
+
+.calendar-table td.event-day {
+    background-color:rgb(23, 194, 51); /* Verde Shamrock para los días con eventos */
+    border-radius: 50%; /* Redondeamos los días con eventos */
+    color: white;
+}
+
+.calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-nav .btn {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+}
+
+/* Para suavizar los bordes del calendario */
+.calendar-container .table-bordered {
+    border-radius: 10px; /* Redondeamos el borde de la tabla */
+}
+
+.calendar-container {
+    width: 250px; /* Establece un ancho fijo para el calendario */
+    margin: 0 auto; /* Centra el calendario dentro de su contenedor */
+}
+.calendar-table {
+    width: 100%; /* Hace que la tabla ocupe el 100% del contenedor, que ahora tiene un ancho fijo */
+}
+
+.calendar-table td {
+    border-radius: 10px; /* Redondeamos las celdas */
+}
+
+.calendar-table th {
+    border-radius: 10px 10px 0 0; /* Solo redondeamos los bordes superiores */
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Navbar estilo */
+.navbar {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Mejora en los botones */
+.btn-outline-primary, .btn-outline-secondary {
+    font-weight: 600;
+}
+
+/* Contenedor del calendario */
+.calendar-container {
+    width: 410px; /* Ancho fijo del calendario */
+    margin: 0 auto; /* Centrado en el sidebar */
+    text-align: center;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Flechitas de navegación para los meses */
+.nav-arrows {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Estilo de las flechas */
+.nav-arrows span {
+    font-size: 20px;
+    cursor: pointer;
+    color: #28a745; /* Verde shamrock */
+}
+
+.nav-arrows span:hover {
+    color: #155724; /* Un verde más oscuro al pasar el mouse */
+}
+
+/* Tabla de calendario */
+.calendar-table {
+    width: 100%;
+    border-radius: 10px; /* Bordes redondeados */
+    border: 1px solid #ddd; /* Bordes suaves */
+}
+
+/* Estilo de los días en el calendario */
+.calendar-table td {
+    cursor: pointer;
+    border-radius: 50%; /* Bordes redondeados para los días con eventos */
+    padding: 10px;
+    transition: background-color 0.3s ease;
+}
+
+/* Estilo al pasar el mouse sobre los días */
+.calendar-table td:hover {
+    background-color: #d4edda; /* Color suave cuando se pasa el ratón sobre los días */
+}
+
+/* Celda que contiene días con eventos */
+.dia-evento {
+    background-color: #c3e6cb; /* Color suave de fondo para los días con eventos */
+}
+
+/* Celda sin evento */
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+/* Sidebar */
+.sidebar {
+    height: 100vh;
+    width: 410px; /* Ancho del sidebar */
+    background-color: #f8f9fa; /* Fondo claro */
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 20px;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15); /* Sombra suave en el sidebar */
+    border-right: 1px solid #ddd; /* Borde derecho sutil */
+}
+
+/* Estilo de los enlaces en el sidebar */
+.sidebar a {
+    display: block;
+    color: #333;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.sidebar a:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Contenido principal */
+.content-area {
+    margin-left: 420px; /* Deja espacio para el sidebar */
+    padding: 20px;
+}
+
+/* Tabla de eventos en el contenido principal */
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Estilos del buscador */
+.search-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }

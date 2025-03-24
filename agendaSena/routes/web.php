@@ -32,8 +32,21 @@ Route::get("evento/eliminar/{idEvento}", [EventoController::class, 'delete'])->n
 Route::get("evento/PorConfirmar",[EventoController::class, 'eventosPorConfirmar'])->name('eventos.porConfirmar');
 Route::get("cargarParticipantes", [EventoController::class, 'cargarParticipantes'])->name('eventos.buscarParticipantes');
 
+
+
 //  ++++ CALENDARIO  ++++++
 Route::get("calendario/buscarEventos", [CalendarioController::class, 'buscarEventosPorMes'])->name('calendario.buscarEventos');
+
+// // ***Yaque rutas por busqueda***  22-mar-2025
+// Route::get('/buscar-eventos-por-dia', [CalendarioController::class, 'buscarEventosPorDia']);
+// Route::get('/buscar-eventos-por-nombre', [CalendarioController::class, 'buscarEventosPorNombre']);
+// Route::get('/buscar-eventos-por-lugar', [CalendarioController::class, 'buscarEventosPorLugar']);
+// Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico']);
+// // termine adicion d erutas por busqueda*** yaque****
+// Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico'])->name('calendario.publico');
+Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico'])->name('calendario.publico');
+
+
 
 //  ++++ LOGIN  ++++++
 Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');

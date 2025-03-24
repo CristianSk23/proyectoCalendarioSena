@@ -17,12 +17,22 @@ class PublicController extends Controller
         return view('public.index', compact('eventos'));
     }
 
-    public function show($id)
-    {
-        // Obtener un evento específico
-        $evento = Evento::findOrFail($id);
+    // public function show($id)
+    // {
+    //     // Obtener un evento específico
+    //     $evento = Evento::findOrFail($id);
 
-        // Pasar los datos a la vista
-        return view('public.show', compact('evento'));
-    }
+    //     // Pasar los datos a la vista
+    //     return view('public.show', compact('evento'));
+    // }
+
+    public function showEventos()
+{
+    // Obtener los eventos desde la base de datos
+    $eventos = Evento::all();  // O ajusta la consulta según lo que necesites
+
+    return view('eventos', compact('eventos'));
+}
+
+
 }
