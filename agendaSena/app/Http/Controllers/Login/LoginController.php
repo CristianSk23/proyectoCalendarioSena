@@ -1,63 +1,48 @@
 <?php
 
 namespace App\Http\Controllers\Login;
-
-use Illuminate\Support\Facades\Auth;
-
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class LoginController extends Controller
 {
-    public function index()
+    // Muestra la vista del login
+    public function index() 
     {
-        return view('auth.Login.login');
+        return view('login.iniciar'); // Asegúrate de que la vista existe en "resources/views/login/iniciar.blade.php"
     }
+
+    // Procesa el inicio de sesión
     public function login(Request $request)
     {
-        // Validar los datos de entrada
         $request->validate([
-            'email' => 'required|string',
-            'password' => 'required|string',
+            'documento' => 'required',
+            'password' => 'required',
         ]);
+        
+        $user = User::where('par_identificacion', $request->documento)->first();
 
-        // Credenciales para la autenticación
-        $credentials = [
-            'par_correo' => $request->email,
-            'password' => $request->password, // Laravel automáticamente verificará el hash de la contraseña
-        ];
-
-        // Intentar iniciar sesión
-        if (Auth::attempt($credentials)) {
-            // Autenticación exitosa
-            return redirect()->intended('/'); // Redirigir al usuario
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return back()->withErrors(['mensaje' => 'Identificación o contraseña incorrecta']);
         }
 
-        // Si la autenticación falla
-        return back()->withErrors(['error' => 'Credenciales incorrectas']);
+        Auth::login($user);
+
+        return redirect()->route('dashboard'); // Asegúrate de que esta ruta existe
     }
 
+    // Cierra la sesión
     public function logout()
     {
-        // Cerrar sesión del usuario
         Auth::logout();
 
-        // Invalidar la sesión actual
+        // Invalidar la sesión y regenerar el token CSRF
         request()->session()->invalidate();
-
-        // Regenerar el token CSRF para mayor seguridad
         request()->session()->regenerateToken();
 
-        // Redirigir al usuario a la página de inicio de sesión u otra página
-        return redirect('login')->with('success', 'Sesión cerrada exitosamente.');
+        return redirect()->route('login')->with('success', 'Sesión cerrada exitosamente.');
     }
-    public function create() {}
-
-    public function store(Request $request) {}
-
-    public function edit() {}
-
-    public function update(Request $request) {}
-
-    public function destroy() {}
 }

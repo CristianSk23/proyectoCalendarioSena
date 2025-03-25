@@ -11,12 +11,11 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\Evento\ResponsableController;
 
 
+
 //index
 
 
 Route::get('/', [CalendarioController::class, 'generarCalendario'])->name('calendario.index')/* ->middleware('auth') */;
-
-
 //+++++  ===  Horarios  === +++++
 Route::resource('horarios', HorarioController::class);
 
@@ -48,9 +47,8 @@ Route::get("calendario/buscarEventos", [CalendarioController::class, 'buscarEven
 //  ++++ LOGIN  ++++++
 
 Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
-Route::post('loginIngresar', [LoginController::class, 'login'])->name('login.ingresar');
+Route::post('login', [LoginController::class, 'login'])->name('login.ingresar'); 
 Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');
-
 
 
 
