@@ -57,7 +57,10 @@
                 <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
                     @csrf
                     <button type="submit" class="btn btn-danger">
-                        <box-icon name='power-off' color='#ffffff'></box-icon>
+                        <!--agrege provisional  yaque-->
+                        <a href="{{ route('public.index') }}" class="btn btn-danger ms-3">
+                            <box-icon name='power-off' color='#ffffff'></box-icon>
+                        </a>
                     </button>
                 </form>
             </div>

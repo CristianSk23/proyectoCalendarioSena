@@ -10,20 +10,80 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
     
-</head>
-<body>
+    <head>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap"
+    rel="stylesheet">
+<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+{{-- Estilos BOOTSTRAP --}}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+<title>Agenda CDTI-SENA</title>
+
+<style>
+        /* Ajustes para que el navbar no se superponga al contenido */
+        .navbar {
+            position: fixed; /* Fijamos el navbar en la parte superior */
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1050; /* Aseguramos que esté por encima de otros elementos */
+        }
+
+        /* Añadir un margen superior para el contenido principal para que no quede debajo del navbar */
+        .content-area {
+            margin-top: 70px; /* Ajusta este valor según el tamaño de tu navbar */
+        }
+    </style>
+
+</head>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg" style="background-color: #4caf50;">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Eventos Públicos</a>
-            <div class="d-flex">
-                <a href="#" id="home-button" class="btn btn-outline-primary me-2">Inicio</a>
-                <a href="#" class="btn btn-outline-secondary">Sesión</a>
+            <a class="navbar-brand text-white" href="#">
+                <h1 class="h4">AgenSena</h1>
+            </a>
+            
+                    <a href="{{route('calendario.index')}}" class="nav-link text-white" aria-current="page">Eventos</a>
+                
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="d-flex align-items-center">
+                <div class="position-relative">
+                    <a id="icono-notificacion" href="http://">
+                        <box-icon id="icono-campana" name='bell' type='solid' color='#ffffff'></box-icon>
+                        <box-icon id="icono-notificacion-activa" name='bell-ring' type='solid' color='#ffffff'
+                            style="display: none;"></box-icon>
+                    </a>
+                    <span id="cantidad-eventos"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        0
+                    </span>
+                </div>
+                <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">
+                        <box-icon name='power-off' color='#ffffff'></box-icon>
+                    </button>
+                </form>
             </div>
         </div>
     </nav>
-
     <!-- Sidebar con Calendario -->
     <div class="sidebar">
         <h4 class="text-center mb-4">Calendario</h4>
@@ -57,6 +117,7 @@
 
     <!-- Contenido Principal -->
     <div class="content-area">
+        
         <!-- Buscador -->
         <div class="search-container">
             <input type="text" id="search-input" class="form-control" placeholder="Buscar evento..." oninput="searchEvent()">
