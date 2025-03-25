@@ -1,6 +1,5 @@
 <?php
 
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Horario\HorarioController;
 use App\Http\Controllers\Evento\EventoController;
@@ -9,23 +8,17 @@ use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\Evento\ReporteController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\Evento\ResponsableController;
+use App\Http\Controllers\Public\PublicController;
 
+// Rutas públicas
+Route::get('/', [PublicController::class, 'index'])->name('public.index');
+Route::get('/public/{id}', [PublicController::class, 'show'])->name('public.show');
 
-//index
-
-
-Route::get('/', [CalendarioController::class, 'generarCalendario'])->name('calendario.index')/* ->middleware('auth') */;
-
+// Ruta del calendario (cambiada a /calendario)
+Route::get('/calendario', [CalendarioController::class, 'generarCalendario'])->name('calendario.index');
 
 //+++++  ===  Horarios  === +++++
 Route::resource('horarios', HorarioController::class);
-
-// Route::get('/', function () {
-//     return redirect()->route('horarios.index');
-// });
-
-
-
 
 //+++++ === EVENTO  ===  +++++
 Route::post('evento/crearPost', [EventoController::class, 'store'])->name('eventos.store')/* ->middleware('auth') */;
@@ -37,47 +30,43 @@ Route::post("evento/actualizar/{idEvento}", [EventoController::class, 'update'])
 Route::get("evento/eliminar/{idEvento}", [EventoController::class, 'delete'])->name('eventos.eliminarEvento');
 
 Route::get("evento/PorConfirmar",[EventoController::class, 'eventosPorConfirmar'])->name('eventos.porConfirmar');
-
 Route::get("cargarParticipantes", [EventoController::class, 'cargarParticipantes'])->name('eventos.buscarParticipantes');
 
+
+
 //  ++++ CALENDARIO  ++++++
-//Route::resource('eventos', EventoController::class)->middleware('auth');;
-Route::get("calendario", [CalendarioController::class, 'generarCalendario'])->name('calendario.generar');
 Route::get("calendario/buscarEventos", [CalendarioController::class, 'buscarEventosPorMes'])->name('calendario.buscarEventos');
 
-//  ++++ LOGIN  ++++++
+// // ***Yaque rutas por busqueda***  22-mar-2025
+// Route::get('/buscar-eventos-por-dia', [CalendarioController::class, 'buscarEventosPorDia']);
+// Route::get('/buscar-eventos-por-nombre', [CalendarioController::class, 'buscarEventosPorNombre']);
+// Route::get('/buscar-eventos-por-lugar', [CalendarioController::class, 'buscarEventosPorLugar']);
+// Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico']);
+// // termine adicion d erutas por busqueda*** yaque****
+// Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico'])->name('calendario.publico');
+Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico'])->name('calendario.publico');
 
+
+
+//  ++++ LOGIN  ++++++
 Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('loginIngresar', [LoginController::class, 'login'])->name('login.ingresar');
 Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');
 
-
-
-
 //**** reportes*** */
-
-
 Route::get('evento/reportes', [ReporteController::class, 'index_report'])->name('evento.reportes.index');
-// Route::post('evento/reportes/generar-mensual', [ReporteController::class, 'generarReporteMensual'])->name('reportes.mensual');
-// Route::post('evento/reportes/generar-anual', [ReporteController::class, 'generarReporteAnual'])->name('reportes.anual');
-
-
-
 Route::post('/reportes/mensual', [ReporteController::class, 'generarReporteMensual'])->name('reportes.mensual');
 Route::post('/reportes/anual', [ReporteController::class, 'generarReporteAnual'])->name('reportes.anual');
 Route::get('/reportes/filtrar', [ReporteController::class, 'filtrarReportes'])->name('reportes.filtrar');
 
-
-
 // ************* PDF ********************
-
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
-//********+responsable**** */
 
+//********+responsable**** */
 Route::get('/api/responsables', [ResponsableController::class, 'index']);
 
-
 //******PDF REPORTES *************/
-
-
 Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensual'])->name('reportes.pdf.mensual');
+
+// **  controlador de vista publica ******* */
+Route::get('/public', [PublicController::class, 'index'])->middleware('guest');

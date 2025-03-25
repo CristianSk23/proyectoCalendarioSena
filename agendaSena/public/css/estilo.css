@@ -1,3 +1,7 @@
+
+
+@import '~bootstrap/scss/bootstrap';
+
 .bg-textureFondo {
     background-image: url('../images/inicio/Texturas.png');
 }
@@ -314,4 +318,238 @@ body {
 
 .grafica-download-button:hover {
     background-color: #0056b3; /* Color de fondo al pasar el mouse */
+}
+
+
+
+
+
+
+
+
+
+/* estilos nuevos para pagina principal publica */
+
+/* Estilos generales */
+.sidebar {
+    height: 100vh;
+    background-color:rgb(255, 255, 255); /* Verde suave */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 410px; /* Ampliamos el sidebar */
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    transition: width 0.3s ease; /* Animación para el cambio de tamaño */
+}
+
+.sidebar a {
+    display: block;
+    color: #333;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.sidebar a:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.content-area {
+    margin-left: 420px; /* Ajustamos el margen para que se adapte al nuevo tamaño del sidebar */
+    padding: 20px;
+}
+
+.calendar-table th, .calendar-table td {
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.calendar-table td:hover {
+    background-color:rgb(255, 255, 255);
+}
+
+/* Cambiar los colores a verde Shamrock */
+.calendar-table th {
+    background-color: #2ecc71; /* Verde Shamrock */
+    color: white;
+}
+
+.calendar-table td.event-day {
+    background-color:rgb(23, 194, 51); /* Verde Shamrock para los días con eventos */
+    border-radius: 50%; /* Redondeamos los días con eventos */
+    color: white;
+}
+
+.calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-nav .btn {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+}
+
+/* Para suavizar los bordes del calendario */
+.calendar-container .table-bordered {
+    border-radius: 10px; /* Redondeamos el borde de la tabla */
+}
+
+.calendar-container {
+    width: 250px; /* Establece un ancho fijo para el calendario */
+    margin: 0 auto; /* Centra el calendario dentro de su contenedor */
+}
+.calendar-table {
+    width: 100%; /* Hace que la tabla ocupe el 100% del contenedor, que ahora tiene un ancho fijo */
+}
+
+.calendar-table td {
+    border-radius: 10px; /* Redondeamos las celdas */
+}
+
+.calendar-table th {
+    border-radius: 10px 10px 0 0; /* Solo redondeamos los bordes superiores */
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Navbar estilo */
+.navbar {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Mejora en los botones */
+.btn-outline-primary, .btn-outline-secondary {
+    font-weight: 600;
+}
+
+/* Contenedor del calendario */
+.calendar-container {
+    width: 410px; /* Ancho fijo del calendario */
+    margin: 0 auto; /* Centrado en el sidebar */
+    text-align: center;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Flechitas de navegación para los meses */
+.nav-arrows {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* Estilo de las flechas */
+.nav-arrows span {
+    font-size: 20px;
+    cursor: pointer;
+    color: #28a745; /* Verde shamrock */
+}
+
+.nav-arrows span:hover {
+    color: #155724; /* Un verde más oscuro al pasar el mouse */
+}
+
+/* Tabla de calendario */
+.calendar-table {
+    width: 100%;
+    border-radius: 10px; /* Bordes redondeados */
+    border: 1px solid #ddd; /* Bordes suaves */
+}
+
+/* Estilo de los días en el calendario */
+.calendar-table td {
+    cursor: pointer;
+    border-radius: 50%; /* Bordes redondeados para los días con eventos */
+    padding: 10px;
+    transition: background-color 0.3s ease;
+}
+
+/* Estilo al pasar el mouse sobre los días */
+.calendar-table td:hover {
+    background-color: #d4edda; /* Color suave cuando se pasa el ratón sobre los días */
+}
+
+/* Celda que contiene días con eventos */
+.dia-evento {
+    background-color: #c3e6cb; /* Color suave de fondo para los días con eventos */
+}
+
+/* Celda sin evento */
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+/* Sidebar */
+.sidebar {
+    height: 100vh;
+    width: 410px; /* Ancho del sidebar */
+    background-color: #f8f9fa; /* Fondo claro */
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 20px;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15); /* Sombra suave en el sidebar */
+    border-right: 1px solid #ddd; /* Borde derecho sutil */
+}
+
+/* Estilo de los enlaces en el sidebar */
+.sidebar a {
+    display: block;
+    color: #333;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+.sidebar a:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Contenido principal */
+.content-area {
+    margin-left: 420px; /* Deja espacio para el sidebar */
+    padding: 20px;
+}
+
+/* Tabla de eventos en el contenido principal */
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Estilos del buscador */
+.search-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
