@@ -291,33 +291,41 @@ class CalendarioController extends Controller
     }
 
     public function generarCalendarioPublico(Request $request)
-    {
-        // Obtener el mes y año actuales o proporcionados por el usuario
-        $fechaActual = Carbon::now();
-        $mes = $request->query('mes', $fechaActual->month); // Mes actual o el proporcionado por el usuario
-        $anio = $request->query('anio', $fechaActual->year); // Año actual o el proporcionado por el usuario
+{
+    // Obtener el mes y año actuales o proporcionados por el usuario
+    $fechaActual = Carbon::now();
+    $mes = $request->query('mes', $fechaActual->month); // Mes actual o el proporcionado por el usuario
+    $anio = $request->query('anio', $fechaActual->year); // Año actual o el proporcionado por el usuario
 
-        // Validar mes y año
-        if ($mes < 1 || $mes > 12 || $anio < 1) {
-            return redirect()->back()->withErrors(['error' => 'Mes o año no válidos.']);
-        }
-
-        // Generar la matriz del calendario
-        $calendario = $this->generarMatrizCalendario($mes, $anio);
-
-        // Obtener eventos para el mes actual
-        $primerDiaDelMes = Carbon::createFromDate($anio, $mes, 1);
-        $ultimoDiaDelMes = $primerDiaDelMes->copy()->endOfMonth();
-
-        $eventos = Evento::whereBetween('fechaEvento', [$primerDiaDelMes, $ultimoDiaDelMes])
-            ->where('estadoEvento', 1) // Solo eventos activos
-            ->orderBy('fechaEvento', 'asc')
-            ->get();
-
-            
-        // Pasar los datos del calendario y eventos a la vista
-        return view('public.index', compact('calendario', 'mes', 'anio', 'eventos'));
+    // Validar mes y año
+    if ($mes < 1 || $mes > 12 || $anio < 1) {
+        return redirect()->back()->withErrors(['error' => 'Mes o año no válidos.']);
     }
+
+    // Generar la matriz del calendario
+    $calendario = $this->generarMatrizCalendario($mes, $anio);
+
+    // Obtener eventos para el mes actual
+    $primerDiaDelMes = Carbon::createFromDate($anio, $mes, 1);
+    $ultimoDiaDelMes = $primerDiaDelMes->copy()->endOfMonth();
+
+    // Obtener los eventos que suceden dentro de este mes
+    $eventos = Evento::whereBetween('fechaEvento', [$primerDiaDelMes, $ultimoDiaDelMes])
+        ->where('estadoEvento', 1) // Solo eventos activos
+        ->orderBy('fechaEvento', 'asc')
+        ->get();
+
+    // Agrupar eventos por día (asignarlos a sus días respectivos en el calendario)
+    $eventosPorDia = [];
+    foreach ($eventos as $evento) {
+        $fechaEvento = Carbon::parse($evento->fechaEvento)->format('Y-m-d'); // Formato de fecha: Año-Mes-Día
+        $eventosPorDia[$fechaEvento][] = $evento;
+    }
+
+    // Pasar los datos del calendario, eventos agrupados y más a la vista
+    return view('public.index', compact('calendario', 'mes', 'anio', 'eventosPorDia'));
+}
+
 
     
 
