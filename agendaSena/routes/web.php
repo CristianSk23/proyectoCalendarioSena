@@ -53,6 +53,7 @@ Route::get('login', [LoginController::class, 'index'])->name('login')->middlewar
 Route::post('loginIngresar', [LoginController::class, 'login'])->name('login.ingresar');
 Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');
 
+
 //**** reportes*** */
 Route::get('evento/reportes', [ReporteController::class, 'index_report'])->name('evento.reportes.index');
 Route::post('/reportes/mensual', [ReporteController::class, 'generarReporteMensual'])->name('reportes.mensual');

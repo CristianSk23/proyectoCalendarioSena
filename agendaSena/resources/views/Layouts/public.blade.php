@@ -18,7 +18,8 @@
             <a class="navbar-brand mx-auto" href="#">AGEN SENA - CDTI</a>
             <div class="d-flex">
                 <a href="#" id="home-button" class="btn btn-outline-primary me-2">Inicio</a>
-                <a href="#" class="btn btn-outline-secondary">Sesión</a>
+                <!-- <a href="#" class="btn btn-outline-secondary">Sesión</a> -->
+                <a href="{{ route('login') }}" class="btn btn-outline-secondary">Sesión</a>
             </div>
         </div>
     </nav>
