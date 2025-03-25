@@ -206,7 +206,7 @@
                                 const ambiente = item.ambiente;
                                 const encargado = item.encargado;
                                 const imagenPublicidad = evento.publicidad;
-                                const imagenURL = `/storage/app/public/imagenes/${imagenPublicidad}`;
+                                const imagenURL = `/public/storage/imagenes/${imagenPublicidad}`;
                                 console.log(imagenURL);
 
                                 return `

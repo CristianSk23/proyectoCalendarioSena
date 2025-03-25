@@ -9,14 +9,13 @@
     <!-- Iconos Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
-    
 </head>
-<body>
+<body class="custom-body">
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Eventos Públicos</a>
+            <!-- Título centrado en el navbar -->
+            <a class="navbar-brand mx-auto" href="#">AGEN SENA - CDTI</a>
             <div class="d-flex">
                 <a href="#" id="home-button" class="btn btn-outline-primary me-2">Inicio</a>
                 <a href="#" class="btn btn-outline-secondary">Sesión</a>
@@ -24,36 +23,34 @@
         </div>
     </nav>
 
-    <!-- Sidebar con Calendario -->
     <div class="sidebar">
-        <h4 class="text-center mb-4">Calendario</h4>
-
-        <!-- Contenedor del calendario -->
-        <div class="calendar-nav">
-            <button id="prev-month" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></button>
-            <span id="month-name" class="h5"></span>
-            <button id="next-month" class="btn btn-outline-primary"><i class="bi bi-arrow-right"></i></button>
-        </div>
-
-        <div class="calendar-container">
-            <table class="table table-bordered calendar-table">
-                <thead>
-                    <tr>
-                        <th>Dom</th>
-                        <th>Lun</th>
-                        <th>Mar</th>
-                        <th>Mié</th>
-                        <th>Jue</th>
-                        <th>Vie</th>
-                        <th>Sáb</th>
-                    </tr>
-                </thead>
-                <tbody id="calendar-body">
-                    <!-- Aquí se llenarán los días del calendario -->
-                </tbody>
-            </table>
-        </div>
+    <div class="calendar-nav">
+        <button id="prev-month" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+        <h5 id="month-name"></h5>
+        <button id="next-month" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-chevron-right"></i>
+        </button>
     </div>
+
+    <div class="calendar-container">
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th>D</th>
+                    <th>L</th>
+                    <th>M</th>
+                    <th>M</th>
+                    <th>J</th>
+                    <th>V</th>
+                    <th>S</th>
+                </tr>
+            </thead>
+            <tbody id="calendar-body"></tbody>
+        </table>
+    </div>
+</div>
 
     <!-- Contenido Principal -->
     <div class="content-area">
@@ -64,6 +61,18 @@
 
         <div id="event-details" class="mt-4"></div> <!-- Contenedor para mostrar los eventos -->
     </div>
+
+
+<!-- Pie de página -->
+<footer class="footer">
+        <div class="container text-center">
+            <p>&copy; 2025 Los derechos de autor reservados | Centro de Aprendizaje Industrial | SENA - CALI</p>
+        </div>
+    </footer>
+
+
+
+
 
     <!-- Cargar Bootstrap JS y dependencias -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -126,40 +135,36 @@
 
         // Función para mostrar todos los eventos
         function showAllEvents() {
-            const eventDetailsContainer = document.getElementById('event-details');
-            eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
-
-            if (eventos.length > 0) {
-                // Si hay eventos, mostrar las tarjetas de eventos
-                eventos.forEach(event => {
-                    eventDetailsContainer.innerHTML += `
-                        <div class="card mb-3" style="max-width: 540px;">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    <img src="${event.imagen || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${event.nomEvento}</h5>
-                                        <p class="card-text">${event.descripcion}</p>
-                                        <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else {
-                // Si no hay eventos, mostrar el mensaje
-                eventDetailsContainer.innerHTML = `
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">No hay eventos disponibles.</h5>
-                        </div>
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = '<div class="events-grid"></div>';
+    
+    const gridContainer = eventDetailsContainer.querySelector('.events-grid');
+    
+    if (eventos.length > 0) {
+        eventos.forEach(event => {
+            gridContainer.innerHTML += `
+                <div class="card event-card">
+                    <img src="${event.imagen || 'https://via.placeholder.com/150'}" class="card-img-top" alt="Imagen del evento">
+                    <div class="card-body">
+                        <h5 class="card-title">${event.nomEvento}</h5>
+                        <p class="card-text">${event.descripcion}</p>
+                        <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
                     </div>
-                `;
-            }
-        }
+                </div>
+            `;
+        });
+    } else {
+        gridContainer.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No hay eventos disponibles.</h5>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Aplica el mismo patrón para showEventDetails y searchEvent
 
         // Función para mostrar los eventos del día seleccionado
         function showEventDetails(day) {
@@ -228,7 +233,7 @@
                 filteredEvents.forEach(event => {
                     eventDetailsContainer.innerHTML += `
                         <div class="card mb-3" style="max-width: 540px;">
-                                                        <div class="row g-0">
+                             <div class="row g-0">
                                 <div class="col-md-4">
                                     <img src="${event.imagen || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
                                 </div>
@@ -256,10 +261,35 @@
             }
         }
 
+        // Función para mostrar todos los eventos cuando se haga clic en "Inicio"
+        document.getElementById('home-button').addEventListener('click', function() {
+            // Mostrar los eventos sin ocultar el calendario
+            showAllEvents();
+        });
+
         // Cargar el calendario y eventos iniciales
         loadCalendar();
         showAllEvents();
+
+        
+
+
+
+
+
+
+
+
+
+
     </script>
+
+
+
+        
+
+
+
+
 </body>
 </html>
-
