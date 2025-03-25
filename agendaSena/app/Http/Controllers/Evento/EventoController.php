@@ -177,7 +177,6 @@ class EventoController extends Controller
         $anio = $request->input('anio');
         // Construir la fecha en formato YYYY-MM-DD
         $fecha = sprintf('%04d-%02d-%02d', $anio, $mes, $dia);
-        log::info("El dia es: " . $fecha);
 
         // Buscar eventos para la fecha específica
         try {
