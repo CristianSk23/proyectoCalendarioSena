@@ -115,9 +115,8 @@
         </div>
     </div>
 
-    <!-- Contenido Principal -->
-    <div class="content-area">
-        
+   <!-- Contenido Principal -->
+   <div class="content-area">
         <!-- Buscador -->
         <div class="search-container">
             <input type="text" id="search-input" class="form-control" placeholder="Buscar evento..." oninput="searchEvent()">
@@ -125,6 +124,14 @@
 
         <div id="event-details" class="mt-4"></div> <!-- Contenedor para mostrar los eventos -->
     </div>
+    
+    <!-- Pie de página -->
+<footer class="footer">
+        <div class="container text-center">
+            <p>&copy; 2025 Los derechos de autor reservados | Centro de Aprendizaje Industrial | SENA - CALI</p>
+        </div>
+    </footer>
+
 
     <!-- Cargar Bootstrap JS y dependencias -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -190,6 +197,10 @@
             const eventDetailsContainer = document.getElementById('event-details');
             eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
 
+
+
+
+            
             if (eventos.length > 0) {
                 // Si hay eventos, mostrar las tarjetas de eventos
                 eventos.forEach(event => {
@@ -278,44 +289,61 @@
         });
 
         // Función para buscar eventos por nombre
-        function searchEvent() {
-            const searchInput = document.getElementById('search-input').value.toLowerCase();
-            const filteredEvents = eventos.filter(event => event.nomEvento.toLowerCase().includes(searchInput));
+        // Función para mostrar todos los eventos
+function showAllEvents() {
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
 
-            const eventDetailsContainer = document.getElementById('event-details');
-            eventDetailsContainer.innerHTML = "";
+    if (eventos.length > 0) {
+        // Crear una fila para las tarjetas
+        let row = document.createElement('div');
+        row.classList.add('row', 'g-3'); // Añadimos clases de Bootstrap para la fila
 
-            if (filteredEvents.length > 0) {
-                filteredEvents.forEach(event => {
-                    eventDetailsContainer.innerHTML += `
-                        <div class="card mb-3" style="max-width: 540px;">
-                                                        <div class="row g-0">
-                                <div class="col-md-4">
-                                    <img src="${event.imagen || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${event.nomEvento}</h5>
-                                        <p class="card-text">${event.descripcion}</p>
-                                        <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-                                    </div>
-                                </div>
+        // Agrupar los eventos en 3 tarjetas por fila
+        eventos.forEach((event, index) => {
+            // Crear cada tarjeta de evento
+            const card = document.createElement('div');
+            card.classList.add('col-md-4'); // 3 tarjetas por fila en pantallas medianas y grandes
+            card.innerHTML = `
+                <div class="card mb-3">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="${event.imagen || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">${event.nomEvento}</h5>
+                                <p class="card-text">${event.descripcion}</p>
+                                <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
                             </div>
                         </div>
-                    `;
-                });
-            } else {
-                // Si no se encuentran eventos después del filtro
-                eventDetailsContainer.innerHTML = `
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">No se encontraron eventos.</h5>
-                            <p class="card-text">No se encontraron eventos que coincidan con tu búsqueda.</p>
-                        </div>
                     </div>
-                `;
+                </div>
+            `;
+
+            // Agregar la tarjeta a la fila
+            row.appendChild(card);
+
+            // Cada vez que lleguemos a 3 tarjetas, agregamos la fila al contenedor
+            if ((index + 1) % 3 === 0 || index === eventos.length - 1) {
+                eventDetailsContainer.appendChild(row);
+                // Crear una nueva fila para las siguientes 3 tarjetas
+                row = document.createElement('div');
+                row.classList.add('row', 'g-3');
             }
-        }
+        });
+    } else {
+        // Si no hay eventos, mostrar el mensaje
+        eventDetailsContainer.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No hay eventos disponibles.</h5>
+                </div>
+            </div>
+        `;
+    }
+}
+
 
         // Cargar el calendario y eventos iniciales
         loadCalendar();
