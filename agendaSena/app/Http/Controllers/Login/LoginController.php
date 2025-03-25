@@ -9,13 +9,11 @@ use App\Models\User;
 
 class LoginController extends Controller
 {
-    // Muestra la vista del login
     public function index() 
     {
-        return view('login.iniciar'); // Asegúrate de que la vista existe en "resources/views/login/iniciar.blade.php"
+        return view('login.iniciar');
     }
 
-    // Procesa el inicio de sesión
     public function login(Request $request)
     {
         $request->validate([
@@ -31,15 +29,15 @@ class LoginController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard'); // Asegúrate de que esta ruta existe
+        return redirect()->route('calendario.index');
     }
 
-    // Cierra la sesión
+
     public function logout()
     {
         Auth::logout();
 
-        // Invalidar la sesión y regenerar el token CSRF
+        
         request()->session()->invalidate();
         request()->session()->regenerateToken();
 
