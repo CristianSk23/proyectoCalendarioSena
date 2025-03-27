@@ -13,14 +13,14 @@ class CalendarioController extends Controller
 
     public function generarCalendario(Request $request)
     {
-        // Obtener el mes y año actuales o proporcionados por el usuario
+
         $fechaActual = Carbon::now();
         $vista = $request->query('vista');
 
         $mes = $request->query('mes', $fechaActual->month);
         $anio = $request->query('anio', $fechaActual->year);
 
-        // Crear una instancia de Carbon para el primer día del mes
+
         $primerDia_delMes = Carbon::createFromDate($anio, $mes, 1);
         $ultimoDia_delMes = $primerDia_delMes->copy()->endOfMonth();
 
@@ -32,7 +32,6 @@ class CalendarioController extends Controller
         // Total de días en el mes
         $diasEnElMes  = $ultimoDia_delMes->day;
 
-        // Construir la matriz del calendario
         $calendario = [];
         $semana = [];
 
@@ -58,7 +57,6 @@ class CalendarioController extends Controller
         }
         $calendario[] = $semana;
 
-        // Pasar los datos del calendario a la vista
         if ($vista) {
             return view($vista, compact('calendario', 'mes', 'anio'));
         } else {
@@ -326,12 +324,12 @@ class CalendarioController extends Controller
             ->orderBy('fechaEvento', 'asc')
             ->get();
 
-            
+
         // Pasar los datos del calendario y eventos a la vista
         return view('public.index', compact('calendario', 'mes', 'anio', 'eventos'));
     }
 
-    
+
 
     // aqui termina la adicion por busquedas de yaqueline para la vista publica
 

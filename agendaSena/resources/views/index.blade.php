@@ -227,8 +227,8 @@
                                 const ambiente = item.ambiente;
                                 const encargado = item.encargado;
                                 const imagenPublicidad = evento.publicidad;
-                                const imagenURL = `/storage/app/public/imagenes/${imagenPublicidad}`;
-                                console.log(imagenURL);
+                                const imagenURL = `/storage/${imagenPublicidad}`;
+                                console.log(evento.publicidad);
 
                                 return `
             <div class="col-6 mb-4"> 

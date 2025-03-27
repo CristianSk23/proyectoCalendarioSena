@@ -216,6 +216,61 @@ class EventoController extends Controller
         }
     }
 
+
+    public function buscarEventosPorNombre(Request $request)
+    {
+        $nombre = $request->input('nombre');
+        try {
+            if ($nombre) {
+                // Búsqueda insensible a mayúsculas/minúsculas
+                $eventos = Evento::whereRaw('LOWER(nomEvento) LIKE LOWER(?)', ['%' . $nombre . '%'])
+                    ->where('estadoEvento', 1)
+                    ->paginate(10);
+
+                log::info($eventos);
+
+                $resultados = [];
+                foreach ($eventos as $evento) {
+                    $idAmbiente = $evento->pla_amb_id;
+                    $idHorario = $evento->idHorario;
+                    $idCategoria = $evento->idCategoria;
+                    $idEncargado = $evento->par_identificacion;
+
+
+                    $ambiente = Ambiente::find($idAmbiente); // Busca por clave primaria
+                    $horario = Horario::find($idHorario);
+                    $categoria = Categoria::find($idCategoria);
+                    $encargado = Participante::find($idEncargado);
+
+                    $resultados[] = [
+                        'evento' => $evento,
+                        'ambiente' => $ambiente,
+                        'horario' => $horario,
+                        'categoria' => $categoria,
+                        'encargado' => $encargado
+                    ];
+                };
+
+                /*     $horario = Horario::find($idHorario); */
+
+                return response()->json([
+                    'evento' => $resultados
+                ]);
+            }
+
+            return response()->json([
+                'evento' => null
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ocurrió un error al buscar el evento.',
+            ], 500);
+        }
+    }
+
+
+
     public function cargarParticipantes(Request $request)
     {
         $page = $request->input('page', 1);

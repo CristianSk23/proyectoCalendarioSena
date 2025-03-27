@@ -19,7 +19,7 @@
                     <h5 class="text-center">Buscar eventos por nombre.</h5>
                 </div>
                 <br>
-                <form class="form-control-sm">
+                <form onsubmit="event.preventDefault(); buscarEventoPorNombre()">
                     <div class="d-flex align-items-center ">
                         <div class="flex-grow-1">
                             <label for="eventName" class="form-label">Nombre del evento</label>
@@ -57,7 +57,13 @@
 
 <script>
     let fechaActual = new Date();
-
+    const notyf = new Notyf({
+        duration: 4000,
+        position: {
+            x: 'center',
+            y: 'top',
+        }
+    });
 
     function buscarEventoDia(fecha) {
         const anio = fecha.getFullYear();
@@ -78,6 +84,7 @@
 
                 if (eventosBD.length > 0) {
                     eventosBD.forEach(evento => {
+
                         if (evento.evento.estadoEvento == 1) {
                             const col = document.createElement('div');
                             col.className = 'col-12 mb-3'; // Ajusta el tamaño de la columna según tus necesidades
@@ -143,6 +150,99 @@
 
 
 
+
+    function buscarEventoPorNombre() {
+        const nombreInput = document.getElementById('nombreEvento');
+        const nombre = nombreInput.value;
+        const baseRuta = "{{ route('eventos.buscarEventoPorNombre') }}";
+
+        fetch(`${baseRuta}?nombre=${nombre}`)
+            .then(response => response.json())
+            .then(data => {
+                const eventosBD = data.evento;
+                const eventModal = document.getElementById('eventModal');
+
+                // Limpiar y preparar el modal
+                const tituloEventos = document.getElementById('tituloEventos');
+                const eventosList = document.getElementById('eventosList');
+
+                tituloEventos.textContent = `Resultados de búsqueda: "${nombre}"`;
+                eventosList.innerHTML = '';
+
+                if (eventosBD && eventosBD.length > 0) {
+               
+
+                    // Mostrar todos los eventos en el modal
+                    eventosBD.forEach(evento => {
+                        if (evento.evento.estadoEvento == 1) {
+                            const cardEvento = document.createElement('div');
+                            cardEvento.className = 'col-12 mb-4'; // Tarjeta de ancho completo
+
+                            const card = document.createElement('div');
+                            card.className = 'card';
+                            card.style.width = '100%';
+
+                            // Contenido de la tarjeta (similar a verDetalleEventos)
+                            const cardBody = document.createElement('div');
+                            cardBody.className = 'card-body';
+
+                            // Título del evento
+                            const cardTitle = document.createElement('h5');
+                            cardTitle.className = 'card-title text-success';
+                            cardTitle.textContent = evento.evento.nomEvento;
+
+                            // Información del evento
+                            const cardDescripcion = document.createElement('p');
+                            cardDescripcion.className = 'card-text';
+                            cardDescripcion.innerHTML = `<b>Descripción:</b> ${evento.evento.descripcion}`;
+
+                            const cardAmbiente = document.createElement('p');
+                            cardAmbiente.className = 'card-text';
+                            cardAmbiente.innerHTML = `<b>Ambiente:</b> ${evento.ambiente.pla_amb_descripcion}`;
+
+                            const cardHorario = document.createElement('p');
+                            cardHorario.className = 'card-text';
+                            cardHorario.innerHTML = `<b>Horario:</b> ${evento.horario.inicio} - ${evento.horario.fin}`;
+
+                            // Botón para más detalles (si es necesario)
+                            const btnDetalle = document.createElement('button');
+                            btnDetalle.className = 'btn btn-primary mt-2';
+                            btnDetalle.textContent = 'Ver más detalles';
+                            btnDetalle.addEventListener('click', () => {
+                                modal.hide();
+                                verDetalleEventos(evento);
+                            });
+
+                            // Agregar elementos a la tarjeta
+                            cardBody.appendChild(cardTitle);
+                            cardBody.appendChild(cardDescripcion);
+                            cardBody.appendChild(cardAmbiente);
+                            cardBody.appendChild(cardHorario);
+                            cardBody.appendChild(btnDetalle);
+
+                            card.appendChild(cardBody);
+                            cardEvento.appendChild(card);
+                            eventosList.appendChild(cardEvento);
+                            nombreInput.value = '';
+                        }
+                    });
+
+                    // Mostrar el modal
+                    const modal = new bootstrap.Modal(eventModal);
+                    modal.show();
+                } else {
+                    console.log("No hay eventos con esas busquedas");
+                    notyf.error('No se encontraron eventos con ese nombre');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                nombreInput.value = '';
+            });
+    }
+
+
+
     const hoy = new Date()
 
     const listaEventos = document.getElementById('event-list-sideBar');
@@ -152,6 +252,7 @@
     buscarEventoDia(hoy);
 
     function verDetalleEventos(evento) {
+
         const tituloEventos = document.getElementById('tituloEventos');
         tituloEventos.textContent = evento.evento.nomEvento;
 
@@ -249,10 +350,74 @@
         const eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
         eventModal.show();
 
-
     }
 
 
 
 </script>
 </nav>
+
+
+
+
+{{--
+if (eventosBD[evento].estadoEvento == 1) {
+console.log("Estado del evento " , eventosBD[evento].estadoEvento);
+
+const col = document.createElement('div');
+col.className = 'col-12 mb-3'; // Ajusta el tamaño de la columna según tus necesidades
+
+const card = document.createElement('div');
+card.className = 'card';
+
+// Cuerpo de la tarjeta
+const cardBody = document.createElement('div');
+cardBody.className = 'card-body';
+
+// Título de la tarjeta
+const cardTitle = document.createElement('h5');
+cardTitle.className = 'card-title';
+cardTitle.textContent = eventosBD[evento].nomEvento; // Nombre del evento
+
+// Descripción del evento
+const cardText = document.createElement('p');
+cardText.className = 'card-text';
+cardText.textContent = "Descripción: " + eventosBD[evento].descripcion; // Descripción del evento
+
+// Horario del evento
+const cardHorario = document.createElement('p');
+cardHorario.className = 'card-text';
+cardHorario.textContent = "Horario: Inicio " + eventosBD[evento].horario.inicio + " - Fin: " +
+eventosBD[evento].horario.fin; // Horario del evento
+
+const cardAmbiente = document.createElement('p');
+cardAmbiente.className = 'card-text';
+cardAmbiente.textContent = "Ambiente: " + eventosBD[evento].ambiente.pla_amb_descripcion;
+
+const btnDetalle = document.createElement('button');
+btnDetalle.className = 'btn btn-success';
+btnDetalle.textContent = 'Ver Detalles';
+btnDetalle.addEventListener('click', () => {
+verDetalleEventos(eventosBD[evento]);
+});
+// Agregar elementos al cuerpo de la tarjeta
+cardBody.appendChild(cardTitle);
+cardBody.appendChild(cardText);
+cardBody.appendChild(cardHorario);
+cardBody.appendChild(cardAmbiente);
+cardBody.appendChild(btnDetalle);
+// Agregar el cuerpo de la tarjeta a la tarjeta
+card.appendChild(cardBody);
+
+// Agregar la tarjeta a la columna
+col.appendChild(card);
+
+// Agregar la columna a la lista de eventos
+eventList.appendChild(col);
+} else {
+noEvents.classList.remove('d-none'); // Mostrar el mensaje si no hay eventos
+}
+
+
+
+--}}

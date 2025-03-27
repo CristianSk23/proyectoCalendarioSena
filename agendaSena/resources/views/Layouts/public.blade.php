@@ -193,11 +193,13 @@
             if (eventos.length > 0) {
                 // Si hay eventos, mostrar las tarjetas de eventos
                 eventos.forEach(event => {
+                    const imagenPublicidad = event.publicidad;
+                    const imagenURL = `/storage/${imagenPublicidad}`;
                     eventDetailsContainer.innerHTML += `
                         <div class="card mb-3" style="max-width: 540px;">
                             <div class="row g-0">
                                 <div class="col-md-4">
-                                    <img src="${event.imagen || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
+                                    <img src="${imagenURL || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
                                 </div>
                                 <div class="col-md-8">
                                     <div class="card-body">
