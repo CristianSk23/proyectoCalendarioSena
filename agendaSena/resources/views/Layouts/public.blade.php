@@ -17,8 +17,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap"
-    rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
@@ -96,6 +95,7 @@
         </div>
 
         <div class="calendar-container">
+           <did class="text-calendar"> <h1> Calendario</h1>d
             <table class="table table-bordered calendar-table">
                 <thead>
                     <tr>
@@ -113,15 +113,41 @@
                 </tbody>
             </table>
         </div>
+                    
+         
+         <!-- Filtro por Categoría -->
+                <div class="search-input-container">
+                    <label for="category-search">Buscar por categoría:</label>
+                    <select id="category-search" class="form-control" oninput="searchEvent()">
+                        <option value="">Seleccione una categoría</option>
+                        <!-- Aquí puedes llenar las categorías dinámicamente desde la base de datos si es necesario -->
+                        <option value="1">Categoría 1</option>
+                        <option value="2">Categoría 2</option>
+                        <option value="3">Categoría 3</option>
+                    </select>
+                </div>
+
+                <!-- Filtro por Fecha -->
+                <div class="search-input-container">
+                    <label for="date-search">Buscar por fecha:</label>
+                    <input type="date" id="date-search" class="form-control" oninput="searchEvent()">
+                </div>
+
+                <!-- Filtro por Nombre del Evento -->
+                <div class="search-input-container">
+                    <label for="search-input">Buscar por nombre:</label>
+                    <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre..." oninput="searchEvent()">
+                </div>
+
+
+        </div>
+
     </div>
 
     <!-- Contenido Principal -->
     <div class="content-area">
         
-        <!-- Buscador -->
-        <div class="search-container">
-            <input type="text" id="search-input" class="form-control" placeholder="Buscar evento..." oninput="searchEvent()">
-        </div>
+      
 
         <div id="event-details" class="mt-4"></div> <!-- Contenedor para mostrar los eventos -->
     </div>
@@ -186,43 +212,46 @@
         }
 
         // Función para mostrar todos los eventos
-        function showAllEvents() {
-            const eventDetailsContainer = document.getElementById('event-details');
-            eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
+   // Función para mostrar todos los eventos
+function showAllEvents() {
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
 
-            if (eventos.length > 0) {
-                // Si hay eventos, mostrar las tarjetas de eventos
-                eventos.forEach(event => {
-                    const imagenPublicidad = event.publicidad;
-                    const imagenURL = `/storage/${imagenPublicidad}`;
-                    eventDetailsContainer.innerHTML += `
-                        <div class="card mb-3" style="max-width: 540px;">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    <img src="${imagenURL || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${event.nomEvento}</h5>
-                                        <p class="card-text">${event.descripcion}</p>
-                                        <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-                                    </div>
-                                </div>
+    if (eventos.length > 0) {
+        // Si hay eventos, mostrar las tarjetas de eventos
+        eventos.forEach(event => {
+            const imagenPublicidad = event.publicidad || 'https://via.placeholder.com/150';
+            const imagenURL = `/storage/${imagenPublicidad}`;
+
+            eventDetailsContainer.innerHTML += `
+                <div class="card mb-3" style="max-width: 540px;">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="${imagenURL}" class="img-fluid rounded-start" alt="Imagen del evento" style="object-fit: cover; width: 100%; height: 100%;">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">${event.nomEvento}</h5>
+                                <p class="card-text">${event.descripcion}</p>
+                                <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
                             </div>
                         </div>
-                    `;
-                });
-            } else {
-                // Si no hay eventos, mostrar el mensaje
-                eventDetailsContainer.innerHTML = `
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">No hay eventos disponibles.</h5>
-                        </div>
                     </div>
-                `;
-            }
-        }
+                </div>
+            `;
+        });
+    } else {
+        // Si no hay eventos, mostrar el mensaje
+        eventDetailsContainer.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No hay eventos disponibles.</h5>
+                </div>
+            </div>
+        `;
+    }
+}
+
 
         // Función para mostrar los eventos del día seleccionado
         function showEventDetails(day) {
@@ -237,11 +266,13 @@
             if (eventsForDay.length > 0) {
                 // Si hay eventos, mostrar las tarjetas de eventos
                 eventsForDay.forEach(event => {
+                    const imagenPublicidad = event.publicidad;
+                    const imagenURL = `/storage/${imagenPublicidad}`;
                     eventDetailsContainer.innerHTML += `
                         <div class="card mb-3" style="max-width: 540px;">
                             <div class="row g-0">
                                 <div class="col-md-4">
-                                    <img src="${event.imagen || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
+                                    <img src="${imagenURL || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
                                 </div>
                                 <div class="col-md-8">
                                     <div class="card-body">
@@ -280,44 +311,112 @@
         });
 
         // Función para buscar eventos por nombre
+        // function searchEvent() {
+        //     const searchInput = document.getElementById('search-input').value.toLowerCase();
+        //     const filteredEvents = eventos.filter(event => event.nomEvento.toLowerCase().includes(searchInput));
+
+        //     const eventDetailsContainer = document.getElementById('event-details');
+        //     eventDetailsContainer.innerHTML = "";
+
+        //     if (filteredEvents.length > 0) {
+        //         filteredEvents.forEach(event => {
+        //             const imagenPublicidad = event.publicidad;
+        //             const imagenURL = `/storage/${imagenPublicidad}`;
+        //             eventDetailsContainer.innerHTML += `
+        //                 <div class="card mb-3" style="max-width: 540px;">
+        //                                                 <div class="row g-0">
+        //                         <div class="col-md-4">
+        //                             <img src="${imagenURL || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
+        //                         </div>
+        //                         <div class="col-md-8">
+        //                             <div class="card-body">
+        //                                 <h5 class="card-title">${event.nomEvento}</h5>
+        //                                 <p class="card-text">${event.descripcion}</p>
+        //                                 <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
+        //                             </div>
+        //                         </div>
+        //                     </div>
+        //                 </div>
+        //             `;
+        //         });
+        //     } else {
+        //         // Si no se encuentran eventos después del filtro
+        //         eventDetailsContainer.innerHTML = `
+        //             <div class="card">
+        //                 <div class="card-body">
+        //                     <h5 class="card-title">No se encontraron eventos.</h5>
+        //                     <p class="card-text">No se encontraron eventos que coincidan con tu búsqueda.</p>
+        //                 </div>
+        //             </div>
+        //         `;
+        //     }
+        // }
+
+
+
+
+
+
         function searchEvent() {
-            const searchInput = document.getElementById('search-input').value.toLowerCase();
-            const filteredEvents = eventos.filter(event => event.nomEvento.toLowerCase().includes(searchInput));
+    const categoryId = document.getElementById('category-search').value;
+    const date = document.getElementById('date-search').value;
+    const searchInput = document.getElementById('search-input').value.toLowerCase();
 
-            const eventDetailsContainer = document.getElementById('event-details');
-            eventDetailsContainer.innerHTML = "";
+    // Filtrar eventos según categoría, fecha y nombre
+    const filteredEvents = eventos.filter(event => {
+        const matchesCategory = categoryId ? event.idCategoria == categoryId : true;
+        const matchesDate = date ? new Date(event.fechaEvento).toLocaleDateString() === new Date(date).toLocaleDateString() : true;
+        const matchesName = searchInput ? event.nomEvento.toLowerCase().includes(searchInput) : true;
 
-            if (filteredEvents.length > 0) {
-                filteredEvents.forEach(event => {
-                    eventDetailsContainer.innerHTML += `
-                        <div class="card mb-3" style="max-width: 540px;">
-                                                        <div class="row g-0">
-                                <div class="col-md-4">
-                                    <img src="${event.imagen || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${event.nomEvento}</h5>
-                                        <p class="card-text">${event.descripcion}</p>
-                                        <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-                                    </div>
-                                </div>
+        return matchesCategory && matchesDate && matchesName;
+    });
+
+    // Mostrar los eventos filtrados
+    displayEvents(filteredEvents);
+}
+function displayEvents(events) {
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = "";
+
+    if (events.length > 0) {
+        events.forEach(event => {
+            const imagenURL = `/storage/${event.publicidad || 'default_image.jpg'}`;
+            eventDetailsContainer.innerHTML += `
+                <div class="card mb-3" style="max-width: 540px;">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="${imagenURL}" class="img-fluid rounded-start" alt="Imagen del evento" style="object-fit: cover; width: 100%; height: 100%;">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title">${event.nomEvento}</h5>
+                                <p class="card-text">${event.descripcion}</p>
+                                <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
                             </div>
                         </div>
-                    `;
-                });
-            } else {
-                // Si no se encuentran eventos después del filtro
-                eventDetailsContainer.innerHTML = `
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">No se encontraron eventos.</h5>
-                            <p class="card-text">No se encontraron eventos que coincidan con tu búsqueda.</p>
-                        </div>
                     </div>
-                `;
-            }
-        }
+                </div>
+            `;
+        });
+    } else {
+        eventDetailsContainer.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No se encontraron eventos.</h5>
+                    <p class="card-text">No se encontraron eventos que coincidan con tu búsqueda.</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+
+
+
+
+
+
+
 
         // Cargar el calendario y eventos iniciales
         loadCalendar();

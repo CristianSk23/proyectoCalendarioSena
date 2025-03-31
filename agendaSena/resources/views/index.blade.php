@@ -231,23 +231,23 @@
                                 console.log(evento.publicidad);
 
                                 return `
-            <div class="col-6 mb-4"> 
-                <div class="card col-6" style="width: 100%;">
-                    <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento" style="max-width: 100%; height: auto;">
-                    <div class="card-body">
-                        <h5 class="card-title text-success">${evento.nomEvento}</h5>
-                        <p class="card-text"><b>Descripción:</b> ${evento.descripcion}</p>
-                        <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
-                        <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
-                        <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
-                        <p class="card-text"><b>Encargado:</b> ${encargado.par_nombres}</p>
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ route('eventos.editarEvento', '') }}/${evento.idEvento}" class="btn btn-warning">Actualizar</a>
-                            <button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                            <div class="col-6 mb-4"> 
+                                <div class="card col-6" style="width: 100%;">
+                                    <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento" style="max-width: 100%; height: auto;">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-success">${evento.nomEvento}</h5>
+                                        <p class="card-text"><b>Descripción:</b> ${evento.descripcion}</p>
+                                        <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
+                                        <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
+                                        <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
+                                        <p class="card-text"><b>Encargado:</b> ${encargado.par_nombres}</p>
+                                        <div class="d-flex justify-content-between">
+                                            <a href="{{ route('eventos.editarEvento', '') }}/${evento.idEvento}" class="btn btn-warning">Actualizar</a>
+                                            <button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
         `;
                             }).join('');
                             tituloEventos.className = "text-center";
