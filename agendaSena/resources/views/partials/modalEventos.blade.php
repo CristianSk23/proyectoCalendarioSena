@@ -10,7 +10,6 @@
                 <div id="eventosList" class="row row-cols-2"></div>
             </div>
             <div class="modal-footer">
-                <button id="agregarEvento" class="btn btn-light">Agregar Evento</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>

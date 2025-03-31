@@ -30,18 +30,12 @@ class EventoController extends Controller
     {
         // Cargar categorías y fichas para el formulario
         $calendario = $this->calendarioGenerado();
-        $dia = $request->input('dia');
-        $mes = $request->input('mes');
-        $anio = $request->input('anio');
-        // Construir la fecha en formato YYYY-MM-DD
-        $fecha = sprintf('%04d-%02d-%02d', $anio, $mes, $dia);
-
         $categorias = Categoria::all();
         $fichas = Ficha::all();
         $participantes = Participante::where('est_apr_id',  2)->select('par_identificacion', 'par_nombres')->paginate(10);
         $ambientes = Ambiente::all();
 
-        return view('Evento.crearEvento', compact('categorias', 'fichas', 'fecha', 'calendario', 'anio', 'participantes', 'ambientes'));
+        return view('Evento.crearEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes'));
     }
 
     public function store(Request $request)
@@ -177,6 +171,7 @@ class EventoController extends Controller
         $anio = $request->input('anio');
         // Construir la fecha en formato YYYY-MM-DD
         $fecha = sprintf('%04d-%02d-%02d', $anio, $mes, $dia);
+        log::info($fecha);
 
         // Buscar eventos para la fecha específica
         try {

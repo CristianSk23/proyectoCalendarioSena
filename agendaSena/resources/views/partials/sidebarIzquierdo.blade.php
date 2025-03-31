@@ -3,7 +3,7 @@
     <!-- Contenedor para el listado de eventos -->
     <div class="mt-4 border rounded-lg p-4 bg-light">
         <h3 class="font-weight-bold">
-            Eventos del {{ now()->locale('es')->day }} de {{ now()->locale('es')->monthName }}
+            Eventos del {{ now()->day }} de {{ now()->locale('es')->monthName }}
         </h3>
         <div id="event-list-sideBar" class="row" style="max-height: 200px; overflow-y: auto; padding-right: 10px;">
             <!-- Aquí se insertarán las cards dinámicamente -->
@@ -38,7 +38,7 @@
                     <h5 class="text-center">Buscar eventos por Fecha.</h5>
                 </div>
                 <br>
-                <form class="form-control-sm">
+                <form class="form-control-sm" onsubmit="event.preventDefault(); buscarEventoPorFecha()">
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <label for="eventName" class="form-label">Fecha del evento</label>
@@ -49,6 +49,14 @@
                         </button>
                 </form>
             </div>
+        </div>
+
+
+        <div class="card">
+            <button type="submit" class="btn btn-success ms-2 mt-4 btn-sm" id="agregarEvento">
+                <box-icon name='add-to-queue' type='solid' color='#ffffff'></box-icon>
+                Agregar Evento
+            </button>
         </div>
     </div>
 
@@ -65,92 +73,207 @@
         }
     });
 
-    function buscarEventoDia(fecha) {
-        const anio = fecha.getFullYear();
-        const mes = fecha.getMonth();
-        const dia = fecha.getDate();
+    // Función para crear cards de evento reutilizable
+    function crearCardEvento(evento, tipo = 'sidebar') {
+        // Configuración según el tipo de vista
+        const config = {
+            'sidebar': {
+                containerClass: 'col-12 mb-3',
+                cardClass: 'card',
+                titleClass: 'card-title',
+                showImage: false,
+                showFullInfo: false,
+                showActions: true,
+                actionBtnClass: 'btn btn-success',
+                actionBtnText: 'Ver Detalles'
+            },
+            'modal': {
+                containerClass: 'col-12 mb-4',
+                cardClass: 'card',
+                titleClass: 'card-title text-success',
+                showImage: false,
+                showFullInfo: false,
+                showActions: true,
+                actionBtnClass: 'btn btn-primary mt-2',
+                actionBtnText: 'Ver detalles'
+            },
+            'detalle': {
+                containerClass: 'col-6 mb-4',
+                cardClass: 'card',
+                titleClass: 'card-title text-success',
+                showImage: true,
+                showFullInfo: true,
+                showActions: true
+            }
+        }[tipo];
 
-        const baseRuta = "{{ route('eventos.buscar') }}";
-        fetch(`${baseRuta}?dia=${dia}&mes=${mes + 1}&anio=${anio}`)
-            .then(response => response.json())
-            .then(data => {
-                const eventosBD = data.data;
-                const eventList = document.getElementById('event-list-sideBar');
-                const noEvents = document.getElementById('no-events');
-                eventList.innerHTML = ''; // Limpiar el contenedor antes de agregar nuevas cards
+        // Crear elementos contenedores
+        const container = document.createElement('div');
+        container.className = config.containerClass;
 
-                console.log(eventosBD);
+        const card = document.createElement('div');
+        card.className = config.cardClass;
+        card.style.width = '100%';
 
+        // Agregar imagen si corresponde
+        if (config.showImage && evento.evento.publicidad) {
+            const cardImg = document.createElement('img');
+            cardImg.className = 'card-img-top';
+            cardImg.src = `/storage/${evento.evento.publicidad}`;
+            cardImg.alt = 'Publicidad del evento';
+            cardImg.style.maxWidth = '100%';
+            cardImg.style.height = 'auto';
+            card.appendChild(cardImg);
+        }
 
-                if (eventosBD.length > 0) {
-                    eventosBD.forEach(evento => {
+        // Crear cuerpo de la card
+        const cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
 
-                        if (evento.evento.estadoEvento == 1) {
-                            const col = document.createElement('div');
-                            col.className = 'col-12 mb-3'; // Ajusta el tamaño de la columna según tus necesidades
+        // Título del evento
+        const cardTitle = document.createElement('h5');
+        cardTitle.className = config.titleClass;
+        cardTitle.textContent = evento.evento.nomEvento;
+        cardBody.appendChild(cardTitle);
 
-                            const card = document.createElement('div');
-                            card.className = 'card';
+        // Descripción del evento
+        const cardDescripcion = document.createElement('p');
+        cardDescripcion.className = 'card-text';
+        cardDescripcion.innerHTML = `<b>Descripción:</b> ${evento.evento.descripcion}`;
+        cardBody.appendChild(cardDescripcion);
 
-                            // Cuerpo de la tarjeta
-                            const cardBody = document.createElement('div');
-                            cardBody.className = 'card-body';
+        // Información adicional común
+        const cardAmbiente = document.createElement('p');
+        cardAmbiente.className = 'card-text';
+        cardAmbiente.innerHTML = `<b>Ambiente:</b> ${evento.ambiente.pla_amb_descripcion}`;
+        cardBody.appendChild(cardAmbiente);
 
-                            // Título de la tarjeta
-                            const cardTitle = document.createElement('h5');
-                            cardTitle.className = 'card-title';
-                            cardTitle.textContent = evento.evento.nomEvento; // Nombre del evento
+        const cardHorario = document.createElement('p');
+        cardHorario.className = 'card-text';
+        cardHorario.innerHTML = `<b>Horario:</b> ${evento.horario.inicio} - ${evento.horario.fin}`;
+        cardBody.appendChild(cardHorario);
 
-                            // Descripción del evento
-                            const cardText = document.createElement('p');
-                            cardText.className = 'card-text';
-                            cardText.textContent = "Descripción: " + evento.evento.descripcion; // Descripción del evento
+        // Información detallada solo para vista de detalle
+        if (config.showFullInfo) {
+            const cardCategoria = document.createElement('p');
+            cardCategoria.className = 'card-text';
+            cardCategoria.innerHTML = `<b>Categoría:</b> ${evento.categoria.nomCategoria}`;
+            cardBody.appendChild(cardCategoria);
 
-                            // Horario del evento
-                            const cardHorario = document.createElement('p');
-                            cardHorario.className = 'card-text';
-                            cardHorario.textContent = "Horario: Inicio " + evento.horario.inicio + " - Fin: " + evento.horario.fin; // Horario del evento
+            const cardEncargado = document.createElement('p');
+            cardEncargado.className = 'card-text';
+            cardEncargado.innerHTML = `<b>Encargado:</b> ${evento.encargado.par_nombres}`;
+            cardBody.appendChild(cardEncargado);
+        }
 
-                            const cardAmbiente = document.createElement('p');
-                            cardAmbiente.className = 'card-text';
-                            cardAmbiente.textContent = "Ambiente: " + evento.ambiente.pla_amb_descripcion;
+        // Botones de acción
+        if (config.showActions) {
+            const cardActions = document.createElement('div');
+            cardActions.className = 'd-flex justify-content-between mt-3';
 
-                            const btnDetalle = document.createElement('button');
-                            btnDetalle.className = 'btn btn-success';
-                            btnDetalle.textContent = 'Ver Detalles';
-                            btnDetalle.addEventListener('click', () => {
-                                verDetalleEventos(evento);
-                            });
-                            // Agregar elementos al cuerpo de la tarjeta
-                            cardBody.appendChild(cardTitle);
-                            cardBody.appendChild(cardText);
-                            cardBody.appendChild(cardHorario);
-                            cardBody.appendChild(cardAmbiente);
-                            cardBody.appendChild(btnDetalle);
-                            // Agregar el cuerpo de la tarjeta a la tarjeta
-                            card.appendChild(cardBody);
+            if (tipo !== 'detalle') {
+                // Botón para ver detalles (solo en sidebar y modal)
+                const btnDetalles = document.createElement('button');
+                btnDetalles.className = config.actionBtnClass;
+                btnDetalles.textContent = config.actionBtnText;
+                btnDetalles.addEventListener('click', () => {
+                    if (tipo === 'modal') {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('eventModal'));
+                        if (modal) modal.hide();
+                    }
+                    verDetalleEventos(evento);
+                });
+                cardActions.appendChild(btnDetalles);
+            } else {
+                // Botones para vista de detalle (actualizar y eliminar)
+                const btnActualizar = document.createElement('a');
+                btnActualizar.className = 'btn btn-warning';
+                btnActualizar.href = `{{ route('eventos.editarEvento', '') }}/${evento.evento.idEvento}`;
+                btnActualizar.textContent = 'Actualizar';
 
-                            // Agregar la tarjeta a la columna
-                            col.appendChild(card);
+                const btnEliminar = document.createElement('button');
+                btnEliminar.className = 'btn btn-danger';
+                btnEliminar.setAttribute('data-nombre-evento', evento.evento.nomEvento);
+                btnEliminar.setAttribute('data-id-evento', evento.evento.idEvento);
+                btnEliminar.textContent = 'Eliminar';
 
-                            // Agregar la columna a la lista de eventos
-                            eventList.appendChild(col);
-                        } else {
-                            noEvents.classList.remove('d-none'); // Mostrar el mensaje si no hay eventos
-                        }
+                cardActions.appendChild(btnActualizar);
+                cardActions.appendChild(btnEliminar);
+            }
 
+            cardBody.appendChild(cardActions);
+        }
 
-                    });
-                } else {
-                    noEvents.classList.remove('d-none'); // Mostrar el mensaje si no hay eventos
+        // Ensamblar la card
+        card.appendChild(cardBody);
+        container.appendChild(card);
+
+        return container;
+    }
+
+    // Función para mostrar eventos en la sidebar
+    function mostrarEventosEnSidebar(eventos) {
+        const eventList = document.getElementById('event-list-sideBar');
+        const noEvents = document.getElementById('no-events');
+
+        eventList.innerHTML = '';
+        noEvents.classList.add('d-none');
+
+        if (eventos && eventos.length > 0) {
+            eventos.forEach(evento => {
+                if (evento.evento.estadoEvento == 1) {
+                    const card = crearCardEvento(evento, 'sidebar');
+                    eventList.appendChild(card);
+                }
+            });
+        } else {
+            noEvents.classList.remove('d-none');
+        }
+    }
+
+    // Función para mostrar eventos en el modal
+    function mostrarEventosEnModal(eventos, titulo = 'Resultados de búsqueda') {
+        const eventModal = document.getElementById('eventModal');
+        const tituloEventos = document.getElementById('tituloEventos');
+        const eventosList = document.getElementById('eventosList');
+
+        tituloEventos.textContent = titulo;
+        eventosList.innerHTML = '';
+
+        if (eventos && eventos.length > 0) {
+            eventos.forEach(evento => {
+                if (evento.evento.estadoEvento == 1) {
+                    const card = crearCardEvento(evento, 'modal');
+                    eventosList.appendChild(card);
                 }
             });
 
+            const modal = new bootstrap.Modal(eventModal);
+            modal.show();
+        } else {
+            notyf.error('No se encontraron eventos');
+        }
     }
 
+    // Función para buscar eventos por día
+    function buscarEventoDia(fecha) {
+        const anio = fecha.getFullYear();
+        const mes = fecha.getMonth() + 1;
+        const dia = fecha.getDate();
 
+        const baseRuta = "{{ route('eventos.buscar') }}";
+        fetch(`${baseRuta}?dia=${dia}&mes=${mes}&anio=${anio}`)
+            .then(response => response.json())
+            .then(data => {
+                mostrarEventosEnSidebar(data.data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                notyf.error('Error al buscar eventos');
+            });
+    }
 
-
+    // Función para buscar eventos por nombre
     function buscarEventoPorNombre() {
         const nombreInput = document.getElementById('nombreEvento');
         const nombre = nombreInput.value;
@@ -159,265 +282,73 @@
         fetch(`${baseRuta}?nombre=${nombre}`)
             .then(response => response.json())
             .then(data => {
-                const eventosBD = data.evento;
-                const eventModal = document.getElementById('eventModal');
-
-                // Limpiar y preparar el modal
-                const tituloEventos = document.getElementById('tituloEventos');
-                const eventosList = document.getElementById('eventosList');
-
-                tituloEventos.textContent = `Resultados de búsqueda: "${nombre}"`;
-                eventosList.innerHTML = '';
-
-                if (eventosBD && eventosBD.length > 0) {
-               
-
-                    // Mostrar todos los eventos en el modal
-                    eventosBD.forEach(evento => {
-                        if (evento.evento.estadoEvento == 1) {
-                            const cardEvento = document.createElement('div');
-                            cardEvento.className = 'col-12 mb-4'; // Tarjeta de ancho completo
-
-                            const card = document.createElement('div');
-                            card.className = 'card';
-                            card.style.width = '100%';
-
-                            // Contenido de la tarjeta (similar a verDetalleEventos)
-                            const cardBody = document.createElement('div');
-                            cardBody.className = 'card-body';
-
-                            // Título del evento
-                            const cardTitle = document.createElement('h5');
-                            cardTitle.className = 'card-title text-success';
-                            cardTitle.textContent = evento.evento.nomEvento;
-
-                            // Información del evento
-                            const cardDescripcion = document.createElement('p');
-                            cardDescripcion.className = 'card-text';
-                            cardDescripcion.innerHTML = `<b>Descripción:</b> ${evento.evento.descripcion}`;
-
-                            const cardAmbiente = document.createElement('p');
-                            cardAmbiente.className = 'card-text';
-                            cardAmbiente.innerHTML = `<b>Ambiente:</b> ${evento.ambiente.pla_amb_descripcion}`;
-
-                            const cardHorario = document.createElement('p');
-                            cardHorario.className = 'card-text';
-                            cardHorario.innerHTML = `<b>Horario:</b> ${evento.horario.inicio} - ${evento.horario.fin}`;
-
-                            // Botón para más detalles (si es necesario)
-                            const btnDetalle = document.createElement('button');
-                            btnDetalle.className = 'btn btn-primary mt-2';
-                            btnDetalle.textContent = 'Ver más detalles';
-                            btnDetalle.addEventListener('click', () => {
-                                modal.hide();
-                                verDetalleEventos(evento);
-                            });
-
-                            // Agregar elementos a la tarjeta
-                            cardBody.appendChild(cardTitle);
-                            cardBody.appendChild(cardDescripcion);
-                            cardBody.appendChild(cardAmbiente);
-                            cardBody.appendChild(cardHorario);
-                            cardBody.appendChild(btnDetalle);
-
-                            card.appendChild(cardBody);
-                            cardEvento.appendChild(card);
-                            eventosList.appendChild(cardEvento);
-                            nombreInput.value = '';
-                        }
-                    });
-
-                    // Mostrar el modal
-                    const modal = new bootstrap.Modal(eventModal);
-                    modal.show();
-                } else {
-                    console.log("No hay eventos con esas busquedas");
-                    notyf.error('No se encontraron eventos con ese nombre');
-                }
+                const titulo = `Resultados de búsqueda: "${nombre}"`;
+                mostrarEventosEnModal(data.evento, titulo);
+                nombreInput.value = '';
             })
             .catch(error => {
                 console.error('Error:', error);
                 nombreInput.value = '';
+                notyf.error('Error al buscar eventos');
             });
     }
 
+    // Función para buscar eventos por fecha
+    function buscarEventoPorFecha() {
+        const fechaInput = document.getElementById('fechaEvento');
+        const fecha = fechaInput.value;
+        const fechaFormateada = new Date(fecha);
 
+        const anio = fechaFormateada.getFullYear();
+        const mes = fechaFormateada.getMonth() + 1;
+        const dia = fechaFormateada.getDate() + 1;
 
-    const hoy = new Date()
-
-    const listaEventos = document.getElementById('event-list-sideBar');
-    const noEventos = document.getElementById('no-events');
-
-
-    buscarEventoDia(hoy);
-
-    function verDetalleEventos(evento) {
-
-        const tituloEventos = document.getElementById('tituloEventos');
-        tituloEventos.textContent = evento.evento.nomEvento;
-
-        const eventosList = document.getElementById('eventosList');
-        eventosList.innerHTML = ''; // Limpiar el contenedor antes de agregar nuevas cards
-
-        // Crear el contenedor principal de la card
-        const cardEvento = document.createElement('div');
-        cardEvento.className = 'col-6 mb-4'; // Ajusta el tamaño de la columna según tus necesidades
-
-        // Crear el elemento card
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.style.width = '100%';
-
-        // Crear la imagen de la card
-        const cardImg = document.createElement('img');
-        const imagenPublicidad = evento.evento.publicidad;
-        const imagenURL = `/storage/${imagenPublicidad}`;
-        cardImg.className = 'card-img-top';
-        cardImg.src = imagenURL // Asumiendo que tienes la URL de la imagen en evento.imagenURL
-        cardImg.alt = 'Publicidad del evento';
-        cardImg.style.maxWidth = '100%';
-        cardImg.style.height = 'auto';
-
-        // Crear el cuerpo de la card
-        const cardBody = document.createElement('div');
-        cardBody.className = 'card-body';
-
-        // Crear el título de la card
-        const cardTitle = document.createElement('h5');
-        cardTitle.className = 'card-title text-success';
-        cardTitle.textContent = evento.evento.nomEvento;
-
-        // Crear los elementos de texto de la card
-        const cardDescripcion = document.createElement('p');
-        cardDescripcion.className = 'card-text';
-        cardDescripcion.innerHTML = `<b>Descripción:</b> ${evento.evento.descripcion}`;
-
-        const cardAmbiente = document.createElement('p');
-        cardAmbiente.className = 'card-text';
-        cardAmbiente.innerHTML = `<b>Ambiente:</b> ${evento.ambiente.pla_amb_descripcion}`;
-
-        const cardCategoria = document.createElement('p');
-        cardCategoria.className = 'card-text';
-        cardCategoria.innerHTML = `<b>Categoría:</b> ${evento.categoria.nomCategoria}`;
-
-        const cardHorario = document.createElement('p');
-        cardHorario.className = 'card-text';
-        cardHorario.innerHTML = `<b>Horario:</b> ${evento.horario.inicio} - ${evento.horario.fin}`;
-
-        const cardEncargado = document.createElement('p');
-        cardEncargado.className = 'card-text';
-        cardEncargado.innerHTML = `<b>Encargado:</b> ${evento.encargado.par_nombres}`;
-
-        // Crear los botones de acción
-        const cardActions = document.createElement('div');
-        cardActions.className = 'd-flex justify-content-between';
-
-        const btnActualizar = document.createElement('a');
-        btnActualizar.className = 'btn btn-warning';
-        btnActualizar.href = `{{ route('eventos.editarEvento', '') }}/${evento.evento.idEvento}`;
-        btnActualizar.textContent = 'Actualizar';
-
-        const btnEliminar = document.createElement('button');
-        btnEliminar.className = 'btn btn-danger';
-        btnEliminar.setAttribute('data-nombre-evento', evento.evento.nomEvento);
-        btnEliminar.setAttribute('data-id-evento', evento.evento.idEvento);
-        btnEliminar.textContent = 'Eliminar';
-
-        // Agregar los botones al contenedor de acciones
-        cardActions.appendChild(btnActualizar);
-        cardActions.appendChild(btnEliminar);
-
-        // Agregar todos los elementos al cuerpo de la card
-        cardBody.appendChild(cardTitle);
-        cardBody.appendChild(cardDescripcion);
-        cardBody.appendChild(cardAmbiente);
-        cardBody.appendChild(cardCategoria);
-        cardBody.appendChild(cardHorario);
-        cardBody.appendChild(cardEncargado);
-        cardBody.appendChild(cardActions);
-
-        // Agregar la imagen y el cuerpo a la card
-        card.appendChild(cardImg);
-        card.appendChild(cardBody);
-
-        // Agregar la card al contenedor principal
-        cardEvento.appendChild(card);
-
-        // Agregar la card al contenedor de la lista de eventos
-        eventosList.appendChild(cardEvento);
-
-        // Mostrar el modal (si es necesario)
-        const eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
-        eventModal.show();
-
+        const baseRuta = "{{ route('eventos.buscar') }}";
+        fetch(`${baseRuta}?dia=${dia}&mes=${mes}&anio=${anio}`)
+            .then(response => response.json())
+            .then(data => {
+                const eventosDb = data.data;
+                if (eventosDb.length === 0) {
+                    notyf.error('No se encontraron eventos para la fecha seleccionada');
+                    return;
+                }
+                eventosDb.forEach(evento => {
+                    mostrarEventosEnModal(eventosDb, `Resultados de búsqueda: ${evento.evento.fechaEvento}`);
+                });
+            })
+            .catch(error => {
+                notyf.error('Error al buscar eventos por fecha');
+            });
     }
 
+    // Función para ver detalles de un evento
+    function verDetalleEventos(evento) {
+        const tituloEventos = document.getElementById('tituloEventos');
+        const eventosList = document.getElementById('eventosList');
 
+        tituloEventos.textContent = evento.evento.nomEvento;
+        eventosList.innerHTML = '';
+
+        const card = crearCardEvento(evento, 'detalle');
+        eventosList.appendChild(card);
+
+        const eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
+        eventModal.show();
+    }
+
+    // Inicialización - Mostrar eventos del día actual
+    const listaEventos = document.getElementById('event-list-sideBar');
+    const noEventos = document.getElementById('no-events');
+    buscarEventoDia(fechaActual);
+
+
+    const btnAgregarEvento = document.getElementById('agregarEvento');
+
+    btnAgregarEvento.addEventListener('click', function () {
+        const baseRutaCrearEvento = "{{ route('eventos.crearEvento') }}";
+        // Redirigir a la ruta de creación de eventos
+        window.location.href = `${baseRutaCrearEvento}`;
+    });
 
 </script>
 </nav>
-
-
-
-
-{{--
-if (eventosBD[evento].estadoEvento == 1) {
-console.log("Estado del evento " , eventosBD[evento].estadoEvento);
-
-const col = document.createElement('div');
-col.className = 'col-12 mb-3'; // Ajusta el tamaño de la columna según tus necesidades
-
-const card = document.createElement('div');
-card.className = 'card';
-
-// Cuerpo de la tarjeta
-const cardBody = document.createElement('div');
-cardBody.className = 'card-body';
-
-// Título de la tarjeta
-const cardTitle = document.createElement('h5');
-cardTitle.className = 'card-title';
-cardTitle.textContent = eventosBD[evento].nomEvento; // Nombre del evento
-
-// Descripción del evento
-const cardText = document.createElement('p');
-cardText.className = 'card-text';
-cardText.textContent = "Descripción: " + eventosBD[evento].descripcion; // Descripción del evento
-
-// Horario del evento
-const cardHorario = document.createElement('p');
-cardHorario.className = 'card-text';
-cardHorario.textContent = "Horario: Inicio " + eventosBD[evento].horario.inicio + " - Fin: " +
-eventosBD[evento].horario.fin; // Horario del evento
-
-const cardAmbiente = document.createElement('p');
-cardAmbiente.className = 'card-text';
-cardAmbiente.textContent = "Ambiente: " + eventosBD[evento].ambiente.pla_amb_descripcion;
-
-const btnDetalle = document.createElement('button');
-btnDetalle.className = 'btn btn-success';
-btnDetalle.textContent = 'Ver Detalles';
-btnDetalle.addEventListener('click', () => {
-verDetalleEventos(eventosBD[evento]);
-});
-// Agregar elementos al cuerpo de la tarjeta
-cardBody.appendChild(cardTitle);
-cardBody.appendChild(cardText);
-cardBody.appendChild(cardHorario);
-cardBody.appendChild(cardAmbiente);
-cardBody.appendChild(btnDetalle);
-// Agregar el cuerpo de la tarjeta a la tarjeta
-card.appendChild(cardBody);
-
-// Agregar la tarjeta a la columna
-col.appendChild(card);
-
-// Agregar la columna a la lista de eventos
-eventList.appendChild(col);
-} else {
-noEvents.classList.remove('d-none'); // Mostrar el mensaje si no hay eventos
-}
-
-
-
---}}
