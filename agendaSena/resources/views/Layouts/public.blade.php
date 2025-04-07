@@ -10,12 +10,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
     
-    <head>
 
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
+
+<!-- <meta charset="UTF-8"> -->
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+<!-- <link rel="stylesheet" href="{{ asset('css/estilo.css') }}"> -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
@@ -46,14 +46,17 @@
         }
     </style>
 
-</head>
+
 
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg" style="background-color: #4caf50;">
         <div class="container-fluid">
-            <a class="navbar-brand text-white" href="#">
-                <h1 class="h4">AgenSena</h1>
-            </a>
+        <a class="navbar-brand text-white" href="#">
+    <h1 class="h4">AgenSena</h1>
+</a>
+<a href="{{route('public.index')}}" class="nav-link text-white" aria-current="page">Inicio</a>
+
+            
             
                     <a href="{{route('calendario.index')}}" class="nav-link text-white" aria-current="page">Eventos</a>
                 
@@ -71,7 +74,7 @@
                     </a>
                     <span id="cantidad-eventos"
                         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        0
+                        
                     </span>
                 </div>
                 <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
@@ -95,7 +98,7 @@
         </div>
 
         <div class="calendar-container">
-           <did class="text-calendar"> <h1> Calendario</h1>d
+           <did class="text-calendar"> <h1> Calendario</h1>
             <table class="table table-bordered calendar-table">
                 <thead>
                     <tr>
@@ -114,18 +117,13 @@
             </table>
         </div>
                     
-         
-         <!-- Filtro por Categoría -->
-                <div class="search-input-container">
-                    <label for="category-search">Buscar por categoría:</label>
-                    <select id="category-search" class="form-control" oninput="searchEvent()">
-                        <option value="">Seleccione una categoría</option>
-                        <!-- Aquí puedes llenar las categorías dinámicamente desde la base de datos si es necesario -->
-                        <option value="1">Categoría 1</option>
-                        <option value="2">Categoría 2</option>
-                        <option value="3">Categoría 3</option>
-                    </select>
-                </div>
+            <div class="search-input-container">
+                <label for="category-search">Buscar por categoría:</label>
+                <select id="category-search" class="form-control" oninput="searchEvent()">
+                    <option value="">Seleccione una categoría</option>
+                    <!-- Las categorías se llenan dinámicamente con JavaScript o PHP -->
+                </select>
+            </div>
 
                 <!-- Filtro por Fecha -->
                 <div class="search-input-container">
@@ -211,37 +209,140 @@
             }
         }
 
-        // Función para mostrar todos los eventos
-   // Función para mostrar todos los eventos
-function showAllEvents() {
+    
+
+
+// Función para mostrar todos los eventos
+function createEventCard(event) {
+    // Aseguramos que la imagen de publicidad esté correctamente definida
+    const imagenPublicidad = event.publicidad || 'https://via.placeholder.com/150';
+    const imagenURL = `/storage/${imagenPublicidad}`;
+
+    // Desestructuramos el horario, ambiente y categoría de los eventos
+    const horario = event.horario || {};  // Si no existe, asignamos un objeto vacío
+    const ambiente = event.ambiente || {};  // Lo mismo para ambiente
+    const categoria = event.categoria || {};  // Lo mismo para categoria
+
+    // Creamos el HTML para la tarjeta del evento
+    return `
+        <div class="card mb-3" style="max-width: 540px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="${imagenURL}" class="img-fluid rounded-start" alt="Imagen del evento" style="object-fit: cover; width: 100%; height: 100%;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <!-- Título del Evento -->
+                        <h5 class="card-title">${event.nomEvento}</h5>
+                        
+                        <!-- Descripción del Evento -->
+                        <p class="card-text">${event.descripcion}</p>
+
+                        <!-- Fecha del Evento -->
+                        <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
+
+                        <!-- Mostrar hora de inicio y fin -->
+                        ${horario && horario.inicio && horario.fin ? `
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Hora: ${new Date(horario.inicio).toLocaleTimeString()} - ${new Date(horario.fin).toLocaleTimeString()}
+                                </small>
+                            </p>
+                        ` : ''}
+
+                        <!-- Mostrar ambiente -->
+                        ${ambiente && ambiente.nombre ? `
+                            <p class="card-text">
+                                <small class="text-muted">Ambiente: ${ambiente.nombre}</small>
+                            </p>
+                        ` : ''}
+
+                        <!-- Mostrar categoría -->
+                        ${categoria && categoria.nombre ? `
+                            <p class="card-text">
+                                <small class="text-muted">Categoría: ${categoria.nombre}</small>
+                            </p>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+
+
+
+   
+
+
+
+
+   function showAllEvents() {
     const eventDetailsContainer = document.getElementById('event-details');
     eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
 
-    if (eventos.length > 0) {
-        // Si hay eventos, mostrar las tarjetas de eventos
-        eventos.forEach(event => {
-            const imagenPublicidad = event.publicidad || 'https://via.placeholder.com/150';
-            const imagenURL = `/storage/${imagenPublicidad}`;
+    // Obtener el mes y año actual
+    const currentMonth = new Date().getMonth();  // El mes actual (0-11)
+    const currentYear = new Date().getFullYear();  // El año actual
 
-            eventDetailsContainer.innerHTML += `
-                <div class="card mb-3" style="max-width: 540px;">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <img src="${imagenURL}" class="img-fluid rounded-start" alt="Imagen del evento" style="object-fit: cover; width: 100%; height: 100%;">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title">${event.nomEvento}</h5>
-                                <p class="card-text">${event.descripcion}</p>
-                                <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-                            </div>
-                        </div>
-                    </div>
+    // Filtrar los eventos del mes actual
+    const eventsCurrentMonth = eventos.filter(event => {
+        const eventDate = new Date(event.fechaEvento);
+        return eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
+    });
+
+    // Filtrar los eventos del mes siguiente
+    const eventsNextMonth = eventos.filter(event => {
+        const eventDate = new Date(event.fechaEvento);
+        return eventDate.getMonth() === currentMonth + 1 && eventDate.getFullYear() === currentYear;
+    });
+
+    // Mostrar los eventos del mes actual
+    if (eventsCurrentMonth.length > 0) {
+        eventDetailsContainer.innerHTML += `
+            <h4 class="mb-3">Eventos del Mes Actual (${new Date().toLocaleString('default', { month: 'long' })})</h4>
+        `;
+        eventsCurrentMonth.forEach(event => {
+            eventDetailsContainer.innerHTML += createEventCard(event);
+        });
+    } else {
+        eventDetailsContainer.innerHTML += `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No hay eventos para el siguiente mes.</h5>
                 </div>
+            </div>
+        `;
+    }
+
+
+    if (eventsNextMonth.length > 0) {
+        // Si hay eventos, mostrar las tarjetas de eventos
+        eventsNextMonth.forEach(event => {
+            
+            eventDetailsContainer.innerHTML += `
+                 <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No hay eventos disponibles.</h5>
+                </div>
+            </div>
             `;
         });
     } else {
         // Si no hay eventos, mostrar el mensaje
+        eventDetailsContainer.innerHTML += `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No hay eventos para el sigueinte mes.</h5>
+                </div>
+            </div>
+        `;
+    }
+
+
+    // Si no hay eventos en ambos meses, mostrar un mensaje
+    if (eventsCurrentMonth.length === 0 && eventsNextMonth.length === 0) {
         eventDetailsContainer.innerHTML = `
             <div class="card">
                 <div class="card-body">
@@ -250,6 +351,9 @@ function showAllEvents() {
             </div>
         `;
     }
+
+
+
 }
 
 
@@ -266,27 +370,11 @@ function showAllEvents() {
             if (eventsForDay.length > 0) {
                 // Si hay eventos, mostrar las tarjetas de eventos
                 eventsForDay.forEach(event => {
-                    const imagenPublicidad = event.publicidad;
-                    const imagenURL = `/storage/${imagenPublicidad}`;
-                    eventDetailsContainer.innerHTML += `
-                        <div class="card mb-3" style="max-width: 540px;">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    <img src="${imagenURL || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${event.nomEvento}</h5>
-                                        <p class="card-text">${event.descripcion}</p>
-                                        <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                       eventDetailsContainer.innerHTML += createEventCard(event);
+                         
                 });
             } else {
-                // Si no hay eventos para el día, mostrar el mensaje
+                //  Si no hay eventos para el día, mostrar el mensaje
                 eventDetailsContainer.innerHTML = `
                     <div class="card">
                         <div class="card-body">
@@ -310,110 +398,55 @@ function showAllEvents() {
             loadCalendar();
         });
 
-        // Función para buscar eventos por nombre
-        // function searchEvent() {
-        //     const searchInput = document.getElementById('search-input').value.toLowerCase();
-        //     const filteredEvents = eventos.filter(event => event.nomEvento.toLowerCase().includes(searchInput));
-
-        //     const eventDetailsContainer = document.getElementById('event-details');
-        //     eventDetailsContainer.innerHTML = "";
-
-        //     if (filteredEvents.length > 0) {
-        //         filteredEvents.forEach(event => {
-        //             const imagenPublicidad = event.publicidad;
-        //             const imagenURL = `/storage/${imagenPublicidad}`;
-        //             eventDetailsContainer.innerHTML += `
-        //                 <div class="card mb-3" style="max-width: 540px;">
-        //                                                 <div class="row g-0">
-        //                         <div class="col-md-4">
-        //                             <img src="${imagenURL || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
-        //                         </div>
-        //                         <div class="col-md-8">
-        //                             <div class="card-body">
-        //                                 <h5 class="card-title">${event.nomEvento}</h5>
-        //                                 <p class="card-text">${event.descripcion}</p>
-        //                                 <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-        //                             </div>
-        //                         </div>
-        //                     </div>
-        //                 </div>
-        //             `;
-        //         });
-        //     } else {
-        //         // Si no se encuentran eventos después del filtro
-        //         eventDetailsContainer.innerHTML = `
-        //             <div class="card">
-        //                 <div class="card-body">
-        //                     <h5 class="card-title">No se encontraron eventos.</h5>
-        //                     <p class="card-text">No se encontraron eventos que coincidan con tu búsqueda.</p>
-        //                 </div>
-        //             </div>
-        //         `;
-        //     }
-        // }
+        
 
 
 
 
+    function searchEvent() {
+    // Obtener los valores de los filtros
+        const categoryId = document.getElementById('category-search').value;
+        const date = document.getElementById('date-search').value;
+        const searchInput = document.getElementById('search-input').value.toLowerCase();
 
+        // Filtrar eventos según categoría, fecha y nombre
+        const filteredEvents = eventos.filter(event => {
+            const matchesCategory = categoryId ? event.idCategoria == categoryId : true; // Filtrar por categoría si se selecciona una
+            const matchesDate = date ? new Date(event.fechaEvento).toLocaleDateString() === new Date(date).toLocaleDateString() : true; // Filtrar por fecha si se selecciona una
+            const matchesName = searchInput ? event.nomEvento.toLowerCase().includes(searchInput) : true; // Filtrar por nombre si se ingresa algo
 
-        function searchEvent() {
-    const categoryId = document.getElementById('category-search').value;
-    const date = document.getElementById('date-search').value;
-    const searchInput = document.getElementById('search-input').value.toLowerCase();
-
-    // Filtrar eventos según categoría, fecha y nombre
-    const filteredEvents = eventos.filter(event => {
-        const matchesCategory = categoryId ? event.idCategoria == categoryId : true;
-        const matchesDate = date ? new Date(event.fechaEvento).toLocaleDateString() === new Date(date).toLocaleDateString() : true;
-        const matchesName = searchInput ? event.nomEvento.toLowerCase().includes(searchInput) : true;
-
-        return matchesCategory && matchesDate && matchesName;
-    });
-
-    // Mostrar los eventos filtrados
-    displayEvents(filteredEvents);
-}
-function displayEvents(events) {
-    const eventDetailsContainer = document.getElementById('event-details');
-    eventDetailsContainer.innerHTML = "";
-
-    if (events.length > 0) {
-        events.forEach(event => {
-            const imagenURL = `/storage/${event.publicidad || 'default_image.jpg'}`;
-            eventDetailsContainer.innerHTML += `
-                <div class="card mb-3" style="max-width: 540px;">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <img src="${imagenURL}" class="img-fluid rounded-start" alt="Imagen del evento" style="object-fit: cover; width: 100%; height: 100%;">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title">${event.nomEvento}</h5>
-                                <p class="card-text">${event.descripcion}</p>
-                                <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+            return matchesCategory && matchesDate && matchesName; // Devolver los eventos que cumplan todos los filtros
         });
-    } else {
-        eventDetailsContainer.innerHTML = `
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">No se encontraron eventos.</h5>
-                    <p class="card-text">No se encontraron eventos que coincidan con tu búsqueda.</p>
-                </div>
-            </div>
-        `;
+
+        // Mostrar los eventos filtrados
+        displayEvents(filteredEvents);
     }
+
+
+
+   function displayEvents(events) {
+    const eventsContainer = document.getElementById('events-container');
+    eventsContainer.innerHTML = ''; // Limpiar los eventos previos
+
+    if (events.length === 0) {
+        eventsContainer.innerHTML = '<p>No se encontraron eventos.</p>';
+        return;
+    }
+
+    events.forEach(event => {
+        const eventCard = document.createElement('div');
+        eventCard.classList.add('event-card');
+
+        eventCard.innerHTML = `
+            <h5>${event.nomEvento}</h5>
+            <p><strong>Categoría:</strong> ${event.categoria.nomCategoria}</p> <!-- Asumiendo que cada evento tiene un objeto de categoría -->
+            <p><strong>Fecha:</strong> ${event.fechaEvento}</p>
+            <p><strong>Descripción:</strong> ${event.descripcion}</p>
+        `;
+
+        eventsContainer.appendChild(eventCard);
+    });
 }
-
-
-
-
-
 
 
 
