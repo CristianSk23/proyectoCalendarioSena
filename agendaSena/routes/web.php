@@ -9,6 +9,7 @@ use App\Http\Controllers\Evento\ReporteController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\Evento\ResponsableController;
 use App\Http\Controllers\Public\PublicController;
+use App\Http\Controllers\CategoriaController;
 
 // Rutas públicas
 Route::get('/', [PublicController::class, 'index'])->name('public.index');
@@ -49,6 +50,10 @@ Route::get("calendario/buscarEventos", [CalendarioController::class, 'buscarEven
 // Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico'])->name('calendario.publico');
 Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico'])->name('calendario.publico');
 
+
+
+// Ruta para las categorías
+Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
 
 
 //  ++++ LOGIN  ++++++

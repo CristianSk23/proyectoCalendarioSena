@@ -116,19 +116,15 @@
                 </tbody>
             </table>
         </div>
-                    
-            <div class="search-input-container">
-                <label for="category-search">Buscar por categoría:</label>
-                <select id="category-search" class="form-control" oninput="searchEvent()">
-                    <option value="">Seleccione una categoría</option>
-                    <!-- Las categorías se llenan dinámicamente con JavaScript o PHP -->
-                </select>
-            </div>
+                   
+        <div>
+         
+
 
                 <!-- Filtro por Fecha -->
                 <div class="search-input-container">
                     <label for="date-search">Buscar por fecha:</label>
-                    <input type="date" id="date-search" class="form-control" oninput="searchEvent()">
+                    <input type="date" id="date-search" class="form-control" oninput="searchByDate()">
                 </div>
 
                 <!-- Filtro por Nombre del Evento -->
@@ -149,6 +145,13 @@
 
         <div id="event-details" class="mt-4"></div> <!-- Contenedor para mostrar los eventos -->
     </div>
+
+
+
+
+
+
+
 
     <!-- Cargar Bootstrap JS y dependencias -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -225,7 +228,7 @@ function createEventCard(event) {
 
     // Creamos el HTML para la tarjeta del evento
     return `
-        <div class="card mb-3" style="max-width: 540px;">
+        <div class="card mb-3" style="max-width: 1000px;">
             <div class="row g-0">
                 <div class="col-md-4">
                     <img src="${imagenURL}" class="img-fluid rounded-start" alt="Imagen del evento" style="object-fit: cover; width: 100%; height: 100%;">
@@ -403,50 +406,189 @@ function createEventCard(event) {
 
 
 
-    function searchEvent() {
-    // Obtener los valores de los filtros
-        const categoryId = document.getElementById('category-search').value;
-        const date = document.getElementById('date-search').value;
-        const searchInput = document.getElementById('search-input').value.toLowerCase();
 
-        // Filtrar eventos según categoría, fecha y nombre
-        const filteredEvents = eventos.filter(event => {
-            const matchesCategory = categoryId ? event.idCategoria == categoryId : true; // Filtrar por categoría si se selecciona una
-            const matchesDate = date ? new Date(event.fechaEvento).toLocaleDateString() === new Date(date).toLocaleDateString() : true; // Filtrar por fecha si se selecciona una
-            const matchesName = searchInput ? event.nomEvento.toLowerCase().includes(searchInput) : true; // Filtrar por nombre si se ingresa algo
+        function searchEvent() {
+    const searchInput = document.getElementById('search-input').value.toLowerCase();
+    
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
 
-            return matchesCategory && matchesDate && matchesName; // Devolver los eventos que cumplan todos los filtros
+    // Filtrar los eventos que coincidan con el nombre
+    const filteredEvents = eventos.filter(event => event.nomEvento.toLowerCase().includes(searchInput));
+
+    if (filteredEvents.length > 0) {
+        // Si se encuentran eventos, generamos las tarjetas usando createEventCard
+        filteredEvents.forEach(event => {
+            const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
+            eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
         });
-
-        // Mostrar los eventos filtrados
-        displayEvents(filteredEvents);
+    } else {
+        // Si no se encuentran eventos después del filtro
+        eventDetailsContainer.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No se encontraron eventos.</h5>
+                    <p class="card-text">No se encontraron eventos que coincidan con tu búsqueda.</p>
+                </div>
+            </div>
+        `;
     }
+}
 
 
 
-   function displayEvents(events) {
-    const eventsContainer = document.getElementById('events-container');
-    eventsContainer.innerHTML = ''; // Limpiar los eventos previos
+    //****BUSQUEDA POR FECHA***
+// Filtrar por fecha seleccionada
+// Filtrar por fecha seleccionada
+function searchByDate() {
+    const dateInput = document.getElementById('date-search').value;  // Obtener la fecha seleccionada
+    
+    console.log("Fecha seleccionada:", dateInput); // Verificar la fecha seleccionada
 
-    if (events.length === 0) {
-        eventsContainer.innerHTML = '<p>No se encontraron eventos.</p>';
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
+
+    // Si no se seleccionó una fecha, no filtramos y mostramos todos los eventos
+    if (!dateInput) {
+        displayAllEvents(); // Función que muestra todos los eventos sin filtro
         return;
     }
 
-    events.forEach(event => {
-        const eventCard = document.createElement('div');
-        eventCard.classList.add('event-card');
+    // Convertir la fecha seleccionada al formato UTC para evitar el desfase por zona horaria
+    const selectedDate = new Date(dateInput + "T00:00:00Z");  // Añadir hora UTC (00:00:00) para hacer la comparación en UTC
 
-        eventCard.innerHTML = `
-            <h5>${event.nomEvento}</h5>
-            <p><strong>Categoría:</strong> ${event.categoria.nomCategoria}</p> <!-- Asumiendo que cada evento tiene un objeto de categoría -->
-            <p><strong>Fecha:</strong> ${event.fechaEvento}</p>
-            <p><strong>Descripción:</strong> ${event.descripcion}</p>
-        `;
+    // Filtrar eventos por la fecha seleccionada
+    const filteredEvents = eventos.filter(event => {
+        // Convertir la fecha del evento y extraer solo la parte de la fecha (sin hora), en UTC
+        const eventDate = new Date(event.fechaEvento);  // Asumimos que la fecha del evento ya es en UTC
+        const formattedEventDate = eventDate.toISOString().split('T')[0]; // Formato 'YYYY-MM-DD'
 
-        eventsContainer.appendChild(eventCard);
+        // Mostrar la fecha del evento y la fecha seleccionada en la consola
+        console.log("Fecha del evento:", formattedEventDate);
+        console.log("Fecha seleccionada (UTC):", selectedDate.toISOString().split('T')[0]);
+
+        // Comparar solo la fecha (sin la hora)
+        return formattedEventDate === selectedDate.toISOString().split('T')[0];
     });
+
+    // Mostrar los eventos filtrados
+    if (filteredEvents.length > 0) {
+        filteredEvents.forEach(event => {
+            const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
+            eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
+        });
+    } else {
+        // Si no se encuentran eventos después del filtro por fecha
+        eventDetailsContainer.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No se encontraron eventos para la fecha seleccionada.</h5>
+                    <p class="card-text">No hay eventos programados para esta fecha.</p>
+                </div>
+            </div>
+        `;
+    }
 }
+
+
+
+
+
+
+    //++++ CATEGORIA++++
+
+// // Filtrar por categoria seleccionada
+// function searchByCategory() {
+//         const categoryInput = document.getElementById('category-search').value;  // Obtener la categoría seleccionada
+//         console.log("Categoría seleccionada:", categoryInput);  // Verificar la categoría seleccionada
+
+//         const eventDetailsContainer = document.getElementById('event-details');
+//         eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
+
+//         // Si no se seleccionó una categoría, no filtramos y mostramos todos los eventos
+//         if (!categoryInput) {
+//             displayAllEvents(); // Función que muestra todos los eventos sin filtro
+//             return;
+//         }
+
+//         // Filtrar eventos por la categoría seleccionada
+//         const filteredEvents = eventos.filter(event => {
+//             return event.idCategoria == categoryInput;  // Comparar el ID de la categoría
+//         });
+
+//         // Mostrar los eventos filtrados
+//         if (filteredEvents.length > 0) {
+//             filteredEvents.forEach(event => {
+//                 const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
+//                 eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
+//             });
+//         } else {
+//             // Si no se encuentran eventos después del filtro por categoría
+//             eventDetailsContainer.innerHTML = `
+//                 <div class="card">
+//                     <div class="card-body">
+//                         <h5 class="card-title">No se encontraron eventos para la categoría seleccionada.</h5>
+//                         <p class="card-text">No hay eventos programados para esta categoría.</p>
+//                     </div>
+//                 </div>
+//             `;
+//         }
+//     }
+
+
+
+
+// // Funcion para crear la tarjeta de cada evento
+// function createEventCard(event) {
+//     return `
+//         <div class="card">
+//             <div class="card-body">
+//                 <h5 class="card-title">${event.nomEvento}</h5>
+//                 <p class="card-text">Fecha: ${event.fechaEvento}</p>
+//                 <p class="card-text">Categoria: ${event.categoria}</p>
+//                 <p class="card-text">${event.descripcion}</p>
+//             </div>
+//         </div>
+//     `;
+// }
+
+
+
+
+
+
+
+
+
+        // Función para mostrar todos los eventos (en caso de no haber filtrado por fecha)
+        function displayAllEvents() {
+            const eventDetailsContainer = document.getElementById('event-details');
+            eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
+
+            if (eventos.length > 0) {
+                eventos.forEach(event => {
+                    const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
+                    eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
+                });
+            } else {
+                eventDetailsContainer.innerHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">No se encontraron eventos.</h5>
+                            <p class="card-text">No hay eventos programados en este momento.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        
+
+
+
+
+
+
 
 
 
