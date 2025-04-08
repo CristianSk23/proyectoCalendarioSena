@@ -1,4 +1,4 @@
-<nav class="col-12 col-md-3 p-1 border-end bg-white shadow-lg">
+<nav class="col-6 col-md-3 p-1 border-end bg-white shadow-lg">
 
     <!-- Contenedor para el listado de eventos -->
     <div class="mt-4 border rounded-lg p-4 bg-light">
@@ -12,7 +12,7 @@
         <p id="no-events" class="d-none">No hay nada agendado.</p>
     </div>
 
-    <div class=" d-flex flex-column justify-content-end mt-6">
+    <div class="d-flex flex-column justify-content-end mt-3">
         <div class="card">
             <div class="card-body">
                 <div class="bg-success text-white p-2 rounded w-75 mx-auto">
@@ -20,14 +20,14 @@
                 </div>
                 <br>
                 <form onsubmit="event.preventDefault(); buscarEventoPorNombre()">
-                    <div class="d-flex align-items-center ">
+                    <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <label for="eventName" class="form-label">Nombre del evento</label>
-                            <input type="text" class="form-control form-control-sm " id="nombreEvento"
+                            <input type="text" class="form-control form-control-sm" id="nombreEvento"
                                 placeholder="Buscar Evento">
                         </div>
                         <button type="submit" class="btn btn-success ms-2 mt-4 btn-sm">
-                            <box-icon name='search-alt-2' color='#ffffff'></box-icon>
+                            <i class="bx bx-search-alt-2" style="color: #ffffff;"></i>
                         </button>
                 </form>
             </div>
@@ -45,16 +45,15 @@
                             <input type="date" class="form-control" id="fechaEvento" placeholder="Buscar Evento">
                         </div>
                         <button type="submit" class="btn btn-success ms-2 mt-4 btn-sm">
-                            <box-icon name='search-alt-2' color='#ffffff'></box-icon>
+                            <i class="bx bx-search-alt-2" style="color: #ffffff;"></i>
                         </button>
                 </form>
             </div>
         </div>
 
-
         <div class="card">
             <button type="submit" class="btn btn-success ms-2 mt-4 btn-sm" id="agregarEvento">
-                <box-icon name='add-to-queue' type='solid' color='#ffffff'></box-icon>
+                <i class="bx bxs-add-to-queue" style="color: #ffffff;"></i>
                 Agregar Evento
             </button>
         </div>
@@ -242,7 +241,7 @@
 
         if (eventos && eventos.length > 0) {
             eventos.forEach(evento => {
-                if (evento.evento.estadoEvento == 1) {
+                if (evento.evento.estadoEvento != 2) {
                     const card = crearCardEvento(evento, 'modal');
                     eventosList.appendChild(card);
                 }
@@ -282,6 +281,8 @@
         fetch(`${baseRuta}?nombre=${nombre}`)
             .then(response => response.json())
             .then(data => {
+                console.log(data.evento);
+
                 const titulo = `Resultados de búsqueda: "${nombre}"`;
                 mostrarEventosEnModal(data.evento, titulo);
                 nombreInput.value = '';

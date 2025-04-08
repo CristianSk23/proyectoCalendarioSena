@@ -32,6 +32,7 @@ Route::get("evento/eliminar/{idEvento}", [EventoController::class, 'delete'])->n
 Route::get("evento/PorConfirmar", [EventoController::class, 'eventosPorConfirmar'])->name('eventos.porConfirmar');
 Route::get("cargarParticipantes", [EventoController::class, 'cargarParticipantes'])->name('eventos.buscarParticipantes');
 Route::get("eventosPorNombre", [EventoController::class, 'buscarEventosPorNombre'])->name('eventos.buscarEventoPorNombre');
+route::post("confirmarEvento", [EventoController::class, 'confirmarEvento'])->name('eventos.confirmarEvento');
 //Route::get("eventosPorFecha", [EventoController::class, 'buscarEventosPorFecha'])->name('eventos.buscarEventoPorFecha');
 
 

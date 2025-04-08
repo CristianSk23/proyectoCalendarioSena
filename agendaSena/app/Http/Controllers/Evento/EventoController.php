@@ -12,6 +12,7 @@ use App\Models\Participante\Participante;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Traits\CalendarTrait;
+use Carbon\Carbon;
 use Illuminate\Container\Attributes\Log as AttributesLog;
 
 class EventoController extends Controller
@@ -94,7 +95,6 @@ class EventoController extends Controller
             return redirect()->route('calendario.index')->with('success', 'Evento creado exitosamente.');
         } catch (\Exception $e) {
             // Registrar el error en los logs y devolver un mensaje
-            Log::error('Error al crear evento: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Ocurrió un error: ' . $e->getMessage());
         }
     }
@@ -171,11 +171,12 @@ class EventoController extends Controller
         $anio = $request->input('anio');
         // Construir la fecha en formato YYYY-MM-DD
         $fecha = sprintf('%04d-%02d-%02d', $anio, $mes, $dia);
-        log::info($fecha);
 
         // Buscar eventos para la fecha específica
         try {
-            $eventos = Evento::whereDate('fechaEvento', $fecha)->get();
+            $eventos = Evento::whereDate('fechaEvento', $fecha)
+            ->where('estadoEvento', "<>", 0)
+            ->get();
             $resultados = [];
             foreach ($eventos as $evento) {
                 $idAmbiente = $evento->pla_amb_id;
@@ -219,10 +220,11 @@ class EventoController extends Controller
             if ($nombre) {
                 // Búsqueda insensible a mayúsculas/minúsculas
                 $eventos = Evento::whereRaw('LOWER(nomEvento) LIKE LOWER(?)', ['%' . $nombre . '%'])
-                    ->where('estadoEvento', 1)
+                    ->where('estadoEvento', "<>", 2)
+                    ->where('estadoEvento', "<>", 0)
                     ->paginate(10);
 
-                log::info($eventos);
+
 
                 $resultados = [];
                 foreach ($eventos as $evento) {
@@ -285,17 +287,73 @@ class EventoController extends Controller
     {
         $eventos = Evento::where('estadoEvento', 2)->get(); //* Filtrar solo los eventos con estado 2 SERIA EL ESTADO POR CONFIRMAR
         $cantidadEventos = count($eventos);
+        if ($cantidadEventos > 0) {
+            # code...
+            foreach ($eventos as $evento) {
+                $idAmbiente = $evento->pla_amb_id;
+                $idHorario = $evento->idHorario;
+               
+                $ambiente = Ambiente::find($idAmbiente); // Busca por clave primaria
+                $horario = Horario::find($idHorario);
+               
+            };
+            return response()->json([
+                'eventos' => $eventos,
+                'ambiente' => $ambiente,
+                'horario' => $horario,
+                'cantidadEventos' => $cantidadEventos
+            ]);
+        }
         return response()->json([
-            'eventos' => $eventos,
+            'eventos' => null,
             'cantidadEventos' => $cantidadEventos
         ]);
+    }
+
+
+    public function confirmarEvento(Request $request)
+    {
+        $idEvento = $request->input('idEvento');
+        //log::info($idEvento);
+        $evento = Evento::find($idEvento);
+
+        if ($evento) {
+            $evento->estadoEvento = 1; // Cambiar el estado a confirmado
+            $evento->save();
+
+            return response()->json(['success' => true, 'message' => 'Evento confirmado exitosamente.']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Evento no encontrado.']);
+        }
+    }
+
+    public function confirmarEventoPorFecha()
+    {
+        $fechaActual = Carbon::now()->format('Y-m-d');
+
+        // Obtener los eventos que cumplen con la condición
+        $eventos = Evento::where("fechaEvento", "<", $fechaActual)->get(); // Cambié a get()
+
+        // Loguear la cantidad de eventos encontrados
+        log::info("Eventos encontrados que se realizaron: " . $eventos->count());
+
+        if ($eventos->isNotEmpty()) { // Verificar si hay eventos
+            foreach ($eventos as $evento) {
+                $evento->estadoEvento = 3; // Cambiar el estado a confirmado
+                $evento->save();
+            }
+
+            return response()->json(['success' => true, 'message' => 'Eventos confirmados exitosamente.']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Evento no encontrado.']);
+        }
     }
 
 
     public function delete(Request $request)
     {
         $idEvento = $request->__get('idEvento');
-        //Log::error("El id del evento para eliminar ". $idEvento);
+
 
         $eventoEncontrado = Evento::find($idEvento);
 

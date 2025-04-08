@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Evento\EventoController;
 use App\Models\Evento\Evento;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 use function Illuminate\Log\log;
 
@@ -67,31 +69,38 @@ class CalendarioController extends Controller
 
     public function buscarEventosPorMes(Request $request)
     {
+        $eventoController = new EventoController();
+        $eventoController->confirmarEventoPorFecha();
         if ($request->query("mes") != null && $request->query("anio") != null) {
             $mesActual = Carbon::now()->month;
             $mesConvertir = $request->query('mes');
             $mes = $mesConvertir + 1;
             $anio = $request->query('anio');
-            $primerDia_delMes = Carbon::createFromDate($anio, $mes, 1);
-            $ultimoDia_delMes = $primerDia_delMes->copy()->endOfMonth();
-            //dd($primerDia_delMes, $ultimoDia_delMes);
+            $primerDia_delMes = Carbon::createFromDate($anio, $mes, 1)->toDateString();
+            $ultimoDia_delMes = Carbon::createFromDate($anio, $mes, 1)->endOfMonth()->toDateString();
         } else {
 
             $mesActual = Carbon::now()->month;
             $anioActual = Carbon::now()->year;
-
             $primerDia_delMes = Carbon::createFromDate($anioActual, $mesActual, 1);
             $ultimoDia_delMes = $primerDia_delMes->copy()->endOfMonth();
         }
         try {
 
 
-            $eventosConfirmados = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
+            $eventosConfirmados = Evento::whereDate('fechaEvento', '>=', $primerDia_delMes)
+                ->whereDate('fechaEvento', '<=', $ultimoDia_delMes)
                 ->where('estadoEvento', 1)
-                ->orderBy('fechaEvento', 'asc')
+                ->orderBy('fechaEvento')
                 ->get();
+
+
             $eventosReservados = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
                 ->where('estadoEvento', 2)
+                ->orderBy('fechaEvento', 'asc')
+                ->get();
+            $eventosRealizados = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
+                ->where('estadoEvento', 3)
                 ->orderBy('fechaEvento', 'asc')
                 ->get();
 
@@ -110,11 +119,19 @@ class CalendarioController extends Controller
                     'fecha' => $evento->fechaEvento,
                 ];
             });
+            $eventosEncontradosRealizados = $eventosRealizados->map(function ($evento) {
+                return [
+                    'id' => $evento->idEvento,
+                    'nombre' => $evento->nomEvento,
+                    'fecha' => $evento->fechaEvento,
+                ];
+            });
 
             return response()->json([
                 'success' => true,
                 'eventosConfirmados' => $eventosEncontradosConfirmados,
                 'eventosReservados' => $eventosEncontradosReservados,
+                'eventosRealizados' => $eventosEncontradosRealizados,
             ]);
         } catch (\Exception $e) {
             return response()->json([
