@@ -9,6 +9,7 @@ use App\Http\Controllers\Evento\ReporteController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\Evento\ResponsableController;
 use App\Http\Controllers\Public\PublicController;
+use App\Http\Controllers\CategoriaController;
 
 // Rutas públicas
 Route::get('/', [PublicController::class, 'index'])->name('public.index');
@@ -28,6 +29,7 @@ Route::get("evento/crear", [EventoController::class, 'create'])->name('eventos.c
 Route::get("evento/editar/{idEvento}", [EventoController::class, 'edit'])->name('eventos.editarEvento');
 Route::post("evento/actualizar/{idEvento}", [EventoController::class, 'update'])->name('eventos.actualizarEvento');
 Route::get("evento/eliminar/{idEvento}", [EventoController::class, 'delete'])->name('eventos.eliminarEvento');
+Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index');
 
 Route::get("evento/PorConfirmar", [EventoController::class, 'eventosPorConfirmar'])->name('eventos.porConfirmar');
 Route::get("cargarParticipantes", [EventoController::class, 'cargarParticipantes'])->name('eventos.buscarParticipantes');
@@ -49,6 +51,10 @@ Route::get("calendario/buscarEventos", [CalendarioController::class, 'buscarEven
 // Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico'])->name('calendario.publico');
 Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico'])->name('calendario.publico');
 
+
+
+// Ruta para las categorías
+Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
 
 
 //  ++++ LOGIN  ++++++

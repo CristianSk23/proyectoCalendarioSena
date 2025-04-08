@@ -447,12 +447,57 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 }
 
-.calendar-nav h5 {
-    margin: 0;
-    font-size: 1.1rem;
+.calendar-nav .btn {
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+}
+
+/* Para suavizar los bordes del calendario */
+.calendar-container .table-bordered {
+    border-radius: 10px; /* Redondeamos el borde de la tabla */
+}
+
+.calendar-container {
+    width: 250px; /* Establece un ancho fijo para el calendario */
+    margin: 0 auto; /* Centra el calendario dentro de su contenedor */
+}
+.calendar-table {
+    width: 100%; /* Hace que la tabla ocupe el 100% del contenedor, que ahora tiene un ancho fijo */
+}
+
+.calendar-table td {
+    border-radius: 10px; /* Redondeamos las celdas */
+}
+
+.calendar-table th {
+    border-radius: 40px 10px 0 0; /* Solo redondeamos los bordes superiores */
+    
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Navbar estilo */
+.navbar {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Mejora en los botones */
+.btn-outline-primary, .btn-outline-secondary {
     font-weight: 600;
     color: #2c3e50;
 }
@@ -471,122 +516,174 @@ body {
     transition: all 0.2s ease;
 }
 
-/* Navbar estilo verde */
-.navbar {
-    background-color: #28a745 !important;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+/* Tabla de calendario */
 
-.navbar-brand,
-.navbar-brand:hover {
-    color: white !important;
-}
-
-.navbar .btn-outline-primary {
-    color: white;
-    border-color: white;
-}
-
-.navbar .btn-outline-primary:hover {
-    background-color: white;
-    color: #28a745;
-}
-
-.navbar .btn-outline-secondary {
-    color: white;
-    border-color: white;
-}
-
-.navbar .btn-outline-secondary:hover {
-    background-color: white;
-    color: #6c757d;
-}
-
-/* Estilos para las cards de eventos */
-.events-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.event-card {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.3s ease;
-}
-
-.event-card:hover {
-    transform: scale(1.05);
-}
-
-.event-card .card-img-top {
-    height: 200px;
-    object-fit: cover;
-}
-
-.event-card .card-body {
-    flex-grow: 1;
-}
 
 /* Estilos del buscador */
+/* Estilos del contenedor de búsqueda dentro del sidebar */
 .search-container {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    max-width: 600px;
+    background-color: #ffffff; /* Fondo blanco para el contenedor de búsqueda */
+    padding: 20px;
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    margin-bottom: 30px; /* Espacio inferior */
 }
 
-.search-container .form-control {
-    border-radius: 20px;
-    padding: 10px 20px;
+/* Título del buscador */
+.search-container h1 {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
 }
 
-/* Pie de Página */
-.footer {
-    background-color: #f8f9fa;
-    padding: 20px 0;
-    text-align: center;
-    position: relative;
-    width: 100%;
-    border-top: 1px solid #49cd42;
-    margin-top: auto; /* Hace que el pie de página se posicione al final */
+/* Estilos para los inputs del buscador */
+.search-input-container {
+    margin-bottom: 15px;
 }
 
-.footer p {
-    margin: 0;
-    color: #555;
+.search-input-container label {
+    display: block;
     font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
 }
 
-/* Establecer los estilos solo para el body con la clase "custom-body" */
-.custom-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Asegura que la página ocupe toda la altura de la ventana */
-}
-
-
-/* Estilo para hacer las tarjetas más grandes */
-.card {
-    height: 100%; /* Aseguramos que todas las tarjetas tengan el mismo tamaño */
-}
-
-.card-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Esto asegura que el contenido se distribuye uniformemente dentro de la tarjeta */
-    height: 100%;
-}
-
-.card img {
+.search-input-container input {
     width: 100%;
-    height: 200px; /* Fija una altura para las imágenes, puede ajustarse */
-    object-fit: cover; /* Esto asegura que la imagen mantenga su aspecto sin deformarse */
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s ease;
 }
 
-.col-md-4 {
-    display: flex; /* Flexbox para asegurar que las tarjetas se ajusten correctamente */
-    justify-content: center;
-    align-items: stretch; /* Asegura que las tarjetas llenen el contenedor */
+/* Efecto de enfoque en los inputs */
+.search-input-container input:focus {
+    border-color: #007bff; /* Azul cuando el input está en foco */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sombra de enfoque */
+}
+
+/* Botón de búsqueda (si lo hay) */
+.search-button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Cambio de color del botón al pasar el ratón */
+.search-button:hover {
+    background-color: #0056b3;
+}
+
+/* Contenedor general del sidebar */
+.sidebar {
+    height: 100vh;
+    width: 410px; /* Ancho del sidebar */
+    background-color: #f8f9fa; /* Fondo claro */
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 20px;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15); /* Sombra suave en el sidebar */
+    border-right: 1px solid #ddd; /* Borde derecho sutil */
+    z-index: 999; /* Asegura que el sidebar esté encima del contenido */
+}
+
+/* Contenido principal */
+.content-area {
+    margin-left: 420px; /* Deja espacio para el sidebar */
+    padding: 20px;
+}
+
+/* Estilos del calendario */
+.calendar-container {
+    width: 410px; /* Establecemos un ancho fijo para el calendario */
+    margin: 0 auto; /* Centra el calendario dentro de su contenedor */
+    text-align: center;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    padding: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-table {
+    width: 100%;
+    border-radius: 10px; /* Bordes redondeados */
+    border: 1px solid #ddd; /* Bordes suaves */
+    text-align: center;
+    
+}
+.calendar-title{
+        margin: 0;
+        font-size: 27px;
+        font-weight: 400;
+      
+      
+}
+
+/* Estilo de los días en el calendario */
+.calendar-table td {
+    cursor: pointer;
+    border-radius: 50%; /* Bordes redondeados para los días con eventos */
+    padding: 10px;
+    transition: background-color 0.3s ease;
+}
+
+/* Estilo al pasar el mouse sobre los días */
+.calendar-table td:hover {
+    background-color: #d4edda; /* Color suave cuando se pasa el ratón sobre los días */
+}
+
+/* Celda que contiene días con eventos */
+.dia-evento {
+    background-color: #c3e6cb; /* Color suave de fondo para los días con eventos */
+}
+
+/* Celda sin evento */
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+/* Estilo para los contenedores de los campos de búsqueda */
+.search-input-container {
+    margin: 10px 0;  /* Espacio entre los elementos */
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* Centra los elementos */
+    justify-content: Left;
+}
+
+/* Estilo para los inputs y selectores */
+.search-input-container input,
+.search-input-container select {
+    width: 80%;  /* Ancho de los campos de búsqueda */
+    max-width: 400px;  /* Limita el tamaño máximo */
+    padding: 10px;
+    margin: 5px 0;  /* Espacio entre los elementos */
+    border-radius: 5px;  /* Bordes redondeados */
+    border: 1px solid #ccc;  /* Borde gris claro */
+    box-sizing: border-box;  /* Incluye padding y border dentro del tamaño total */
+}
+
+/* Placeholder con estilo centrado */
+.
+
+/* Asegura que todos los campos tengan un borde similar al estilo original */
+.search-input-container input:focus,
+.search-input-container select:focus {
+    border-color: #007bff;  /* Borde azul al hacer foco */
+    outline: none;  /* Elimina el contorno por defecto */
+}
+
+/* Estilo del label para mantener consistencia */
+.search-input-container label {
+    margin-bottom: 5px; /* Espacio debajo de la etiqueta */
+    font-weight: 600; /* Asegura que las etiquetas sean visibles */
+    text-align: left; 
 }

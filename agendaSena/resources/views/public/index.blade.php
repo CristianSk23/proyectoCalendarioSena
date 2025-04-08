@@ -13,6 +13,9 @@
                             <div class="card-body">
                                 <h5 class="card-title">{{ $evento->nomEvento }}</h5>
                                 <p class="card-text">{{ $evento->descripcion }}</p>
+                                <p class="card-text">Fecha: {{ $evento->fecha }}</p>
+                                <p class="card-text">Hora: {{ $evento->hora }}</p>
+                                <!-- <p class="card-text">Lugar: {{ $evento->lugar }}</p> -->
                                 <a href="{{ route('public.show', $evento->idEvento) }}" class="btn btn-primary">
                                     Ver Detalles
                                 </a>

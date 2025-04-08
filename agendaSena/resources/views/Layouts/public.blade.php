@@ -10,15 +10,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
     
-    <head>
 
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
+
+<!-- <meta charset="UTF-8"> -->
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+<!-- <link rel="stylesheet" href="{{ asset('css/estilo.css') }}"> -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap"
-    rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
@@ -47,14 +46,17 @@
         }
     </style>
 
-</head>
+
 
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg" style="background-color: #4caf50;">
         <div class="container-fluid">
-            <a class="navbar-brand text-white" href="#">
-                <h1 class="h4">AgenSena</h1>
-            </a>
+        <a class="navbar-brand text-white" href="#">
+    <h1 class="h4">AgenSena</h1>
+</a>
+<a href="{{route('public.index')}}" class="nav-link text-white" aria-current="page">Inicio</a>
+
+            
             
                     <a href="{{route('calendario.index')}}" class="nav-link text-white" aria-current="page">Eventos</a>
                 
@@ -72,7 +74,7 @@
                     </a>
                     <span id="cantidad-eventos"
                         class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        0
+                        
                     </span>
                 </div>
                 <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
@@ -96,6 +98,7 @@
         </div>
 
         <div class="calendar-container">
+           <did class="text-calendar"> <h1> Calendario</h1>
             <table class="table table-bordered calendar-table">
                 <thead>
                     <tr>
@@ -113,24 +116,41 @@
                 </tbody>
             </table>
         </div>
+                   
+        <div>
+         
+
+
+                <!-- Filtro por Fecha -->
+                <div class="search-input-container">
+                    <label for="date-search">Buscar por fecha:</label>
+                    <input type="date" id="date-search" class="form-control" oninput="searchByDate()">
+                </div>
+
+                <!-- Filtro por Nombre del Evento -->
+                <div class="search-input-container">
+                    <label for="search-input">Buscar por nombre:</label>
+                    <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre..." oninput="searchEvent()">
+                </div>
+
+
+        </div>
+
     </div>
 
-   <!-- Contenido Principal -->
-   <div class="content-area">
-        <!-- Buscador -->
-        <div class="search-container">
-            <input type="text" id="search-input" class="form-control" placeholder="Buscar evento..." oninput="searchEvent()">
-        </div>
+    <!-- Contenido Principal -->
+    <div class="content-area">
+        
+      
 
         <div id="event-details" class="mt-4"></div> <!-- Contenedor para mostrar los eventos -->
     </div>
-    
-    <!-- Pie de página -->
-<footer class="footer">
-        <div class="container text-center">
-            <p>&copy; 2025 Los derechos de autor reservados | Centro de Aprendizaje Industrial | SENA - CALI</p>
-        </div>
-    </footer>
+
+
+
+
+
+
 
 
     <!-- Cargar Bootstrap JS y dependencias -->
@@ -192,48 +212,153 @@
             }
         }
 
-        // Función para mostrar todos los eventos
-        function showAllEvents() {
-            const eventDetailsContainer = document.getElementById('event-details');
-            eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
+    
 
 
+// Función para mostrar todos los eventos
+function createEventCard(event) {
+    // Aseguramos que la imagen de publicidad esté correctamente definida
+    const imagenPublicidad = event.publicidad || 'https://via.placeholder.com/150';
+    const imagenURL = `/storage/${imagenPublicidad}`;
 
+    // Desestructuramos el horario, ambiente y categoría de los eventos
+    const horario = event.horario || {};  // Si no existe, asignamos un objeto vacío
+    const ambiente = event.ambiente || {};  // Lo mismo para ambiente
+    const categoria = event.categoria || {};  // Lo mismo para categoria
 
-            
-            if (eventos.length > 0) {
-                // Si hay eventos, mostrar las tarjetas de eventos
-                eventos.forEach(event => {
-                    const imagenPublicidad = event.publicidad;
-                    const imagenURL = `/storage/${imagenPublicidad}`;
-                    eventDetailsContainer.innerHTML += `
-                        <div class="card mb-3" style="max-width: 540px;">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    <img src="${imagenURL || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${event.nomEvento}</h5>
-                                        <p class="card-text">${event.descripcion}</p>
-                                        <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else {
-                // Si no hay eventos, mostrar el mensaje
-                eventDetailsContainer.innerHTML = `
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">No hay eventos disponibles.</h5>
-                        </div>
+    // Creamos el HTML para la tarjeta del evento
+    return `
+        <div class="card mb-3" style="max-width: 1000px;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="${imagenURL}" class="img-fluid rounded-start" alt="Imagen del evento" style="object-fit: cover; width: 100%; height: 100%;">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <!-- Título del Evento -->
+                        <h5 class="card-title">${event.nomEvento}</h5>
+                        
+                        <!-- Descripción del Evento -->
+                        <p class="card-text">${event.descripcion}</p>
+
+                        <!-- Fecha del Evento -->
+                        <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
+
+                        <!-- Mostrar hora de inicio y fin -->
+                        ${horario && horario.inicio && horario.fin ? `
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Hora: ${new Date(horario.inicio).toLocaleTimeString()} - ${new Date(horario.fin).toLocaleTimeString()}
+                                </small>
+                            </p>
+                        ` : ''}
+
+                        <!-- Mostrar ambiente -->
+                        ${ambiente && ambiente.nombre ? `
+                            <p class="card-text">
+                                <small class="text-muted">Ambiente: ${ambiente.nombre}</small>
+                            </p>
+                        ` : ''}
+
+                        <!-- Mostrar categoría -->
+                        ${categoria && categoria.nombre ? `
+                            <p class="card-text">
+                                <small class="text-muted">Categoría: ${categoria.nombre}</small>
+                            </p>
+                        ` : ''}
                     </div>
-                `;
-            }
-        }
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+
+
+
+   
+
+
+
+
+   function showAllEvents() {
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
+
+    // Obtener el mes y año actual
+    const currentMonth = new Date().getMonth();  // El mes actual (0-11)
+    const currentYear = new Date().getFullYear();  // El año actual
+
+    // Filtrar los eventos del mes actual
+    const eventsCurrentMonth = eventos.filter(event => {
+        const eventDate = new Date(event.fechaEvento);
+        return eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
+    });
+
+    // Filtrar los eventos del mes siguiente
+    const eventsNextMonth = eventos.filter(event => {
+        const eventDate = new Date(event.fechaEvento);
+        return eventDate.getMonth() === currentMonth + 1 && eventDate.getFullYear() === currentYear;
+    });
+
+    // Mostrar los eventos del mes actual
+    if (eventsCurrentMonth.length > 0) {
+        eventDetailsContainer.innerHTML += `
+            <h4 class="mb-3">Eventos del Mes Actual (${new Date().toLocaleString('default', { month: 'long' })})</h4>
+        `;
+        eventsCurrentMonth.forEach(event => {
+            eventDetailsContainer.innerHTML += createEventCard(event);
+        });
+    } else {
+        eventDetailsContainer.innerHTML += `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No hay eventos para el siguiente mes.</h5>
+                </div>
+            </div>
+        `;
+    }
+
+
+    if (eventsNextMonth.length > 0) {
+        // Si hay eventos, mostrar las tarjetas de eventos
+        eventsNextMonth.forEach(event => {
+            
+            eventDetailsContainer.innerHTML += `
+                 <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No hay eventos disponibles.</h5>
+                </div>
+            </div>
+            `;
+        });
+    } else {
+        // Si no hay eventos, mostrar el mensaje
+        eventDetailsContainer.innerHTML += `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No hay eventos para el sigueinte mes.</h5>
+                </div>
+            </div>
+        `;
+    }
+
+
+    // Si no hay eventos en ambos meses, mostrar un mensaje
+    if (eventsCurrentMonth.length === 0 && eventsNextMonth.length === 0) {
+        eventDetailsContainer.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No hay eventos disponibles.</h5>
+                </div>
+            </div>
+        `;
+    }
+
+
+
+}
+
 
         // Función para mostrar los eventos del día seleccionado
         function showEventDetails(day) {
@@ -248,25 +373,11 @@
             if (eventsForDay.length > 0) {
                 // Si hay eventos, mostrar las tarjetas de eventos
                 eventsForDay.forEach(event => {
-                    eventDetailsContainer.innerHTML += `
-                        <div class="card mb-3" style="max-width: 540px;">
-                            <div class="row g-0">
-                                <div class="col-md-4">
-                                    <img src="${event.imagen || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
-                                </div>
-                                <div class="col-md-8">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${event.nomEvento}</h5>
-                                        <p class="card-text">${event.descripcion}</p>
-                                        <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                       eventDetailsContainer.innerHTML += createEventCard(event);
+                         
                 });
             } else {
-                // Si no hay eventos para el día, mostrar el mensaje
+                //  Si no hay eventos para el día, mostrar el mensaje
                 eventDetailsContainer.innerHTML = `
                     <div class="card">
                         <div class="card-body">
@@ -290,61 +401,196 @@
             loadCalendar();
         });
 
-        // Función para buscar eventos por nombre
-        // Función para mostrar todos los eventos
-function showAllEvents() {
+        
+
+
+
+
+
+        function searchEvent() {
+    const searchInput = document.getElementById('search-input').value.toLowerCase();
+    
     const eventDetailsContainer = document.getElementById('event-details');
-    eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
+    eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
 
-    if (eventos.length > 0) {
-        // Crear una fila para las tarjetas
-        let row = document.createElement('div');
-        row.classList.add('row', 'g-3'); // Añadimos clases de Bootstrap para la fila
+    // Filtrar los eventos que coincidan con el nombre
+    const filteredEvents = eventos.filter(event => event.nomEvento.toLowerCase().includes(searchInput));
 
-        // Agrupar los eventos en 3 tarjetas por fila
-        eventos.forEach((event, index) => {
-            // Crear cada tarjeta de evento
-            const card = document.createElement('div');
-            card.classList.add('col-md-4'); // 3 tarjetas por fila en pantallas medianas y grandes
-            card.innerHTML = `
-                <div class="card mb-3">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <img src="${event.imagen || 'https://via.placeholder.com/150'}" class="img-fluid rounded-start" alt="Imagen del evento">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title">${event.nomEvento}</h5>
-                                <p class="card-text">${event.descripcion}</p>
-                                <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Agregar la tarjeta a la fila
-            row.appendChild(card);
-
-            // Cada vez que lleguemos a 3 tarjetas, agregamos la fila al contenedor
-            if ((index + 1) % 3 === 0 || index === eventos.length - 1) {
-                eventDetailsContainer.appendChild(row);
-                // Crear una nueva fila para las siguientes 3 tarjetas
-                row = document.createElement('div');
-                row.classList.add('row', 'g-3');
-            }
+    if (filteredEvents.length > 0) {
+        // Si se encuentran eventos, generamos las tarjetas usando createEventCard
+        filteredEvents.forEach(event => {
+            const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
+            eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
         });
     } else {
-        // Si no hay eventos, mostrar el mensaje
+        // Si no se encuentran eventos después del filtro
         eventDetailsContainer.innerHTML = `
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">No hay eventos disponibles.</h5>
+                    <h5 class="card-title">No se encontraron eventos.</h5>
+                    <p class="card-text">No se encontraron eventos que coincidan con tu búsqueda.</p>
                 </div>
             </div>
         `;
     }
 }
+
+
+
+    //****BUSQUEDA POR FECHA***
+// Filtrar por fecha seleccionada
+// Filtrar por fecha seleccionada
+function searchByDate() {
+    const dateInput = document.getElementById('date-search').value;  // Obtener la fecha seleccionada
+    
+    console.log("Fecha seleccionada:", dateInput); // Verificar la fecha seleccionada
+
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
+
+    // Si no se seleccionó una fecha, no filtramos y mostramos todos los eventos
+    if (!dateInput) {
+        displayAllEvents(); // Función que muestra todos los eventos sin filtro
+        return;
+    }
+
+    // Convertir la fecha seleccionada al formato UTC para evitar el desfase por zona horaria
+    const selectedDate = new Date(dateInput + "T00:00:00Z");  // Añadir hora UTC (00:00:00) para hacer la comparación en UTC
+
+    // Filtrar eventos por la fecha seleccionada
+    const filteredEvents = eventos.filter(event => {
+        // Convertir la fecha del evento y extraer solo la parte de la fecha (sin hora), en UTC
+        const eventDate = new Date(event.fechaEvento);  // Asumimos que la fecha del evento ya es en UTC
+        const formattedEventDate = eventDate.toISOString().split('T')[0]; // Formato 'YYYY-MM-DD'
+
+        // Mostrar la fecha del evento y la fecha seleccionada en la consola
+        console.log("Fecha del evento:", formattedEventDate);
+        console.log("Fecha seleccionada (UTC):", selectedDate.toISOString().split('T')[0]);
+
+        // Comparar solo la fecha (sin la hora)
+        return formattedEventDate === selectedDate.toISOString().split('T')[0];
+    });
+
+    // Mostrar los eventos filtrados
+    if (filteredEvents.length > 0) {
+        filteredEvents.forEach(event => {
+            const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
+            eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
+        });
+    } else {
+        // Si no se encuentran eventos después del filtro por fecha
+        eventDetailsContainer.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No se encontraron eventos para la fecha seleccionada.</h5>
+                    <p class="card-text">No hay eventos programados para esta fecha.</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+
+
+
+
+
+    //++++ CATEGORIA++++
+
+// // Filtrar por categoria seleccionada
+// function searchByCategory() {
+//         const categoryInput = document.getElementById('category-search').value;  // Obtener la categoría seleccionada
+//         console.log("Categoría seleccionada:", categoryInput);  // Verificar la categoría seleccionada
+
+//         const eventDetailsContainer = document.getElementById('event-details');
+//         eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
+
+//         // Si no se seleccionó una categoría, no filtramos y mostramos todos los eventos
+//         if (!categoryInput) {
+//             displayAllEvents(); // Función que muestra todos los eventos sin filtro
+//             return;
+//         }
+
+//         // Filtrar eventos por la categoría seleccionada
+//         const filteredEvents = eventos.filter(event => {
+//             return event.idCategoria == categoryInput;  // Comparar el ID de la categoría
+//         });
+
+//         // Mostrar los eventos filtrados
+//         if (filteredEvents.length > 0) {
+//             filteredEvents.forEach(event => {
+//                 const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
+//                 eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
+//             });
+//         } else {
+//             // Si no se encuentran eventos después del filtro por categoría
+//             eventDetailsContainer.innerHTML = `
+//                 <div class="card">
+//                     <div class="card-body">
+//                         <h5 class="card-title">No se encontraron eventos para la categoría seleccionada.</h5>
+//                         <p class="card-text">No hay eventos programados para esta categoría.</p>
+//                     </div>
+//                 </div>
+//             `;
+//         }
+//     }
+
+
+
+
+// // Funcion para crear la tarjeta de cada evento
+// function createEventCard(event) {
+//     return `
+//         <div class="card">
+//             <div class="card-body">
+//                 <h5 class="card-title">${event.nomEvento}</h5>
+//                 <p class="card-text">Fecha: ${event.fechaEvento}</p>
+//                 <p class="card-text">Categoria: ${event.categoria}</p>
+//                 <p class="card-text">${event.descripcion}</p>
+//             </div>
+//         </div>
+//     `;
+// }
+
+
+
+
+
+
+
+
+
+        // Función para mostrar todos los eventos (en caso de no haber filtrado por fecha)
+        function displayAllEvents() {
+            const eventDetailsContainer = document.getElementById('event-details');
+            eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
+
+            if (eventos.length > 0) {
+                eventos.forEach(event => {
+                    const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
+                    eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
+                });
+            } else {
+                eventDetailsContainer.innerHTML = `
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">No se encontraron eventos.</h5>
+                            <p class="card-text">No hay eventos programados en este momento.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        
+
+
+
+
+
+
+
+
 
 
         // Cargar el calendario y eventos iniciales
