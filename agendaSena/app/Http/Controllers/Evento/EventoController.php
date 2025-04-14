@@ -19,11 +19,12 @@ class EventoController extends Controller
     use CalendarTrait;
     public function index()
     {
+        $categorias = Categoria::all(); // Obtener las categorías
         // Carga eventos nuevos 
         $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
             ->where('estadoEvento', 1) // Filtrar solo los eventos con estado 1
             ->get();
-        return view('Evento.inicioEvento', compact('eventos'));
+        return view('Evento.inicioEvento', compact('eventos','categorias'));
     }
 
     public function create(Request $request)
@@ -330,4 +331,45 @@ class EventoController extends Controller
             'estadoEvento' => 'required|integer',
         ]);
     }
+
+
+
+    public function filtrarPorCategoria(Request $request)
+    {
+        $categoriaId = $request->input('idCategoria');
+
+        if (!$categoriaId) {
+            return response()->json(['success' => false, 'message' => 'Categoría inválida']);
+        }
+
+        // Solo trae eventos públicos con esa categoría
+        $eventos = Evento::where('estadoEvento', 1)
+                    ->where('idCategoria', $categoriaId)
+                    ->with(['categoria', 'horario', 'ambiente']) // relaciones que quieres mostrar
+                    ->get();
+
+        return response()->json(['success' => true, 'eventos' => $eventos]);
+    }
+
+
+
+
+
+
+    public function publicos()
+    {
+        $categorias = Categoria::all();
+        $eventos = Evento::with(['categoria', 'horario', 'ambiente'])
+            ->where('estadoEvento', 1)
+            ->get();
+
+        return view('evento.public', compact('eventos', 'categorias')); // Vista pública
+    }
+
+
+
+
+
+
+
 }

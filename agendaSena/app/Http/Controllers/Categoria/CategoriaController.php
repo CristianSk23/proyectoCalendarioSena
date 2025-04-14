@@ -9,10 +9,18 @@ class CategoriaController extends Controller
 {
     public function index()
     {
-        $categorias = Categoria::all(); // Obtener todas las categorías
+        $categorias = Categoria::orderBy('nombre')->get();
+ // Obtener todas las categorías
         return view('categoria.index', compact('categorias')); // Retornar la vista con las categorías
     }
 
+    // Para la vista public.blade.php
+    public function showPublic()
+    {
+        $categorias = Categoria::all();
+        return view('layouts.public', compact('categorias'));
+    }
+    
     public function create()
     {
         return view('categoria.create'); // Retornar la vista para crear una nueva categoría
@@ -52,4 +60,16 @@ class CategoriaController extends Controller
         $categoria->delete(); // Eliminar la categoría
         return redirect()->route('categorias.index')->with('success', 'Categoría eliminada exitosamente.');
     }
+
+    public function mostrarVistaConCategorias()
+{
+    $categorias = Categoria::where('estadoCategoria', 1)->get();
+    $eventos = Evento::all(); // Asegúrate de tener este modelo
+
+    return view('layouts.public', compact('categorias', 'eventos'));
+}
+
+
+
+
 }

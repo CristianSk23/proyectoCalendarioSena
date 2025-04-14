@@ -9,7 +9,9 @@ use App\Http\Controllers\Evento\ReporteController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\Evento\ResponsableController;
 use App\Http\Controllers\Public\PublicController;
-use App\Http\Controllers\CategoriaController;
+// use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\Categoria\CategoriaController;
+
 
 // Rutas públicas
 Route::get('/', [PublicController::class, 'index'])->name('public.index');
@@ -53,7 +55,7 @@ Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendar
 
 
 // Ruta para las categorías
-Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
+// Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
 
 
 //  ++++ LOGIN  ++++++
@@ -78,3 +80,24 @@ Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensu
 
 // **  controlador de vista publica ******* */
 Route::get('/public', [PublicController::class, 'index'])->middleware('guest');
+
+//****EVENTOS¨*** */
+Route::get('/buscarEventos', [EventoController::class, 'buscarEventos'])->name('eventos.buscar');
+
+// Route::get('/categorias', [CategoriaController::class, 'getCategorias']);
+
+// Route::get('/categorias', [CategoriaController::class, 'getCategorias'])->name('categorias.index');
+
+// Route::get('/publica', [CategoriasController::class, 'mostrarVistaConCategorias'])->name('categorias.vista');
+
+
+
+
+
+// Route::get('/eventos/categoria', [EventoController::class, 'buscarEventosPorCategoria'])->name('eventos.porCategoria');
+
+// Route::get('/', [CategoriaController::class, 'mostrarVistaConCategorias'])->name('public.index');
+
+
+
+Route::get('/filtrar-eventos-categoria', [EventoController::class, 'filtrarPorCategoria'])->name('eventos.filtrar.categoria');

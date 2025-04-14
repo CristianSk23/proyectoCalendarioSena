@@ -20,4 +20,8 @@ class Categoria extends Model
         'descripcion',
         'estadoCategoria',
     ];
+
+    
+
+
 }

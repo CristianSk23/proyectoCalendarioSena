@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,7 +12,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
     
-
 
 
 <!-- <meta charset="UTF-8"> -->
@@ -45,7 +46,6 @@
             margin-top: 70px; /* Ajusta este valor según el tamaño de tu navbar */
         }
     </style>
-
 
 
   <!-- Navbar -->
@@ -118,21 +118,44 @@
         </div>
                    
         <div>
-         
 
+                         <!-- Filtro por Categorias -->
+                    <!-- <div class="search-input-container">
+                            <label for="category-search">Buscar por categoría:</label>
+                            <select id="category-search" class="form-control" oninput="searchEvent()">
+                                <option value="">Seleccione una categoría</option> -->
+                                <!-- Las categorías se llenan dinámicamente con JavaScript o PHP -->
+                            <!-- </select>
+                        </div> -->
+
+                    <?php
+                        $categorias = DB::table('categoria')->where('estadoCategoria', 1)->get();
+                    ?>
+                    <div class="search-input-container">
+                        <label for="category-search">Buscar por categorías:</label>
+                        <select id="category-search" class="form-control" oninput="searchEvent()">
+                            <option value="">Seleccione una categoría</option>  <!-- Opción por defecto -->
+                            
+                            @foreach ($categorias as $categoria)
+                                <option value="{{ $categoria->idCategoria }}">{{ $categoria->nomCategoria }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+         
 
                 <!-- Filtro por Fecha -->
                 <div class="search-input-container">
                     <label for="date-search">Buscar por fecha:</label>
                     <input type="date" id="date-search" class="form-control" oninput="searchByDate()">
                 </div>
+                    <!-- Aquí se mostrarán los resultados de los eventos filtrados -->
+<!-- <div id="eventosResultados"></div> -->
 
                 <!-- Filtro por Nombre del Evento -->
                 <div class="search-input-container">
                     <label for="search-input">Buscar por nombre:</label>
                     <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre..." oninput="searchEvent()">
                 </div>
-
 
         </div>
 
@@ -152,13 +175,13 @@
 
 
 
-
     <!-- Cargar Bootstrap JS y dependencias -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
     <script>
         let currentDate = new Date();
+        
         let eventos = @json($eventos); // Eventos pasados desde el backend a JavaScript
 
         // Función para cargar el calendario
@@ -184,10 +207,15 @@
                 cell.innerText = day;
 
                 // Verificar si hay eventos para ese día
+               
                 const eventForDay = eventos.filter(event => {
-                    const eventDate = new Date(event.fechaEvento);
-                    return eventDate.getDate() === day && eventDate.getMonth() === currentDate.getMonth() && eventDate.getFullYear() === currentDate.getFullYear();
+                    const [year, month, dayStr] = event.fechaEvento.split('-');
+                    const eventDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(dayStr)); // ← construcción local
+                    return eventDate.getDate() === day &&
+                        eventDate.getMonth() === currentDate.getMonth() &&
+                        eventDate.getFullYear() === currentDate.getFullYear();
                 });
+
 
                 // Marcar el día con eventos
                 if (eventForDay.length > 0) {
@@ -213,7 +241,6 @@
         }
 
     
-
 
 // Función para mostrar todos los eventos
 function createEventCard(event) {
@@ -275,9 +302,7 @@ function createEventCard(event) {
 
 
 
-
    
-
 
 
 
@@ -319,7 +344,6 @@ function createEventCard(event) {
         `;
     }
 
-
     if (eventsNextMonth.length > 0) {
         // Si hay eventos, mostrar las tarjetas de eventos
         eventsNextMonth.forEach(event => {
@@ -343,7 +367,6 @@ function createEventCard(event) {
         `;
     }
 
-
     // Si no hay eventos en ambos meses, mostrar un mensaje
     if (eventsCurrentMonth.length === 0 && eventsNextMonth.length === 0) {
         eventDetailsContainer.innerHTML = `
@@ -356,16 +379,28 @@ function createEventCard(event) {
     }
 
 
-
 }
 
+       
 
-        // Función para mostrar los eventos del día seleccionado
+
+        // FUNCION REAL DONDE RECIBE LOS DATOS PARA EVALUAR LOS EVENTOS EXISTENTES!!!!!!!!!!!!!!!!!
         function showEventDetails(day) {
+            console.log("Día seleccionado:", day);
             const eventsForDay = eventos.filter(event => {
-                const eventDate = new Date(event.fechaEvento);
-                return eventDate.getDate() === day && eventDate.getMonth() === currentDate.getMonth() && eventDate.getFullYear() === currentDate.getFullYear();
+                const [year, month, dayStr] = event.fechaEvento.split('-');
+                const eventDay = parseInt(dayStr, 10);
+                const eventMonth = parseInt(month, 10) - 1; // Mes en JS: 0-11
+                const eventYear = parseInt(year, 10);
+
+                return (
+                    eventDay === day &&
+                    eventMonth === currentDate.getMonth() &&
+                    eventYear === currentDate.getFullYear()
+                );
             });
+
+            console.log("Eventos encontrados:", eventsForDay);
 
             const eventDetailsContainer = document.getElementById('event-details');
             eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
@@ -373,11 +408,10 @@ function createEventCard(event) {
             if (eventsForDay.length > 0) {
                 // Si hay eventos, mostrar las tarjetas de eventos
                 eventsForDay.forEach(event => {
-                       eventDetailsContainer.innerHTML += createEventCard(event);
-                         
+                    eventDetailsContainer.innerHTML += createEventCard(event);
                 });
             } else {
-                //  Si no hay eventos para el día, mostrar el mensaje
+                // Si no hay eventos para el día, mostrar el mensaje
                 eventDetailsContainer.innerHTML = `
                     <div class="card">
                         <div class="card-body">
@@ -402,7 +436,6 @@ function createEventCard(event) {
         });
 
         
-
 
 
 
@@ -436,10 +469,10 @@ function createEventCard(event) {
 }
 
 
-
     //****BUSQUEDA POR FECHA***
 // Filtrar por fecha seleccionada
-// Filtrar por fecha seleccionada
+
+
 function searchByDate() {
     const dateInput = document.getElementById('date-search').value;  // Obtener la fecha seleccionada
     
@@ -493,64 +526,58 @@ function searchByDate() {
 
 
 
+  //++++ CATEGORIA++++
+
+// Filtrar por categoria seleccionada
+function searchByCategory() {
+        const categoryInput = document.getElementById('category-search').value;  // Obtener la categoría seleccionada
+        console.log("Categoría seleccionada:", categoryInput);  // Verificar la categoría seleccionada
+
+        const eventDetailsContainer = document.getElementById('event-details');
+        eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
+
+        console.log(categoryInput);
+        
+
+        // Si no se seleccionó una categoría, no filtramos y mostramos todos los eventos
+        if (!categoryInput) {
+            displayAllEvents(); // Función que muestra todos los eventos sin filtro
+            return;
+        }
+
+        // Filtrar eventos por la categoría seleccionada
+        const filteredEvents = eventos.filter(event => {
+            return event.idCategoria == categoryInput;  // Comparar el ID de la categoría
+        });
+
+        // Mostrar los eventos filtrados
+        if (filteredEvents.length > 0) {
+            filteredEvents.forEach(event => {
+                const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
+                eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
+            });
+        } else {
+            // Si no se encuentran eventos después del filtro por categoría
+            eventDetailsContainer.innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">No se encontraron eventos para la categoría seleccionada.</h5>
+                        <p class="card-text">No hay eventos programados para esta categoría.</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
 
 
-    //++++ CATEGORIA++++
-
-// // Filtrar por categoria seleccionada
-// function searchByCategory() {
-//         const categoryInput = document.getElementById('category-search').value;  // Obtener la categoría seleccionada
-//         console.log("Categoría seleccionada:", categoryInput);  // Verificar la categoría seleccionada
-
-//         const eventDetailsContainer = document.getElementById('event-details');
-//         eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
-
-//         // Si no se seleccionó una categoría, no filtramos y mostramos todos los eventos
-//         if (!categoryInput) {
-//             displayAllEvents(); // Función que muestra todos los eventos sin filtro
-//             return;
-//         }
-
-//         // Filtrar eventos por la categoría seleccionada
-//         const filteredEvents = eventos.filter(event => {
-//             return event.idCategoria == categoryInput;  // Comparar el ID de la categoría
-//         });
-
-//         // Mostrar los eventos filtrados
-//         if (filteredEvents.length > 0) {
-//             filteredEvents.forEach(event => {
-//                 const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
-//                 eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
-//             });
-//         } else {
-//             // Si no se encuentran eventos después del filtro por categoría
-//             eventDetailsContainer.innerHTML = `
-//                 <div class="card">
-//                     <div class="card-body">
-//                         <h5 class="card-title">No se encontraron eventos para la categoría seleccionada.</h5>
-//                         <p class="card-text">No hay eventos programados para esta categoría.</p>
-//                     </div>
-//                 </div>
-//             `;
-//         }
-//     }
 
 
 
 
-// // Funcion para crear la tarjeta de cada evento
-// function createEventCard(event) {
-//     return `
-//         <div class="card">
-//             <div class="card-body">
-//                 <h5 class="card-title">${event.nomEvento}</h5>
-//                 <p class="card-text">Fecha: ${event.fechaEvento}</p>
-//                 <p class="card-text">Categoria: ${event.categoria}</p>
-//                 <p class="card-text">${event.descripcion}</p>
-//             </div>
-//         </div>
-//     `;
-// }
+
+
+
+
 
 
 
@@ -582,21 +609,27 @@ function searchByDate() {
             }
         }
 
-        
-
-
-
-
-
-
-
-
-
-
         // Cargar el calendario y eventos iniciales
         loadCalendar();
         showAllEvents();
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
