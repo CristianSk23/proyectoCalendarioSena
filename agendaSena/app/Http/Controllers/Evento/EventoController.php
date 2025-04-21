@@ -356,18 +356,45 @@ class EventoController extends Controller
 
 
 
-    public function publicos()
+    // public function publicos()
+    // {
+    //     $categorias = Categoria::all();
+    //     $eventos = Evento::with(['categoria', 'horario', 'ambiente'])
+    //         ->where('estadoEvento', 1)
+    //         ->get();
+
+    //     return view('evento.public', compact('eventos', 'categorias')); // Vista pública
+    // }
+
+
+
+    public function detalleEvento($id)
     {
-        $categorias = Categoria::all();
-        $eventos = Evento::with(['categoria', 'horario', 'ambiente'])
-            ->where('estadoEvento', 1)
-            ->get();
+        try {
+            $evento = Evento::with(['horario', 'ambiente', 'categoria', 'participante', 'ficha'])
+                ->where('idEvento', $id)
+                ->where('estadoEvento', 1)
+                ->first();
 
-        return view('evento.public', compact('eventos', 'categorias')); // Vista pública
+            if (!$evento) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Evento no encontrado o inactivo.'
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'evento' => $evento
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener detalles del evento.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-
-
-
 
 
 

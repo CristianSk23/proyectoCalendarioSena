@@ -100,4 +100,5 @@ Route::get('/buscarEventos', [EventoController::class, 'buscarEventos'])->name('
 
 
 
-Route::get('/filtrar-eventos-categoria', [EventoController::class, 'filtrarPorCategoria'])->name('eventos.filtrar.categoria');
+// Route::get('/filtrar-eventos-categoria', [EventoController::class, 'filtrarPorCategoria'])->name('eventos.filtrar.categoria');
+Route::get('/evento/{id}/detalle', [EventoController::class, 'detalleEvento'])->name('evento.detalle');
