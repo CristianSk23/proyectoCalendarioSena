@@ -8,6 +8,7 @@ use App\Models\Horario\Horario;
 use App\Models\Categoria\categoria;
 use App\Models\Ambiente\Ambiente;
 use App\Models\Ficha\Ficha;
+use App\Models\fotografiasEvento\FotografiaEvento;
 use App\Models\sep_participante\Participante;
 
 class Evento extends Model
@@ -62,4 +63,8 @@ class Evento extends Model
     {
         return $this->belongsTo(Ficha::class, 'fic_numero', 'fic_numero'); // Clave foránea vinculada
     }
+   /*  public function fotografiasEvento()
+    {
+        return $this->belongsTo(FotografiaEvento::class, 'idEvento', 'idEvento'); // Clave foránea vinculada
+    } */
 }

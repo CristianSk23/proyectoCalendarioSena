@@ -10,6 +10,7 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\Evento\ResponsableController;
 use App\Http\Controllers\Public\PublicController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\FotografiaEvento\FotografiaEventoController;
 
 // Rutas públicas
 Route::get('/', [PublicController::class, 'index'])->name('public.index');
@@ -37,6 +38,10 @@ Route::get("eventosPorNombre", [EventoController::class, 'buscarEventosPorNombre
 route::post("confirmarEvento", [EventoController::class, 'confirmarEvento'])->name('eventos.confirmarEvento');
 //Route::get("eventosPorFecha", [EventoController::class, 'buscarEventosPorFecha'])->name('eventos.buscarEventoPorFecha');
 
+//+++++ === FOTOGRAFIAS EVENTO  ===  +++++
+Route::get('evento/agregarFotos/{idEvento}', [FotografiaEventoController::class, 'paginaPrincinpal'])->name('eventos.agregarFotos')/* ->middleware('auth') */;
+Route::post('evento/agregarFotos/bd/{idEvento}', [FotografiaEventoController::class, 'create'])->name('eventos.agregarFotosBd')/* ->middleware('auth') */;
+Route::delete('evento/agregarFotos/eliminar/{idEvento}', [FotografiaEventoController::class, 'delete'])->name('eventos.eliminarFotosBd')/* ->middleware('auth') */;
 
 
 //  ++++ CALENDARIO  ++++++

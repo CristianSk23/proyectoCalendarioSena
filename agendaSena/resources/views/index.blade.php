@@ -86,19 +86,19 @@
 
                 // Limpiar tabla
                 calendarioTabla.innerHTML = `
-                                                                                                                                    <thead>
-                                                                                                                                        <tr class="table-light table-bordered">
-                                                                                                                                            <th class="text-center">Dom</th>
-                                                                                                                                            <th class="text-center">Lun</th>
-                                                                                                                                            <th class="text-center">Mar</th>
-                                                                                                                                            <th class="text-center">Mié</th>
-                                                                                                                                            <th class="text-center">Jue</th>
-                                                                                                                                            <th class="text-center">Vie</th>
-                                                                                                                                            <th class="text-center">Sáb</th>
-                                                                                                                                        </tr>
-                                                                                                                                    </thead>
-                                                                                                                                    <tbody></tbody>
-                                                                                                                                `;
+                                                                                                                                                                        <thead>
+                                                                                                                                                                            <tr class="table-light table-bordered">
+                                                                                                                                                                                <th class="text-center">Dom</th>
+                                                                                                                                                                                <th class="text-center">Lun</th>
+                                                                                                                                                                                <th class="text-center">Mar</th>
+                                                                                                                                                                                <th class="text-center">Mié</th>
+                                                                                                                                                                                <th class="text-center">Jue</th>
+                                                                                                                                                                                <th class="text-center">Vie</th>
+                                                                                                                                                                                <th class="text-center">Sáb</th>
+                                                                                                                                                                            </tr>
+                                                                                                                                                                        </thead>
+                                                                                                                                                                        <tbody></tbody>
+                                                                                                                                                                    `;
 
                 const tbody = calendarioTabla.querySelector('tbody');
                 let fila = document.createElement('tr');
@@ -116,7 +116,7 @@
                 fetch(ruta)
                     .then(response => response.json())
                     .then(data => {
-                       
+
                         for (let dia = 1; dia <= diasEnMes; dia++) {
                             if (fila.children.length === 7) {
                                 tbody.appendChild(fila);
@@ -160,7 +160,7 @@
                                     diaConv === dia
                                 );
                             });
-                           
+
 
 
                             if (eventosConfirmados) {
@@ -238,9 +238,9 @@
                         nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toUpperCase();
 
                         const contenedorEventos = `
-                                                                                                <h2 class="font-weight-bold text-center" id="tituloEventos"></h2>
-                                                                                                <div id="eventosList"></div>
-                                                                                            `;
+                                                                                                                                    <h2 class="font-weight-bold text-center" id="tituloEventos"></h2>
+                                                                                                                                    <div id="eventosList"></div>
+                                                                                                                                `;
 
                         modalBody.innerHTML = contenedorEventos;
 
@@ -256,27 +256,34 @@
                                 const encargado = item.encargado;
                                 const imagenPublicidad = evento.publicidad;
                                 const imagenURL = `/storage/${imagenPublicidad}`;
-                                console.log(evento.publicidad);
+                                //*console.log(rutaAgregarFotos);
+
+
+                                const botonAccion = evento.estadoEvento == 3
+                                    ? `<a href="{{ route('eventos.agregarFotos', '') }}/${evento.idEvento}" class="btn btn-info">Agregar Fotos</a>`
+                                    : `<a href="{{ route('eventos.editarEvento', '') }}/${evento.idEvento}" class="btn btn-warning">Actualizar</a>`;
+
+
 
                                 return `
-                                                                    <div class="col-6 mb-4"> 
-                                                                        <div class="card col-6" style="width: 100%;">
-                                                                            <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento" style="max-width: 100%; height: auto;">
-                                                                            <div class="card-body">
-                                                                                <h5 class="card-title text-success">${evento.nomEvento}</h5>
-                                                                                <p class="card-text"><b>Descripción:</b> ${evento.descripcion}</p>
-                                                                                <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
-                                                                                <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
-                                                                                <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
-                                                                                <p class="card-text"><b>Encargado:</b> ${encargado.par_nombres}</p>
-                                                                                <div class="d-flex justify-content-between">
-                                                                                    <a href="{{ route('eventos.editarEvento', '') }}/${evento.idEvento}" class="btn btn-warning">Actualizar</a>
-                                                                                    <button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                `;
+                                                                                                        <div class="col-6 mb-4"> 
+                                                                                                            <div class="card col-6" style="width: 100%;">
+                                                                                                                <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento" style="max-width: 100%; height: auto;">
+                                                                                                                <div class="card-body">
+                                                                                                                    <h5 class="card-title text-success">${evento.nomEvento}</h5>
+                                                                                                                    <p class="card-text"><b>Descripción:</b> ${evento.descripcion}</p>
+                                                                                                                    <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
+                                                                                                                    <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
+                                                                                                                    <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
+                                                                                                                    <p class="card-text"><b>Encargado:</b> ${encargado.par_nombres}</p>
+                                                                                                                    <div class="d-flex justify-content-between">
+                                                                                                                        ${botonAccion}
+                                                                                                                        <button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    `;
                             }).join('');
                             tituloEventos.className = "text-center";
                             tituloEventos.innerHTML = `Eventos para: <b>${dia}-${nombreMes}-${anio}</b>`;
@@ -342,7 +349,7 @@
             @if(session('success'))
                 notyf.success('{{ session('success') }}');
             @endif
-                                                                });
+                                                                                                    });
     </script>
 
 @endsection

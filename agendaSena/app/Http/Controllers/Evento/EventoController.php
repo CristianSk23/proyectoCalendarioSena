@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Traits\CalendarTrait;
 use Carbon\Carbon;
-use Illuminate\Container\Attributes\Log as AttributesLog;
+
 
 class EventoController extends Controller
 {
