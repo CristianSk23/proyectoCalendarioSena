@@ -17,19 +17,19 @@ Route::get('/', [PublicController::class, 'index'])->name('public.index');
 Route::get('/public/{id}', [PublicController::class, 'show'])->name('public.show');
 
 // Ruta del calendario (cambiada a /calendario)
-Route::get('/calendario', [CalendarioController::class, 'generarCalendario'])->name('calendario.index');
+Route::get('/calendario', [CalendarioController::class, 'generarCalendario'])->name('calendario.index')->middleware('auth');
 
 //+++++  ===  Horarios  === +++++
 Route::resource('horarios', HorarioController::class);
 
 //+++++ === EVENTO  ===  +++++
-Route::post('evento/crearPost', [EventoController::class, 'store'])->name('eventos.store')/* ->middleware('auth') */;
-Route::get('evento/buscar', [EventoController::class, 'buscarEventos'])->name('eventos.buscar')/* ->middleware('auth') */;
-Route::get("evento/crear", [EventoController::class, 'create'])->name('eventos.crearEvento');
+Route::post('evento/crearPost', [EventoController::class, 'store'])->name('eventos.store')->middleware('auth');
+Route::get('evento/buscar', [EventoController::class, 'buscarEventos'])->name('eventos.buscar')->middleware('auth');
+Route::get("evento/crear", [EventoController::class, 'create'])->name('eventos.crearEvento')->middleware('auth');
 
-Route::get("evento/editar/{idEvento}", [EventoController::class, 'edit'])->name('eventos.editarEvento');
-Route::post("evento/actualizar/{idEvento}", [EventoController::class, 'update'])->name('eventos.actualizarEvento');
-Route::get("evento/eliminar/{idEvento}", [EventoController::class, 'delete'])->name('eventos.eliminarEvento');
+Route::get("evento/editar/{idEvento}", [EventoController::class, 'edit'])->name('eventos.editarEvento')->middleware('auth');
+Route::post("evento/actualizar/{idEvento}", [EventoController::class, 'update'])->name('eventos.actualizarEvento')->middleware('auth');
+Route::get("evento/eliminar/{idEvento}", [EventoController::class, 'delete'])->name('eventos.eliminarEvento')->middleware('auth');
 Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index');
 
 Route::get("evento/PorConfirmar", [EventoController::class, 'eventosPorConfirmar'])->name('eventos.porConfirmar');
@@ -39,9 +39,9 @@ route::post("confirmarEvento", [EventoController::class, 'confirmarEvento'])->na
 //Route::get("eventosPorFecha", [EventoController::class, 'buscarEventosPorFecha'])->name('eventos.buscarEventoPorFecha');
 
 //+++++ === FOTOGRAFIAS EVENTO  ===  +++++
-Route::get('evento/agregarFotos/{idEvento}', [FotografiaEventoController::class, 'paginaPrincinpal'])->name('eventos.agregarFotos')/* ->middleware('auth') */;
-Route::post('evento/agregarFotos/bd/{idEvento}', [FotografiaEventoController::class, 'create'])->name('eventos.agregarFotosBd')/* ->middleware('auth') */;
-Route::delete('evento/agregarFotos/eliminar/{idEvento}', [FotografiaEventoController::class, 'delete'])->name('eventos.eliminarFotosBd')/* ->middleware('auth') */;
+Route::get('evento/agregarFotos/{idEvento}', [FotografiaEventoController::class, 'paginaPrincinpal'])->name('eventos.agregarFotos')->middleware('auth');
+Route::post('evento/agregarFotos/bd/{idEvento}', [FotografiaEventoController::class, 'create'])->name('eventos.agregarFotosBd')->middleware('auth');
+Route::delete('evento/agregarFotos/eliminar/{idEvento}', [FotografiaEventoController::class, 'delete'])->name('eventos.eliminarFotosBd')->middleware('auth');
 
 
 //  ++++ CALENDARIO  ++++++
@@ -62,7 +62,7 @@ Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendar
 Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
 
 
-//  ++++ LOGIN  ++++++
+//** */  ++++ LOGIN  ++++++
 Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('loginIngresar', [LoginController::class, 'login'])->name('login.ingresar');
 Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');

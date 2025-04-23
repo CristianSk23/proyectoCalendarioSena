@@ -64,10 +64,8 @@
                 <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
                     @csrf
                     <button type="submit" class="btn btn-danger">
-                        <a href="{{ route('public.index') }}" class="btn btn-danger ms-3">
-                            <!-- Ícono de power -->
-                            <i class="bx bx-power-off" style="color: #ffffff;"></i>
-                        </a>
+                        <!-- Ícono de power -->
+                        <i class="bx bx-power-off" style="color: #ffffff;"></i>
                     </button>
                 </form>
             </div>
