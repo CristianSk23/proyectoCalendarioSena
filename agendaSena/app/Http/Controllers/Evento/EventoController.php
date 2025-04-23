@@ -27,6 +27,23 @@ class EventoController extends Controller
         return view('Evento.inicioEvento', compact('eventos'));
     }
 
+    public function vistaPublica()
+    {
+        // Obtener todos los eventos públicos (estadoEvento = 1)
+        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
+            ->where('estadoEvento', 1) // Filtrar solo los eventos con estado 1
+            ->get();
+
+        // Verificar que los eventos se están cargando correctamente
+        // dd($eventos); // Descomentar para depurar
+
+        return view('public.index', compact('eventos'));
+    }
+
+
+
+
+
     public function create(Request $request)
     {
         // Cargar categorías y fichas para el formulario
@@ -383,4 +400,46 @@ class EventoController extends Controller
             'estadoEvento' => 'required|integer',
         ]);
     }
+
+    
+ public function detalleEvento($id)
+ {
+     try {
+         $evento = Evento::with(['horario', 'ambiente', 'categoria', 'participante', 'ficha'])
+             ->where('idEvento', $id)
+             ->where('estadoEvento', 1)
+             ->first();
+
+         if (!$evento) {
+             return response()->json([
+                 'success' => false,
+                 'message' => 'Evento no encontrado o inactivo.'
+             ], 404);
+         }
+
+         return response()->json([
+             'success' => true,
+             'evento' => $evento
+         ]);
+     } catch (\Exception $e) {
+         return response()->json([
+             'success' => false,
+             'message' => 'Error al obtener detalles del evento.',
+             'error' => $e->getMessage()
+         ], 500);
+     }
+ }
+
+ public function mostrarEventos(Request $request)
+ {
+     $fechaSeleccionada = $request->input('fecha'); // Asegúrate de que esta variable tenga el valor correcto
+     $eventos = Evento::whereDate('fechaEvento', $fechaSeleccionada)->get(); // Filtrar los eventos según la fecha seleccionada
+ 
+     return view('eventos.publico', compact('eventos'));
+ }
+
+ 
+
+
+
 }

@@ -78,4 +78,3 @@ Route::get('/api/responsables', [ResponsableController::class, 'index']);
 Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensual'])->name('reportes.pdf.mensual');
 
 // **  controlador de vista publica ******* */
-Route::get('/public', [PublicController::class, 'index'])->middleware('guest');

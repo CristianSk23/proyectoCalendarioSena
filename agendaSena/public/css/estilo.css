@@ -364,326 +364,253 @@ body {
 
 
 
-/* Sidebar */
-.sidebar {
-    height: calc(100vh - 56px); /* Resta la altura del navbar */
-    background-color: #ffffff;
-    position: fixed;
-    top: 56px; /* Posición debajo del navbar */
-    left: 0;
-    width: 410px;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    z-index: 999;
-    overflow-y: auto; /* Para scroll si el contenido es largo */
-}
 
-/* Enlaces en el sidebar */
-.sidebar a {
-    display: block;
-    color: #333;
-    padding: 10px 15px;
-    text-decoration: none;
-    font-size: 18px;
-}
 
-.sidebar a:hover {
-    background-color: #007bff;
-    color: white;
-}
 
-/* Contenedor Principal */
-.content-area {
-    margin-left: 420px; /* Deja espacio para el sidebar */
-    padding: 20px;
-    margin-bottom: 60px; /* Espacio para que el pie de página no quede pegado */
-    transition: margin-left 0.3s;
-}
 
-/* Contenedor del Calendario */
-.calendar-container {
-    width: 100%;
-    max-width: 380px; /* Limita el ancho pero mantiene la flexibilidad */
-    margin: 0 auto;
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e0e0e0;
-    overflow: hidden; /* Evitar desbordamientos */
-}
 
-/* Tabla de Calendario */
-.calendar-table {
-    width: 100%; /* Ocupa el 100% del contenedor */
-    table-layout: fixed; /* Asegura que las celdas no se desborden */
-    border-collapse: separate;
-    border-spacing: 5px;
-}
 
-.calendar-table th {
-    background-color: #2ecc71;
-    color: white;
-    padding: 8px;
-    border-radius: 6px;
-}
 
-.calendar-table td {
-    padding: 8px;
-    text-align: center;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-    overflow: hidden; /* Evitar que el texto se desborde */
-}
-
-.calendar-table td.event-day {
-    background-color: #23c233;
-    color: white;
-    font-weight: bold;
-}
-
-/* Navegación del Calendario */
-.calendar-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 4px;
-}
-
-.calendar-nav .btn {
-    width: 45px;
-    height: 45px;
-    font-size: 18px;
-}
-
-/* Para suavizar los bordes del calendario */
-.calendar-container .table-bordered {
-    border-radius: 10px; /* Redondeamos el borde de la tabla */
-}
-
-.calendar-container {
-    width: 250px; /* Establece un ancho fijo para el calendario */
-    margin: 0 auto; /* Centra el calendario dentro de su contenedor */
-}
-.calendar-table {
-    width: 100%; /* Hace que la tabla ocupe el 100% del contenedor, que ahora tiene un ancho fijo */
-}
-
-.calendar-table td {
-    border-radius: 10px; /* Redondeamos las celdas */
-}
-
-.calendar-table th {
-    border-radius: 40px 10px 0 0; /* Solo redondeamos los bordes superiores */
-    
-}
-
-.card-img-top {
-    height: 200px;
-    object-fit: cover;
-}
-
-.card {
-    transition: transform 0.3s ease;
-}
-
-.card:hover {
-    transform: scale(1.05);
-}
-
-/* Navbar estilo */
-.navbar {
+/*           ************************************                 */
+/* === HEADER === */
+/* Estilo personalizado para navbar */
+.navbar-custom {
+    background-color: #10bd35; /* Verde calendario */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Mejora en los botones */
-.btn-outline-primary, .btn-outline-secondary {
+.navbar-custom .nav-link {
+    color: #f0f3f0 !important;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.navbar-custom .nav-link:hover {
+    color: #23d423 !important; /* Verde muy claro al pasar el mouse */
+}
+
+.navbar-custom .navbar-brand {
+    color: #ffffff !important;
+}
+
+
+/*           ************************************                 */
+/* === GENERAL  PARA LA PÁGINA PÚBLICA === */
+.public-page * {
+    box-sizing: border-box;
+}
+.public-page body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #dfe4e9;
+}
+
+body.public-page .navbar-custom {/* fondo navbar public*/
+    background-color: #10bd35;
+    backdrop-filter: blur(40px);
+    color: rgb(248, 242, 242);
+    color: white !important;
+    /* text-shadow: 0 0 1px #000, 0 0 1px #000; contorno negro fino */
+    /* font-size: 1.4rem; */
     font-weight: 600;
-    color: #2c3e50;
+    letter-spacing: 1.9px;
 }
 
-/* Botones de navegación */
-.calendar-nav btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    color: #2ecc71;
-    transition: all 0.2s ease;
-}
-
-/* Tabla de calendario */
-
-
-/* Estilos del buscador */
-/* Estilos del contenedor de búsqueda dentro del sidebar */
-.search-container {
-    background-color: #ffffff; /* Fondo blanco para el contenedor de búsqueda */
-    padding: 20px;
-    border-radius: 8px; /* Bordes redondeados */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    margin-bottom: 30px; /* Espacio inferior */
-}
-
-/* Título del buscador */
-.search-container h1 {
-    font-size: 22px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 15px;
-}
-
-/* Estilos para los inputs del buscador */
-.search-input-container {
-    margin-bottom: 15px;
-}
-
-.search-input-container label {
-    display: block;
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 5px;
-}
-
-.search-input-container input {
+/* === NAVBAR === */
+.public-page .navbar {
+    position: fixed; /* Navbar fijo arriba */
+    top: 0;
+    left: 0;
     width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-    transition: border-color 0.3s ease;
+    z-index: 1050;
+    background-color: #e1f0ed;
+    box-shadow: 0 4px 6px rgba(36, 36, 36, 0.1);
 }
 
-/* Efecto de enfoque en los inputs */
-.search-input-container input:focus {
-    border-color: #007bff; /* Azul cuando el input está en foco */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sombra de enfoque */
+/* BODY  PUBLIC */
+body.public-page::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/css/Body/CDTI_VERDE.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(var(--blur-nivel, 6px)) brightness(0.9) saturate(0.8);
+    /* opacity: 0.5; */
+    z-index: -2;
+    transition: filter 0.3s ease;
 }
 
-/* Botón de búsqueda (si lo hay) */
-.search-button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
 
-/* Cambio de color del botón al pasar el ratón */
-.search-button:hover {
-    background-color: #0056b3;
-}
-
-/* Contenedor general del sidebar */
-.sidebar {
-    height: 100vh;
-    width: 410px; /* Ancho del sidebar */
-    background-color: #f8f9fa; /* Fondo claro */
+/* === SIDEBAR === */
+.public-page .sidebar {
     position: fixed;
     top: 0;
     left: 0;
-    padding-top: 20px;
-    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15); /* Sombra suave en el sidebar */
-    border-right: 1px solid #ddd; /* Borde derecho sutil */
-    z-index: 999; /* Asegura que el sidebar esté encima del contenido */
+    width: 410px;
+    height: 100vh;
+    background-color: #f8f9fa;
+    padding: 20px;
+    box-shadow: 4px 0 10px rgba(12, 19, 0, 0.15);
+    overflow-y: auto;
+    z-index: 999;
+    border-right: 3px solid #edf3ec;
 }
 
-/* Contenido principal */
-.content-area {
-    margin-left: 420px; /* Deja espacio para el sidebar */
+/* === CALENDARIO === */
+.public-page .calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.public-page .calendar-nav .btn { /*FLEcha*/
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 50%;
+    background-color: #e0f8e9;
+    border: 2px solid #20ae1b;
+    color: #5c6058;
+    transition: all 0.3s ease;
+}
+
+.public-page .calendar-nav .btn:hover {
+    background-color: #11ea44;
+    color: #fff;
+}
+
+.public-page .calendar-container {
+    background-color: #ffffff; /* Fondo verde suave */
+    border-radius: 10px;
+    padding: 14px;
+    box-shadow: 0 3px 8px rgba(231, 232, 228, 0.15); /* se*/
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.public-page .calendar-title {
+    font-size: 13px;
+    margin: 0 0 10px 0;
+}
+
+.public-page .calendar-table {
+    width: 100%;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.public-page .calendar-table th {
+    background-color: #10bd35;;/* Color de dias calendario*/
+    color: white;
+    padding: 10px;
+    border-radius: 40px 10px 0 0;
+    text-shadow: 0 0 1px #000, 0 0 1px #000; /* contorno negro fino */
+   
+}
+
+.public-page .calendar-table td {
+    background-color: #e3e7e4;
+    border-radius: 50%;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+    color: #333;
+    cursor: pointer;
+    
+}
+
+.public-page .calendar-table td:hover {
+    background-color: #d4edda;
+}
+
+.public-page .calendar-table td.event-day {
+    background-color: #48cc2e;/* Color de fechas programadas */
+    color: white;
+    font-weight: bold;
+}
+
+.public-page .calendar-table td.empty-day {
+    background-color: transparent;
+    cursor: default;
+}
+
+/* === BUSCADOR === */
+.public-page .search-input-container {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+}
+
+.public-page .search-input-container label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.public-page .search-input-container input,
+.public-page .search-input-container select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.public-page .search-input-container input:focus,
+.public-page .search-input-container select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* === CONTENIDO PRINCIPAL === */
+.public-page .content-area {
+    margin-left: 420px; /* espacio para el sidebar */
+    margin-top: 70px;   /* espacio para el navbar */
     padding: 20px;
 }
 
-/* Estilos del calendario */
-.calendar-container {
-    width: 410px; /* Establecemos un ancho fijo para el calendario */
-    margin: 0 auto; /* Centra el calendario dentro de su contenedor */
-    text-align: center;
+/* === TARJETAS DE EVENTOS === */
+.public-page .card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.public-page .card {
+    background-color: #fff;
     border-radius: 10px;
-    background-color: #f8f9fa;
-    padding: 14px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
 }
 
-.calendar-table {
+.public-page .card:hover {
+    transform: scale(1.05);
+}
+
+.public-page .card-img-top {
     width: 100%;
-    border-radius: 10px; /* Bordes redondeados */
-    border: 1px solid #ddd; /* Bordes suaves */
-    text-align: center;
-    
-}
-.calendar-title{
-        margin: 0;
-        font-size: 27px;
-        font-weight: 400;
-      
-      
+    height: 250px;
+    object-fit: cover;
 }
 
-/* Estilo de los días en el calendario */
-.calendar-table td {
-    cursor: pointer;
-    border-radius: 50%; /* Bordes redondeados para los días con eventos */
-    padding: 10px;
-    transition: background-color 0.3s ease;
+.public-page .card-body {
+    padding: 15px;
 }
 
-/* Estilo al pasar el mouse sobre los días */
-.calendar-table td:hover {
-    background-color: #d4edda; /* Color suave cuando se pasa el ratón sobre los días */
+/* === BOTONES === */
+.public-page .btn-outline-primary,
+.public-page .btn-outline-secondary {
+    font-weight: 600;
+    border-radius: 5px;
 }
 
-/* Celda que contiene días con eventos */
-.dia-evento {
-    background-color: #c3e6cb; /* Color suave de fondo para los días con eventos */
-}
-
-/* Celda sin evento */
-.bg-light {
-    background-color: #f8f9fa !important;
-}
-/* Estilo para los contenedores de los campos de búsqueda */
-.search-input-container {
-    margin: 10px 0;  /* Espacio entre los elementos */
-    display: flex;
-    flex-direction: column;
-    align-items: center;  /* Centra los elementos */
-    justify-content: Left;
-}
-
-/* Estilo para los inputs y selectores */
-.search-input-container input,
-.search-input-container select {
-    width: 80%;  /* Ancho de los campos de búsqueda */
-    max-width: 400px;  /* Limita el tamaño máximo */
-    padding: 10px;
-    margin: 5px 0;  /* Espacio entre los elementos */
-    border-radius: 5px;  /* Bordes redondeados */
-    border: 1px solid #ccc;  /* Borde gris claro */
-    box-sizing: border-box;  /* Incluye padding y border dentro del tamaño total */
-}
-
-/* Placeholder con estilo centrado */
-.
-
-/* Asegura que todos los campos tengan un borde similar al estilo original */
-.search-input-container input:focus,
-.search-input-container select:focus {
-    border-color: #007bff;  /* Borde azul al hacer foco */
-    outline: none;  /* Elimina el contorno por defecto */
-}
-
-/* Estilo del label para mantener consistencia */
-.search-input-container label {
-    margin-bottom: 5px; /* Espacio debajo de la etiqueta */
-    font-weight: 600; /* Asegura que las etiquetas sean visibles */
-    text-align: left; 
-}
+	

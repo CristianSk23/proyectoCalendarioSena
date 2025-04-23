@@ -1,94 +1,36 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eventos Públicos</title>
-    <!-- Cargar Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Iconos Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
-    
+@include('layouts.header') {{-- o tus estilos/scripts directamente --}}
+
+</head>
 
 
-
-<!-- <meta charset="UTF-8"> -->
-<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
-<!-- <link rel="stylesheet" href="{{ asset('css/estilo.css') }}"> -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700&family=Calibri&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-
-{{-- Estilos BOOTSTRAP --}}
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-    crossorigin="anonymous"></script>
-<title>Agenda CDTI-SENA</title>
-
-<style>
-        /* Ajustes para que el navbar no se superponga al contenido */
-        .navbar {
-            position: fixed; /* Fijamos el navbar en la parte superior */
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1050; /* Aseguramos que esté por encima de otros elementos */
-        }
-
-        /* Añadir un margen superior para el contenido principal para que no quede debajo del navbar */
-        .content-area {
-            margin-top: 70px; /* Ajusta este valor según el tamaño de tu navbar */
-        }
-    </style>
-
-
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg" style="background-color: #4caf50;">
-        <div class="container-fluid">
-        <a class="navbar-brand text-white" href="#">
-    <h1 class="h4">AgenSena</h1>
-</a>
-<a href="{{route('public.index')}}" class="nav-link text-white" aria-current="page">Inicio</a>
-
-            
-            
-                    <a href="{{route('calendario.index')}}" class="nav-link text-white" aria-current="page">Eventos</a>
-                
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="d-flex align-items-center">
-                <div class="position-relative">
-                    <a id="icono-notificacion" href="http://">
-                        <box-icon id="icono-campana" name='bell' type='solid' color='#ffffff'></box-icon>
-                        <box-icon id="icono-notificacion-activa" name='bell-ring' type='solid' color='#ffffff'
-                            style="display: none;"></box-icon>
-                    </a>
-                    <span id="cantidad-eventos"
-                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        
-                    </span>
-                </div>
-                <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
-                    @csrf
-                    <button type="submit" class="btn btn-danger">
-                        <box-icon name='power-off' color='#ffffff'></box-icon>
-                    </button>
-                </form>
-            </div>
+    <!-- Modal -->
+    <div class="modal fade" id="showPublicModal" tabindex="-1" aria-labelledby="publicModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 id="publicModalTitle" class="modal-title">Detalle del Evento</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
-    </nav>
+        <div class="modal-body" id="publicModalBody">
+            <!-- Aquí se carga el contenido del evento con JS -->
+        </div>
+        </div>
+    </div>
+    </div>
+    <!-- fin modal -->
+
+
+
+<body class="public-page">
+
     <!-- Sidebar con Calendario -->
     <div class="sidebar">
-        <h4 class="text-center mb-4">Calendario</h4>
+        <h4 class="text-center mb-4">Calendario</h3>
 
         <!-- Contenedor del calendario -->
         <div class="calendar-nav">
@@ -98,8 +40,8 @@
         </div>
 
         <div class="calendar-container">
-           <did class="text-calendar"> <h1> Calendario</h1>
-            <table class="table table-bordered calendar-table">
+           <!-- <did class="text-calendar"> <h1> Calendario</h1> -->
+            <table class="table calendar-table">
                 <thead>
                     <tr>
                         <th>Dom</th>
@@ -118,14 +60,40 @@
         </div>
                    
         <div>
-         
 
+                         <!-- Filtro por Categorias -->
+                    <!-- <div class="search-input-container">
+                            <label for="category-search">Buscar por categoría:</label>
+                            <select id="category-search" class="form-control" oninput="searchEvent()">
+                                <option value="">Seleccione una categoría</option> -->
+                                <!-- Las categorías se llenan dinámicamente con JavaScript o PHP -->
+                            <!-- </select>
+                        </div> -->
+
+                    <!--  -->
+                    <?php
+                        $categorias = DB::table('categoria')->where('estadoCategoria', 1)->get();
+                    ?>
+
+                    <div class="search-input-container">
+                        <label for="category-search">Buscar por categorías:</label>
+                        <select id="category-search" class="form-control" onchange="searchByCategory()">
+                            <option value="">Seleccione una categoría</option>  <!-- Opción por defecto -->
+                            
+                            @foreach ($categorias as $categoria)
+                                <option value="{{ $categoria->idCategoria }}">{{ $categoria->nomCategoria }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+         
 
                 <!-- Filtro por Fecha -->
                 <div class="search-input-container">
                     <label for="date-search">Buscar por fecha:</label>
                     <input type="date" id="date-search" class="form-control" oninput="searchByDate()">
                 </div>
+                    <!-- Aquí se mostrarán los resultados de los eventos filtrados -->
+<!-- <div id="eventosResultados"></div> -->
 
                 <!-- Filtro por Nombre del Evento -->
                 <div class="search-input-container">
@@ -133,25 +101,25 @@
                     <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre..." oninput="searchEvent()">
                 </div>
 
+        </div>
 
+        <!-- boton mostar todos los eventos -->
+        <div class="mt-3">
+            <button class="btn btn-outline-primary w-100" onclick="mostrarTodosEventos()">
+                Mostrar todos los eventos
+            </button>
         </div>
 
     </div>
 
     <!-- Contenido Principal -->
     <div class="content-area">
-        
-      
-
         <div id="event-details" class="mt-4"></div> <!-- Contenedor para mostrar los eventos -->
     </div>
 
 
 
-
-
-
-
+    </body>
 
     <!-- Cargar Bootstrap JS y dependencias -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
@@ -159,6 +127,7 @@
 
     <script>
         let currentDate = new Date();
+        
         let eventos = @json($eventos); // Eventos pasados desde el backend a JavaScript
 
         // Función para cargar el calendario
@@ -184,9 +153,13 @@
                 cell.innerText = day;
 
                 // Verificar si hay eventos para ese día
+               
                 const eventForDay = eventos.filter(event => {
-                    const eventDate = new Date(event.fechaEvento);
-                    return eventDate.getDate() === day && eventDate.getMonth() === currentDate.getMonth() && eventDate.getFullYear() === currentDate.getFullYear();
+                    const [year, month, dayStr] = event.fechaEvento.split('-');
+                    const eventDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(dayStr)); // ← construcción local
+                    return eventDate.getDate() === day &&
+                        eventDate.getMonth() === currentDate.getMonth() &&
+                        eventDate.getFullYear() === currentDate.getFullYear();
                 });
 
                 // Marcar el día con eventos
@@ -212,73 +185,76 @@
             }
         }
 
-    
+    function createEventCard(event) {
+        const imagenPublicidad = event.publicidad || 'https://via.placeholder.com/150';
+        const imagenURL = `/storage/${imagenPublicidad}`;
+
+        const horario = event.horario || {};
+        const ambiente = event.ambiente || {};
+        const categoria = event.categoria || {};
+         const participante = event.participante || {};
+    const ficha = event.ficha || {};
+
+        // Formatear hora inicio y fin
+        const horaInicio = horario.inicio ? new Date(horario.inicio).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+        const horaFin = horario.fin ? new Date(horario.fin).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+
+        const descripcionCorta = event.descripcion.length > 100 
+            ? event.descripcion.substring(0, 100) + "..." 
+            : event.descripcion;
+
+        return `
+            <div class="card mb-3 shadow-sm">
+                <img src="${imagenURL}" class="card-img-top" alt="Imagen del evento" style="height: 180px; object-fit: cover;">
+                <div class="card-body d-flex flex-column" style="min-height: 200px;">
+                    <h5 class="card-title mb-2">${event.nomEvento}</h5>
+                    <p class="card-text text-muted mb-2" style="font-size: 0.95rem;">${descripcionCorta}</p>
+                    <p class="mb-1"><strong>Fecha:</strong> ${new Date(event.fechaEvento+ 'T00:00:00').toLocaleDateString()}</p>
+                    ${horaInicio && horaFin ? `<p class="mb-1"><strong>Hora:</strong> ${horaInicio} - ${horaFin}</p>` : ''}
+                   ${ambiente.pla_amb_descripcion ? `<p class="mb-1"><strong>Ambiente:</strong> ${ambiente.pla_amb_descripcion}</p>` : ''}
+                    ${categoria.nomCategoria ? `<p class="mb-3"><strong>Categoría:</strong> ${categoria.nomCategoria}</p>` : ''}
+                    ${event.participante?.par_nombres ? `<p class="mb-1"><strong>Solicitante:</strong> ${event.participante.par_nombres} ${event.participante.par_apellidos}</p>` : ''}
+                     <button class="btn btn-primary mt-auto w-100" onclick='openModal(${JSON.stringify(event)})'>Ver más</button>
+                    
+
+                    </div>
+            </div>
+        `;
+    }
 
 
-// Función para mostrar todos los eventos
-function createEventCard(event) {
-    // Aseguramos que la imagen de publicidad esté correctamente definida
-    const imagenPublicidad = event.publicidad || 'https://via.placeholder.com/150';
-    const imagenURL = `/storage/${imagenPublicidad}`;
 
-    // Desestructuramos el horario, ambiente y categoría de los eventos
-    const horario = event.horario || {};  // Si no existe, asignamos un objeto vacío
-    const ambiente = event.ambiente || {};  // Lo mismo para ambiente
-    const categoria = event.categoria || {};  // Lo mismo para categoria
+    function openModal(event) {
+        const horario = event.horario || {};
+        const ambiente = event.ambiente || {};
+        const categoria = event.categoria || {};
+        const imagenURL = `/storage/${event.publicidad || 'https://via.placeholder.com/150'}`;
 
-    // Creamos el HTML para la tarjeta del evento
-    return `
-        <div class="card mb-3" style="max-width: 1000px;">
-            <div class="row g-0">
-                <div class="col-md-4">
-                    <img src="${imagenURL}" class="img-fluid rounded-start" alt="Imagen del evento" style="object-fit: cover; width: 100%; height: 100%;">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <!-- Título del Evento -->
-                        <h5 class="card-title">${event.nomEvento}</h5>
-                        
-                        <!-- Descripción del Evento -->
-                        <p class="card-text">${event.descripcion}</p>
-
-                        <!-- Fecha del Evento -->
-                        <p class="card-text"><small class="text-muted">Fecha: ${new Date(event.fechaEvento).toLocaleDateString()}</small></p>
-
-                        <!-- Mostrar hora de inicio y fin -->
-                        ${horario && horario.inicio && horario.fin ? `
-                            <p class="card-text">
-                                <small class="text-muted">
-                                    Hora: ${new Date(horario.inicio).toLocaleTimeString()} - ${new Date(horario.fin).toLocaleTimeString()}
-                                </small>
-                            </p>
-                        ` : ''}
-
-                        <!-- Mostrar ambiente -->
-                        ${ambiente && ambiente.nombre ? `
-                            <p class="card-text">
-                                <small class="text-muted">Ambiente: ${ambiente.nombre}</small>
-                            </p>
-                        ` : ''}
-
-                        <!-- Mostrar categoría -->
-                        ${categoria && categoria.nombre ? `
-                            <p class="card-text">
-                                <small class="text-muted">Categoría: ${categoria.nombre}</small>
-                            </p>
-                        ` : ''}
+        let contenido = `
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-5">
+                        <img src="${imagenURL}" class="img-fluid mb-3" alt="Imagen del evento">
+                    </div>
+                    <div class="col-md-7">
+                        <h5>${event.nomEvento}</h5>
+                        <p>${event.descripcion}</p>
+                        <p><strong>Fecha:</strong> ${new Date(event.fechaEvento).toLocaleDateString()}</p>
+                        ${horario.inicio && horario.fin ? `<p><strong>Hora:</strong> ${new Date(horario.inicio).toLocaleTimeString()} - ${new Date(horario.fin).toLocaleTimeString()}</p>` : ''}
+                        ${ambiente.nombre ? `<p><strong>Ambiente:</strong> ${ambiente.nombre}</p>` : ''}
+                        ${categoria.nombre ? `<p><strong>Categoría:</strong> ${categoria.nombre}</p>` : ''}
                     </div>
                 </div>
             </div>
-        </div>
-    `;
+        `;
+
+        document.getElementById('publicModalTitle').innerText = event.nomEvento;
+        document.getElementById('publicModalBody').innerHTML = contenido;
+
+        // Mostrar el modal con Bootstrap 5
+        const modal = new bootstrap.Modal(document.getElementById('showPublicModal'));
+        modal.show();
 }
-
-
-
-
-   
-
-
 
 
    function showAllEvents() {
@@ -311,14 +287,13 @@ function createEventCard(event) {
         });
     } else {
         eventDetailsContainer.innerHTML += `
-            <div class="card">
+            <div class="card mb-3 shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">No hay eventos para el siguiente mes.</h5>
                 </div>
             </div>
         `;
     }
-
 
     if (eventsNextMonth.length > 0) {
         // Si hay eventos, mostrar las tarjetas de eventos
@@ -343,7 +318,6 @@ function createEventCard(event) {
         `;
     }
 
-
     // Si no hay eventos en ambos meses, mostrar un mensaje
     if (eventsCurrentMonth.length === 0 && eventsNextMonth.length === 0) {
         eventDetailsContainer.innerHTML = `
@@ -355,39 +329,49 @@ function createEventCard(event) {
         `;
     }
 
+}
 
+       
 
+        // FUNCION REAL DONDE RECIBE LOS DATOS PARA EVALUAR LOS EVENTOS EXISTENTES!!!!!!!!!!!!!!!!!
+        function showEventDetails(day) {
+    console.log("Día seleccionado:", day);
+
+    const eventsForDay = eventos.filter(event => {
+        const [year, month, dayStr] = event.fechaEvento.split('-');
+        const eventDay = parseInt(dayStr, 10);
+        const eventMonth = parseInt(month, 10) - 1;
+        const eventYear = parseInt(year, 10);
+
+        return (
+            eventDay === day &&
+            eventMonth === currentDate.getMonth() &&
+            eventYear === currentDate.getFullYear()
+        );
+    });
+
+    console.log("Eventos encontrados:", eventsForDay);
+
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = ""; // Limpiar
+
+    if (eventsForDay.length > 0) {
+        displayEventsInGrid(eventsForDay);  // 🟢 Tarjetas en filas de 3
+    } else {
+        eventDetailsContainer.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No hay eventos para este día.</h5>
+                    <p class="card-text">No se encuentran eventos programados para el ${day}.</p>
+                </div>
+            </div>
+        `;
+    }
 }
 
 
-        // Función para mostrar los eventos del día seleccionado
-        function showEventDetails(day) {
-            const eventsForDay = eventos.filter(event => {
-                const eventDate = new Date(event.fechaEvento);
-                return eventDate.getDate() === day && eventDate.getMonth() === currentDate.getMonth() && eventDate.getFullYear() === currentDate.getFullYear();
-            });
 
-            const eventDetailsContainer = document.getElementById('event-details');
-            eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
 
-            if (eventsForDay.length > 0) {
-                // Si hay eventos, mostrar las tarjetas de eventos
-                eventsForDay.forEach(event => {
-                       eventDetailsContainer.innerHTML += createEventCard(event);
-                         
-                });
-            } else {
-                //  Si no hay eventos para el día, mostrar el mensaje
-                eventDetailsContainer.innerHTML = `
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">No hay eventos para este día.</h5>
-                            <p class="card-text">No se encuentran eventos programados para el ${day}.</p>
-                        </div>
-                    </div>
-                `;
-            }
-        }
 
         // Función para cambiar al mes siguiente
         document.getElementById('next-month').addEventListener('click', function() {
@@ -405,8 +389,6 @@ function createEventCard(event) {
 
 
 
-
-
         function searchEvent() {
     const searchInput = document.getElementById('search-input').value.toLowerCase();
     
@@ -417,9 +399,11 @@ function createEventCard(event) {
     const filteredEvents = eventos.filter(event => event.nomEvento.toLowerCase().includes(searchInput));
 
     if (filteredEvents.length > 0) {
+        
         // Si se encuentran eventos, generamos las tarjetas usando createEventCard
         filteredEvents.forEach(event => {
-            const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
+            displayEventsInGrid(filteredEvents);
+              // Llamamos a la función createEventCard
             eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
         });
     } else {
@@ -435,11 +419,9 @@ function createEventCard(event) {
     }
 }
 
-
-
     //****BUSQUEDA POR FECHA***
 // Filtrar por fecha seleccionada
-// Filtrar por fecha seleccionada
+
 function searchByDate() {
     const dateInput = document.getElementById('date-search').value;  // Obtener la fecha seleccionada
     
@@ -473,84 +455,74 @@ function searchByDate() {
 
     // Mostrar los eventos filtrados
     if (filteredEvents.length > 0) {
-        filteredEvents.forEach(event => {
-            const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
-            eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
-        });
+        displayEventsInGrid(filteredEvents);
     } else {
         // Si no se encuentran eventos después del filtro por fecha
-        eventDetailsContainer.innerHTML = `
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">No se encontraron eventos para la fecha seleccionada.</h5>
-                    <p class="card-text">No hay eventos programados para esta fecha.</p>
-                </div>
-            </div>
-        `;
+        mostrarMensajeSinEventos("No hay eventos para esta categoría.");
+        
     }
 }
 
 
+function mostrarMensajeSinEventos(mensaje) {
+    const container = document.getElementById('event-details');
+    container.innerHTML = `
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">${mensaje}</h5>
+            </div>
+        </div>
+    `;
+}
+
+  //++++ CATEGORIA++++
+
+// Filtrar por categoria seleccionada
+function searchByCategory() {
+        const categoryInput = document.getElementById('category-search').value;  // Obtener la categoría seleccionada
+        console.log("Categoría seleccionada:", categoryInput);  // Verificar la categoría seleccionada
+
+        const eventDetailsContainer = document.getElementById('event-details');
+        eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
+
+        console.log(categoryInput);
+        
+
+        // Si no se seleccionó una categoría, no filtramos y mostramos todos los eventos
+        if (!categoryInput) {
+            displayAllEvents(); // Función que muestra todos los eventos sin filtro
+            return;
+        }
+
+        // Filtrar eventos por la categoría seleccionada
+        const filteredEvents = eventos.filter(event => {
+            return event.idCategoria == categoryInput;  // Comparar el ID de la categoría
+        });
+
+        // Mostrar los eventos filtrados
+        if (filteredEvents.length > 0) {
+            displayEventsInGrid(filteredEvents);
+        } else {
+            // Si no se encuentran eventos después del filtro por categoría
+            eventDetailsContainer.innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">No se encontraron eventos para la categoría seleccionada.</h5>
+                        <p class="card-text">No hay eventos programados para esta categoría.</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
 
 
 
 
-    //++++ CATEGORIA++++
-
-// // Filtrar por categoria seleccionada
-// function searchByCategory() {
-//         const categoryInput = document.getElementById('category-search').value;  // Obtener la categoría seleccionada
-//         console.log("Categoría seleccionada:", categoryInput);  // Verificar la categoría seleccionada
-
-//         const eventDetailsContainer = document.getElementById('event-details');
-//         eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
-
-//         // Si no se seleccionó una categoría, no filtramos y mostramos todos los eventos
-//         if (!categoryInput) {
-//             displayAllEvents(); // Función que muestra todos los eventos sin filtro
-//             return;
-//         }
-
-//         // Filtrar eventos por la categoría seleccionada
-//         const filteredEvents = eventos.filter(event => {
-//             return event.idCategoria == categoryInput;  // Comparar el ID de la categoría
-//         });
-
-//         // Mostrar los eventos filtrados
-//         if (filteredEvents.length > 0) {
-//             filteredEvents.forEach(event => {
-//                 const cardHTML = createEventCard(event);  // Llamamos a la función createEventCard
-//                 eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
-//             });
-//         } else {
-//             // Si no se encuentran eventos después del filtro por categoría
-//             eventDetailsContainer.innerHTML = `
-//                 <div class="card">
-//                     <div class="card-body">
-//                         <h5 class="card-title">No se encontraron eventos para la categoría seleccionada.</h5>
-//                         <p class="card-text">No hay eventos programados para esta categoría.</p>
-//                     </div>
-//                 </div>
-//             `;
-//         }
-//     }
 
 
 
 
-// // Funcion para crear la tarjeta de cada evento
-// function createEventCard(event) {
-//     return `
-//         <div class="card">
-//             <div class="card-body">
-//                 <h5 class="card-title">${event.nomEvento}</h5>
-//                 <p class="card-text">Fecha: ${event.fechaEvento}</p>
-//                 <p class="card-text">Categoria: ${event.categoria}</p>
-//                 <p class="card-text">${event.descripcion}</p>
-//             </div>
-//         </div>
-//     `;
-// }
+
 
 
 
@@ -582,11 +554,27 @@ function searchByDate() {
             }
         }
 
-        
+        // para la cuadricula de  eventos
+    function displayEventsInGrid(events) {
+        const eventDetailsContainer = document.getElementById('event-details');
+        eventDetailsContainer.innerHTML = ''; // Limpiar
 
+        for (let i = 0; i < events.length; i += 3) {
+            let rowHTML = '<div class="row mb-4">';
+            const chunk = events.slice(i, i + 3);
 
+            chunk.forEach(event => {
+                rowHTML += `
+                    <div class="col-md-4">
+                        ${createEventCard(event)}
+                    </div>
+                `;
+            });
 
-
+            rowHTML += '</div>';
+            eventDetailsContainer.innerHTML += rowHTML;
+        }
+    }
 
 
 
@@ -596,7 +584,66 @@ function searchByDate() {
         // Cargar el calendario y eventos iniciales
         loadCalendar();
         showAllEvents();
+
+
+
+
+
+    
+
+
+
+
+    const todosLosEventos = @json($eventos);
+
+
+    function mostrarTodosEventos() {
+        const eventDetailsContainer = document.getElementById('event-details');
+        eventDetailsContainer.innerHTML = ""; // Limpiar
+
+        if (todosLosEventos.length > 0) {
+            displayEventsInGrid(todosLosEventos);  // ← Aquí usas tu función que los muestra en cuadrícula
+        } else {
+            eventDetailsContainer.innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">No se encontraron eventos.</h5>
+                        <p class="card-text">No hay eventos programados en este momento.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        document.getElementById('search-input').value = '';
+    document.getElementById('date-search').value = '';
+    document.getElementById('category-search').value = '';
+    }
+
+    
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

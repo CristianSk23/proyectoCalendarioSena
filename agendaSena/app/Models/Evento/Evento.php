@@ -8,7 +8,7 @@ use App\Models\Horario\Horario;
 use App\Models\Categoria\categoria;
 use App\Models\Ambiente\Ambiente;
 use App\Models\Ficha\Ficha;
-use App\Models\sep_participante\Participante;
+use App\Models\Participante\Participante;
 
 class Evento extends Model
 {
@@ -34,7 +34,23 @@ class Evento extends Model
         'publicidad',
         'estadoEvento',
     ];
+    protected $with = ['categoria', 'horario', 'ambiente', 'ficha', 'participante'];
 
+    // Asegura visibilidad al serializar como JSON
+    protected $visible = [
+        'idEvento',
+        'nomEvento',
+        'descripcion',
+        'fechaEvento',
+        'publicidad',
+        'estadoEvento',
+        'categoria',
+        'horario',
+        'ambiente',
+        'ficha',
+        'participante'
+    ];
+    
     // Relación con Horario
     public function horario()
     {

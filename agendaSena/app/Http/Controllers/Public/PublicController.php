@@ -8,31 +8,39 @@ use Illuminate\Http\Request;
 
 class PublicController extends Controller
 {
+   
+    
     public function index()
     {
         // Obtener todos los eventos públicos (estadoEvento = 1)
-        $eventos = Evento::where('estadoEvento', 1)->get();
+        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
+            ->where('estadoEvento', 1) // Filtrar solo los eventos con estado 1
+            ->get();
 
-        // Pasar los datos a la vista
+        
+            // dd($eventos->toArray());
+
+
+        // Verificar que los eventos se están cargando correctamente
+        if ($eventos->isEmpty()) {
+            // Puedes agregar un mensaje de depuración aquí
+            dd('No hay eventos disponibles con estado 1.');
+        }
+
         return view('public.index', compact('eventos'));
     }
 
-    // public function show($id)
-    // {
-    //     // Obtener un evento específico
-    //     $evento = Evento::findOrFail($id);
 
-    //     // Pasar los datos a la vista
-    //     return view('public.show', compact('evento'));
-    // }
+    public function show($id)
+    {
+        // Obtener un evento específico
+        $evento = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
+            ->where('idEvento', $id)
+            ->where('estadoEvento', 1)
+            ->firstOrFail();
 
-    public function showEventos()
-{
-    // Obtener los eventos desde la base de datos
-    $eventos = Evento::all();  // O ajusta la consulta según lo que necesites
-
-    return view('eventos', compact('eventos'));
-}
-
+        // Pasar los datos a la vista
+        return view('public.show', compact('evento'));
+    }
 
 }
