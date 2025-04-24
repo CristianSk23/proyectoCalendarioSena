@@ -760,3 +760,256 @@ body {
     font-weight: 600; /* Asegura que las etiquetas sean visibles */
     text-align: left; 
 }
+
+
+
+
+
+/* ESTILO VISTA PUBLICA */
+
+
+
+
+
+/* === HEADER === */
+/* Estilo personalizado para navbar */
+.navbar-custom {
+    background-color: #10bd35; /* Verde calendario */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-custom .nav-link {
+    color: #f0f3f0 !important;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.navbar-custom .nav-link:hover {
+    color: #23d423 !important; /* Verde muy claro al pasar el mouse */
+}
+
+.navbar-custom .navbar-brand {
+    color: #ffffff !important;
+}
+
+
+            
+/* === GENERAL  PARA LA PÁGINA PÚBLICA === */
+.public-page * {
+    box-sizing: border-box;
+}
+.public-page body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #dfe4e9;
+}
+
+body.public-page .navbar-custom {/* fondo navbar public*/
+    background-color: #10bd35;
+    backdrop-filter: blur(40px);
+    color: rgb(248, 242, 242);
+    color: white !important;
+    /* text-shadow: 0 0 1px #000, 0 0 1px #000; contorno negro fino */
+    /* font-size: 1.4rem; */
+    font-weight: 600;
+    letter-spacing: 1.9px;
+}
+
+/* === NAVBAR === */
+.public-page .navbar {
+    position: fixed; /* Navbar fijo arriba */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050;
+    background-color: #e1f0ed;
+    box-shadow: 0 4px 6px rgba(36, 36, 36, 0.1);
+}
+
+/* BODY  PUBLIC */
+body.public-page::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/css/Body/CDTI_VERDE.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(var(--blur-nivel, 6px)) brightness(0.9) saturate(0.8);
+    /* opacity: 0.5; */
+    z-index: -2;
+    transition: filter 0.3s ease;
+}
+
+
+/* === SIDEBAR === */
+.public-page .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 410px;
+    height: 100vh;
+    background-color: #f8f9fa;
+    padding: 20px;
+    box-shadow: 4px 0 10px rgba(12, 19, 0, 0.15);
+    overflow-y: auto;
+    z-index: 999;
+    border-right: 3px solid #edf3ec;
+}
+
+/* === CALENDARIO === */
+.public-page .calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.public-page .calendar-nav .btn { /*FLEcha*/
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 50%;
+    background-color: #e0f8e9;
+    border: 2px solid #20ae1b;
+    color: #5c6058;
+    transition: all 0.3s ease;
+}
+
+.public-page .calendar-nav .btn:hover {
+    background-color: #11ea44;
+    color: #fff;
+}
+
+.public-page .calendar-container {
+    background-color: #ffffff; /* Fondo verde suave */
+    border-radius: 10px;
+    padding: 14px;
+    box-shadow: 0 3px 8px rgba(231, 232, 228, 0.15); /* se*/
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.public-page .calendar-title {
+    font-size: 13px;
+    margin: 0 0 10px 0;
+}
+
+.public-page .calendar-table {
+    width: 100%;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.public-page .calendar-table th {
+    background-color: #10bd35;;/* Color de dias calendario*/
+    color: white;
+    padding: 10px;
+    border-radius: 40px 10px 0 0;
+    text-shadow: 0 0 1px #000, 0 0 1px #000; /* contorno negro fino */
+   
+}
+
+.public-page .calendar-table td {
+    background-color: #e3e7e4;
+    border-radius: 50%;
+    padding: 10px;
+    transition: background-color 0.3s ease;
+    color: #333;
+    cursor: pointer;
+    
+}
+
+.public-page .calendar-table td:hover {
+    background-color: #d4edda;
+}
+
+.public-page .calendar-table td.event-day {
+    background-color: #48cc2e;/* Color de fechas programadas */
+    color: white;
+    font-weight: bold;
+}
+
+.public-page .calendar-table td.empty-day {
+    background-color: transparent;
+    cursor: default;
+}
+
+/* === BUSCADOR === */
+.public-page .search-input-container {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+}
+
+.public-page .search-input-container label {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.public-page .search-input-container input,
+.public-page .search-input-container select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.public-page .search-input-container input:focus,
+.public-page .search-input-container select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* === CONTENIDO PRINCIPAL === */
+.public-page .content-area {
+    margin-left: 420px; /* espacio para el sidebar */
+    margin-top: 70px;   /* espacio para el navbar */
+    padding: 20px;
+}
+
+/* === TARJETAS DE EVENTOS === */
+.public-page .card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.public-page .card {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.public-page .card:hover {
+    transform: scale(1.05);
+}
+
+.public-page .card-img-top {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.public-page .card-body {
+    padding: 15px;
+}
+
+/* === BOTONES === */
+.public-page .btn-outline-primary,
+.public-page .btn-outline-secondary {
+    font-weight: 600;
+    border-radius: 5px;
+}
+
+	
