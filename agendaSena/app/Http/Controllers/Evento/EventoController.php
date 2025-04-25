@@ -44,10 +44,12 @@ class EventoController extends Controller
         try {
             // Validar los datos enviados al controlador usando la función privada
             $validatedData = $this->validateRequest($request);
-
+            log::info('Datos validados: ', $request->all());
             //* Guardar la imagen en el sistema de archivos si se proporciona
             if ($request->hasFile('publicidad')) {
                 $rutaImagen = $request->file('publicidad')->store('imagenes', 'public');
+                log::info('ruta imagen: ' . $rutaImagen);
+
                 $validatedData['publicidad'] = $rutaImagen; // Agregar la ruta de la imagen a los datos validados
             }
 
@@ -74,6 +76,7 @@ class EventoController extends Controller
 
             // Agregar el ID del horario a los datos validados
             $validatedData['idHorario'] = $horario->idHora;
+            Log::info('numero de la ficha ' . $validatedData['fic_numero']);
 
             // Crear el evento utilizando los datos validados
             Evento::create([
@@ -90,12 +93,12 @@ class EventoController extends Controller
                 'estadoEvento' => $validatedData['estadoEvento'],
                 'nomSolicitante' => $validatedData['nomSolicitante'], // Agregado desde la búsqueda del participante
             ]);
-
             // Redirigir con un mensaje de éxito
             return redirect()->route('calendario.index')->with('success', 'Evento creado exitosamente.');
         } catch (\Exception $e) {
             // Registrar el error en los logs y devolver un mensaje
-            return redirect()->back()->with('error', 'Ocurrió un error: ' . $e->getMessage());
+            log::error('Error al crear el evento: ' . $e->getMessage());
+            return redirect()->route('eventos.crearEvento')->with('error', 'Ocurrió un error: ' . $e->getMessage());
         }
     }
 
@@ -175,8 +178,8 @@ class EventoController extends Controller
         // Buscar eventos para la fecha específica
         try {
             $eventos = Evento::whereDate('fechaEvento', $fecha)
-            ->where('estadoEvento', "<>", 0)
-            ->get();
+                ->where('estadoEvento', "<>", 0)
+                ->get();
             $resultados = [];
             foreach ($eventos as $evento) {
                 $idAmbiente = $evento->pla_amb_id;
@@ -292,10 +295,9 @@ class EventoController extends Controller
             foreach ($eventos as $evento) {
                 $idAmbiente = $evento->pla_amb_id;
                 $idHorario = $evento->idHorario;
-               
+
                 $ambiente = Ambiente::find($idAmbiente); // Busca por clave primaria
                 $horario = Horario::find($idHorario);
-               
             };
             return response()->json([
                 'eventos' => $eventos,
