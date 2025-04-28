@@ -68,7 +68,10 @@ Route::post('loginIngresar', [LoginController::class, 'login'])->name('login.ing
 Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');
 
 //**** reportes*** */
-Route::get('evento/reportes', [ReporteController::class, 'index_report'])->name('evento.reportes.index');
+// Route::get('evento/reportes', [ReporteController::class, 'index_report'])->name('evento.reportes.index');
+
+Route::middleware('auth')->get('/reportes', [ReportesController::class, 'index'])->name('evento.reportes.index');
+
 Route::post('/reportes/mensual', [ReporteController::class, 'generarReporteMensual'])->name('reportes.mensual');
 Route::post('/reportes/anual', [ReporteController::class, 'generarReporteAnual'])->name('reportes.anual');
 Route::get('/reportes/filtrar', [ReporteController::class, 'filtrarReportes'])->name('reportes.filtrar');
@@ -84,3 +87,20 @@ Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensu
 
 // **  controlador de vista publica ******* */
 Route::get('/public', [PublicController::class, 'index'])->middleware('guest');
+
+
+
+// se agrega vista e ecuestar para  solicitar evento
+Route::get('/solicitud-evento', [EventoController::class, 'solicitudPublica'])->name('evento.solicitud');
+Route::post('/evento/updatepublica/{evento}', [EventoController::class, 'updatePublica'])->name('evento.updatePublica');
+
+
+
+
+
+// Route::get('/test-session-table', function () {
+//     dd(config('session.table'));
+// });
+
+
+

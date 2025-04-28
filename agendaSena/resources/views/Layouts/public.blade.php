@@ -9,19 +9,30 @@
 
 
     <!-- Modal -->
-    <div class="modal fade" id="showPublicModal" tabindex="-1" aria-labelledby="publicModalTitle" aria-hidden="true">
+
+<div class="modal fade" id="showPublicModal" tabindex="-1" aria-labelledby="publicModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 id="publicModalTitle" class="modal-title">Detalle del Evento</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body" id="publicModalBody">
-            <!-- Aquí se carga el contenido del evento con JS -->
-        </div>
+            <!-- Cabecera del modal -->
+            <div class="modal-header custom-modal-header">
+                <h5 id="publicModalTitle" class="modal-title">Detalle del Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <!-- Cuerpo del modal -->
+            <div class="modal-body" id="publicModalBody">
+                <!-- Aquí se cargará el contenido del evento con JS -->
+            </div>
+
+            <!-- Pie de modal -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
         </div>
     </div>
-    </div>
+</div>
+
+
     <!-- fin modal -->
 
 
@@ -100,8 +111,8 @@
                     <label for="search-input">Buscar por nombre:</label>
                     <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre..." oninput="searchEvent()">
                 </div>
-
         </div>
+    
 
         <!-- boton mostar todos los eventos -->
         <div class="mt-3">
@@ -110,13 +121,33 @@
             </button>
         </div>
 
+        <div class="mt-3">
+            <a href="{{ route('evento.solicitud') }}" class="btn btn-outline-primary w-100">
+                Agregar Evento
+            </a>
+
+            <!-- <a href="{{ route('login') }}" class="btn btn-primary">
+                Iniciar Sesión
+            </a> -->
+
+        </div>
+
+        
+
+
     </div>
+
+    
 
     <!-- Contenido Principal -->
     <div class="content-area">
         <div id="event-details" class="mt-4"></div> <!-- Contenedor para mostrar los eventos -->
-    </div>
+   
 
+    <!--  -->
+    <!-- <div class="content-area"> -->
+        @yield('content-2') <!-- Aquí se mostrará la vista -->
+    </div>
 
 
     </body>
@@ -215,8 +246,7 @@
                    ${ambiente.pla_amb_descripcion ? `<p class="mb-1"><strong>Ambiente:</strong> ${ambiente.pla_amb_descripcion}</p>` : ''}
                     ${categoria.nomCategoria ? `<p class="mb-3"><strong>Categoría:</strong> ${categoria.nomCategoria}</p>` : ''}
                     ${event.participante?.par_nombres ? `<p class="mb-1"><strong>Solicitante:</strong> ${event.participante.par_nombres} ${event.participante.par_apellidos}</p>` : ''}
-                     <button class="btn btn-primary mt-auto w-100" onclick='openModal(${JSON.stringify(event)})'>Ver más</button>
-                    
+                    <button class="btn btn-primary mt-auto w-100" onclick='openModal(${JSON.stringify(event)})'>Ver más</button>                    
 
                     </div>
             </div>
@@ -224,44 +254,41 @@
     }
 
 
-
     function openModal(event) {
         const horario = event.horario || {};
         const ambiente = event.ambiente || {};
         const categoria = event.categoria || {};
+        const participante = event.participante || {};
         const imagenURL = `/storage/${event.publicidad || 'https://via.placeholder.com/150'}`;
+        const fecha = new Date(event.fechaEvento).toLocaleDateString();
+        const horaInicio = horario.inicio || '';
+        const horaFin = horario.fin || '';
 
         let contenido = `
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-5">
-                        <img src="${imagenURL}" class="img-fluid mb-3" alt="Imagen del evento">
-                    </div>
-                    <div class="col-md-7">
-                        <h5>${event.nomEvento}</h5>
-                        <p>${event.descripcion}</p>
-                        <p><strong>Fecha:</strong> ${new Date(event.fechaEvento).toLocaleDateString()}</p>
-                        ${horaInicio && horaFin ? `<p class="mb-1"><strong>Hora:</strong> ${horaInicio} - ${horaFin}</p>` : ''}
-                        ${ambiente.nombre ? `<p><strong>Ambiente:</strong> ${ambiente.nombre}</p>` : ''}
-                        ${categoria.nombre ? `<p><strong>Categoría:</strong> ${categoria.nombre}</p>` : ''}
-                    </div>
-                </div>
-            </div>
+            <img src="${imagenURL}" alt="Imagen del evento">
+            <h5>${event.nomEvento}</h5>
+            <p>${event.descripcion}</p>
+            <p><strong>Fecha:</strong> ${fecha}</p>
+            ${horaInicio && horaFin ? `<p><strong>Hora:</strong> ${horaInicio} - ${horaFin}</p>` : ''}
+            ${ambiente.pla_amb_descripcion ? `<p><strong>Ambiente:</strong> ${ambiente.pla_amb_descripcion}</p>` : ''}
+            ${categoria.nomCategoria ? `<p><strong>Categoría:</strong> ${categoria.nomCategoria}</p>` : ''}
+            ${participante.par_nombres ? `<p><strong>Solicitante:</strong> ${participante.par_nombres} ${participante.par_apellidos}</p>` : ''}
         `;
 
         document.getElementById('publicModalTitle').innerText = event.nomEvento;
         document.getElementById('publicModalBody').innerHTML = contenido;
 
-        // Mostrar el modal con Bootstrap 5
         const modal = new bootstrap.Modal(document.getElementById('showPublicModal'));
         modal.show();
-}
+    }
+
 
 
    function showAllEvents() {
     const eventDetailsContainer = document.getElementById('event-details');
     eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
 
+    eventos.sort((a, b) => new Date(a.fechaEvento) - new Date(b.fechaEvento));
     // Obtener el mes y año actual
     const currentMonth = new Date().getMonth();  // El mes actual (0-11)
     const currentYear = new Date().getFullYear();  // El año actual
@@ -517,17 +544,6 @@ function searchByCategory() {
             `;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

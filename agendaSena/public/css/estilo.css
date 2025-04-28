@@ -444,7 +444,7 @@ body {
     position: fixed;
     top: 56px; /* Posición debajo del navbar */
     left: 0;
-    width: 410px;
+    width: 710px;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     z-index: 999;
@@ -1012,4 +1012,92 @@ body.public-page::before {
     border-radius: 5px;
 }
 
-	
+
+
+
+
+
+/* MODAL PUBLIC */
+
+/* Imagen del modal: más grande y destacada */
+.modal-body img {
+    width: 100%;
+    max-height: 400px; /* Máxima altura controlada */
+    object-fit: contain; /* Garantiza que la imagen se ajuste bien sin deformarse */
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra sutil */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Mejorar legibilidad del texto */
+#publicModalBody h5 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+}
+
+#publicModalBody p {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Animación personalizada para el modal */
+.modal.fade .modal-dialog {
+    transform: translateY(-50px);
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    opacity: 0;
+}
+
+.modal.fade.show .modal-dialog {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Header del modal con borde iluminado y color verde elegante */
+.custom-modal-header {
+    background: linear-gradient(90deg, #218a39, #885d21); /* Verde elegante */
+    color: white;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    box-shadow: 0 0 12px rgba(40, 167, 69, 0.5); /* Efecto glow */
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.custom-modal-header h5 {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+/* Botón de cerrar del modal */
+.custom-modal-header .btn-close {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+}
+
+/* Efecto de animación para el modal en la apertura */
+.modal-dialog {
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.modal.fade .modal-dialog {
+    opacity: 0;
+    transform: translateY(-50px);
+}
+
+.modal.fade.show .modal-dialog {
+    opacity: 1;
+    transform: translateY(0);
+}

@@ -49,19 +49,20 @@
 
 
     <!-- Modal -->
-<div class="modal fade" id="eventoModal" tabindex="-1" aria-labelledby="eventoModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="eventoModalLabel">Detalles del Evento</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body" id="modalBody">
-        <!-- Contenido se llena por JS -->
-      </div>
+    <div class="modal fade" id="showPublicModal" tabindex="-1" aria-labelledby="publicModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="publicModalTitle" class="modal-title">Detalle del Evento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="publicModalBody">
+                    <!-- Aquí se carga el contenido del evento con JS -->
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
+
 
     @push('scripts')
     <script>

@@ -9,6 +9,7 @@ use App\Models\Usuario\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Evento\ReporteController;
 
 class LoginController extends Controller
 {
@@ -39,6 +40,14 @@ class LoginController extends Controller
             Log::error('Error de inicio de sesión: ' . $request->par_identificacion);
             return redirect()->route('login')->with('error', 'Número de identificación o contraseña incorrectos.');
         } // Si la autenticación falla
+
+        if (Auth::attempt($credentials)) {
+            // Redirigir al usuario a la página a la que intentaba acceder
+            return redirect()->intended(route('evento.reportes.index'))->with('success', 'Inicio de sesión exitoso');
+        } else {
+            // Si las credenciales son incorrectas, redirige al login con un error
+            return redirect()->route('login')->with('error', 'Número de identificación o contraseña incorrectos.');
+        }
 
     }
 
