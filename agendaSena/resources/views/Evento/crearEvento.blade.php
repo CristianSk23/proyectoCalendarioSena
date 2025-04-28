@@ -78,8 +78,8 @@
         </div>
 
         <div class="mb-3">
-            <label for="idFicha" class="form-label">Ficha:</label>
-            <select name="idFicha" id="idFicha" class="form-select" required>
+            <label for="fic_numero" class="form-label">Ficha:</label>
+            <select name="fic_numero" id="fic_numero" class="form-select" required>
                 <option value="">Seleccionar Ficha</option>
                 @foreach ($fichas as $ficha)
                     < <option value="{{ $ficha->fic_numero }}" {{ isset($evento) && $evento->fic_numero == $ficha->fic_numero ? 'selected' : '' }}>
@@ -202,5 +202,18 @@
 
         // Cargar la primera página al inicio
         cargarParticipantes();
+
+        const notyf = new Notyf({
+            position: {
+                x: 'center',
+                y: 'top',
+            },
+        });
+
+        @if(session('error'))
+            console.log('{{ session('error') }}');
+
+            notyf.error('{{ session('error') }}');
+        @endif
     </script>
 @endsection
