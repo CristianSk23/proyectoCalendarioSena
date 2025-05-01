@@ -86,12 +86,23 @@
         </div>
     </nav>
 
+    
     <script>
         // Tu código de JavaScript para la gestión de eventos y notificaciones aquí
     </script>
 
     @yield('contentReportes')
 
+    <footer class="agensena-footer">
+    <div class="agensena-footer-content">
+        SENA | CENTRO DE DISEÑO TECNOLÓGICO INDUSTRIAL &copy; {{ date('Y') }}
+    </div>
+</footer>
+
+   
 </body>
+
+
+
 
 </html>

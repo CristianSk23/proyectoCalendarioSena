@@ -146,9 +146,17 @@
 
     <!--  -->
     <!-- <div class="content-area"> -->
-        @yield('content-2') <!-- Aquí se mostrará la vista -->
+        @yield('content') <!-- Aquí se mostrará la vista -->
     </div>
 
+
+
+
+    <footer class="agensena-footer">
+        <div class="agensena-footer-content">
+            SENA CDTI  | CENTRO DE DISEÑO TECNOLÓGICO INDUSTRIAL &copy; {{ date('Y') }}
+        </div>
+    </footer>
 
     </body>
 

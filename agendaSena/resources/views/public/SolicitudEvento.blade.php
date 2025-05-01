@@ -1,6 +1,6 @@
 @extends('layouts.public')
 
-@section('content-2')
+@section('content')
 
 <!-- Solicitud para quien  -->
 

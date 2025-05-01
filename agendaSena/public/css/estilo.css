@@ -833,7 +833,7 @@ body.public-page::before {
     top: 0; left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('/css/Body/CDTI_VERDE.jpg');
+    /* background-image: url('/css/Body/CDTI_VERDE.jpg');   IMAGEN FONDO CONTENIDO PUBLICO*/
     background-size: cover;
     background-position: center;
     filter: blur(var(--blur-nivel, 6px)) brightness(0.9) saturate(0.8);
@@ -1100,4 +1100,23 @@ body.public-page::before {
 .modal.fade.show .modal-dialog {
     opacity: 1;
     transform: translateY(0);
+}
+
+
+
+/* FOOTER   -°|>><<|°-  PIE DE PAGINA */
+
+
+.agensena-footer {
+    background-color: #4caf50;
+    padding: 1rem 0;
+    text-align: center;
+    color: white;
+    margin-top: auto;
+}
+
+.agensena-footer-content {
+    font-family: 'Work Sans', 'Calibri', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
 }
