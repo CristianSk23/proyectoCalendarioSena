@@ -2,15 +2,25 @@
 
 @section('content')
 
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap JS (antes de cerrar body) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
 <!-- Solicitud para quien  -->
 
 <h1 class="h2 font-weight-bold mb-4" style="color: grey; text-shadow: -1px 0 green, 0 1px green, 1px 0 white, 0 -1px white;">
-    Crear Evento
+    Solicitar Evento
 </h1>
 
-    <form action="{{ isset($evento) ? route('eventos.updateEvento', $evento->idEvento) : route('eventos.store') }}"
-        method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded shadow" id="forularioEvento">
+
+    <form id="formularioEvento" method="POST" action="{{ route('evento.solicitud.store') }}" enctype="multipart/form-data">
         @csrf
+        <!-- campos del formulario -->
+    
+
 
         <div class="mb-3">
             <label for="par_identificacion" class="form-label">Encargado del Evento:</label>
@@ -87,7 +97,7 @@
             <select name="idFicha" id="idFicha" class="form-select" required>
                 <option value="">Seleccionar Ficha</option>
                 @foreach ($fichas as $ficha)
-                    < <option value="{{ $ficha->fic_numero }}" {{ isset($evento) && $evento->fic_numero == $ficha->fic_numero ? 'selected' : '' }}>
+                     <option value="{{ $ficha->fic_numero }}" {{ isset($evento) && $evento->fic_numero == $ficha->fic_numero ? 'selected' : '' }}>
                         {{ $ficha->fic_numero }}
                         </option>
                 @endforeach
@@ -124,58 +134,90 @@
             <div class="invalid-feedback">El evento debe tener un estado.</div>
         </div>
 
-        <button type="submit" class="btn btn-success">
-            {{ isset($evento) ? 'Actualizar Evento' : 'Crear Evento' }}
-        </button>
-    </form>
+        
+    <!-- Campos ocultos para insertar identificación y contraseña después de la validación -->
+    <input type="hidden" name="par_identificacion">
+    <input type="hidden" name="password">
 
 
+   
 
 
+   <!-- Modal de Validación de Usuario -->
+  
 
-    <script>
+    <button type="button" class="btn btn-success" onclick="abrirModalAutenticacion()"> Enviar Evento </button>
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const formulario = document.getElementById('forularioEvento');
+</form>
+<div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form id="authForm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="authModalLabel">Verifica tu identidad</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="auth_identificacion" class="form-label">Identificación</label>
+                            <input type="text" class="form-control" id="auth_identificacion" name="auth_identificacion" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="auth_password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="auth_password" name="auth_password" required>
+                        </div>
+                        <div id="auth_error" class="text-danger"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Validar y Enviar Evento</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
-            // Validación en tiempo real
-            formulario.addEventListener('input', function (e) {
-                const input = e.target;
-                validadorInputs(input);
-            });
+    
 
-            // Validación al enviar
-            formulario.addEventListener('submit', function (e) {
-                if (!formulario.checkValidity()) {
-                    e.preventDefault();
-                    e.stopPropagation();
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Referencia al formulario principal
+        const formulario = document.getElementById('formularioEvento');
 
-                    // Mostrar todos los errores
-                    const inputs = formulario.querySelectorAll('input, select, textarea');
-                    inputs.forEach(input => validadorInputs(input));
+        // Validación en tiempo real
+        formulario.addEventListener('input', function (e) {
+            const input = e.target;
+            validadorInputs(input);
+        });
+
+        // Validación al enviar
+        formulario.addEventListener('submit', function (e) {
+            if (!formulario.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+                const inputs = formulario.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => validadorInputs(input));
+            }
+
+            formulario.classList.add('was-validated');
+        });
+
+        // Validación personalizada para horarios
+        const horaInicio = formulario.querySelector('[name="horarioEventoInicio"]');
+        const horaFin = formulario.querySelector('[name="horarioEventoFin"]');
+
+        [horaInicio, horaFin].forEach(input => {
+            input.addEventListener('change', function () {
+                if (horaInicio.value && horaFin.value && horaInicio.value >= horaFin.value) {
+                    horaFin.setCustomValidity('La hora de fin debe ser posterior a la de inicio');
+                    horaFin.classList.add('is-invalid');
+                } else {
+                    horaFin.setCustomValidity('');
+                    horaFin.classList.remove('is-invalid');
                 }
-
-                formulario.classList.add('was-validated');
-            });
-
-            // Validación personalizada para horarios
-            const horaInicio = formulario.querySelector('[name="horarioEventoInicio"]');
-            const horaFin = formulario.querySelector('[name="horarioEventoFin"]');
-
-            [horaInicio, horaFin].forEach(input => {
-                input.addEventListener('change', function () {
-                    if (horaInicio.value && horaFin.value && horaInicio.value >= horaFin.value) {
-                        horaFin.setCustomValidity('La hora de fin debe ser posterior a la de inicio');
-                        horaFin.classList.add('is-invalid');
-                    } else {
-                        horaFin.setCustomValidity('');
-                        horaFin.classList.remove('is-invalid');
-                    }
-                });
             });
         });
 
-
+        // Función para validar los inputs
         function validadorInputs(input) {
             if (input.checkValidity()) {
                 input.classList.remove('is-invalid');
@@ -186,27 +228,76 @@
             }
         }
 
-        let page = 1;
+        // Función para abrir el modal de autenticación
+        // function abrirModalAutenticacion() {
+        //     // var authModal = new bootstrap.Modal(document.getElementById('authModal'));
+        //     // authModal.show();
+        //     const modal = document.getElementById('modalAutenticacion');
+        //     const modalInstance = new bootstrap.Modal(modal);
+        //     modalInstance.show();
+        // }
 
-        function cargarParticipantes() {
-            fetch(`/cargarParticipantes?page=${page}`)
-                .then(response => response.json())
-                .then(data => {
-                    const select = document.getElementById('par_identificacion');
-                    data.items.forEach(participante => {
-                        const option = document.createElement('option');
-                        option.value = participante.par_identificacion;
-                        option.textContent = participante.par_nombres;
-                        select.appendChild(option);
-                    });
-                    page++;
-                });
-        }
+       
+   
+  window.abrirModalAutenticacion = function () {
+    const modal = document.getElementById('authModal'); // OJO: debe coincidir con el ID del modal
+    if (modal) {
+        const modalInstance = new bootstrap.Modal(modal);
+        modalInstance.show();
+    } else {
+        console.error('Modal no encontrado');
+    }
+};
 
-        document.getElementById('cargarMas').addEventListener('click', cargarParticipantes);
 
-        // Cargar la primera página al inicio
-        cargarParticipantes();
-    </script>
+
+
+
+
+        // Evento para la validación del formulario de autenticación
+        document.getElementById('authForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            let identificacion = document.getElementById('auth_identificacion').value;
+            let password = document.getElementById('auth_password').value;
+
+            fetch('{{ route("verificar.usuario") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                body: JSON.stringify({
+                    par_identificacion: identificacion,
+                    password: password
+                })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Asignar los valores al formulario original antes de enviarlo
+                    // document.querySelector('[name="par_identificacion"]').value = identificacion;
+                    // document.querySelector('[name="password"]').value = password;
+                    document.getElementById('auth_error').innerText = '';
+
+
+                    document.querySelector('input[name="par_identificacion"]').value = identificacion;
+                    document.querySelector('input[name="password"]').value = password;
+
+                    // Cerrar el modal y enviar el formulario
+                    bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+                    formulario.submit();
+                } else {
+                    document.getElementById('auth_error').innerText = data.message;
+                }
+            });
+        });
+    });
+
+
+
+
+
+    
+</script>
 
 @endsection

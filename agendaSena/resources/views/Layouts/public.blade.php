@@ -72,16 +72,7 @@
                    
         <div>
 
-                         <!-- Filtro por Categorias -->
-                    <!-- <div class="search-input-container">
-                            <label for="category-search">Buscar por categoría:</label>
-                            <select id="category-search" class="form-control" oninput="searchEvent()">
-                                <option value="">Seleccione una categoría</option> -->
-                                <!-- Las categorías se llenan dinámicamente con JavaScript o PHP -->
-                            <!-- </select>
-                        </div> -->
-
-                    <!--  -->
+                      
                     <?php
                         $categorias = DB::table('categoria')->where('estadoCategoria', 1)->get();
                     ?>
@@ -167,13 +158,34 @@
     <script>
         let currentDate = new Date();
         
-        let eventos = @json($eventos); // Eventos pasados desde el backend a JavaScript
+        // let eventos = @json($eventos); 
+        // Eventos pasados desde el backend a JavaScript
+        // let eventos = @json($eventos ?? []);
+
+        @if (isset($eventos))
+            let eventos = @json($eventos);
+        @else
+            let eventos = [];
+        @endif
+
+
+        // if (typeof eventos !== 'undefined' && eventos.length > 0) {
+        //     loadCalendar();
+        //     showAllEvents();
+        // }
+
 
         // Función para cargar el calendario
         function loadCalendar() {
             const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
             const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
             const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+
+            if (!Array.isArray(eventos)) {
+            eventos = [];
+            }
+           
+
 
             // Mostrar el nombre del mes
             document.getElementById('month-name').innerText = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
@@ -293,6 +305,12 @@
 
 
    function showAllEvents() {
+    @if (isset($eventos))
+        let eventos = @json($eventos);
+    @else
+        let eventos = [];
+    @endif
+
     const eventDetailsContainer = document.getElementById('event-details');
     eventDetailsContainer.innerHTML = ""; // Limpiar contenido anterior
 

@@ -80,4 +80,45 @@ class LoginController extends Controller
     public function update(Request $request) {}
 
     public function destroy() {}
+
+
+
+
+
+    // public function validarCredencialesPublicas(Request $request)
+    // {
+    //     $request->validate([
+    //         'par_identificacion' => 'required|int',
+    //         'password' => 'required|string',
+    //     ]);
+    
+    //     $user = User::where('par_identificacion', $request->par_identificacion)->first();
+    
+    //     if (!$user || !Hash::check($request->password, $user->password)) {
+    //         return response()->json(['error' => 'Credenciales inválidas'], 401);
+    //     }
+    
+    //     return response()->json(['success' => true]);
+    // }
+    
+
+
+    public function validarCredencialesPublicas(Request $request)
+    {
+        $request->validate([
+            'par_identificacion' => 'required|int',
+            'password' => 'required|string',
+        ]);
+
+        $user = User::where('par_identificacion', $request->par_identificacion)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['error' => 'Credenciales inválidas'], 401);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+
+
 }

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Traits\CalendarTrait;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 
 class EventoController extends Controller
@@ -56,6 +57,7 @@ class EventoController extends Controller
 
 
         return view('public.SolicitudEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes','eventos'));
+        // return view('Evento.crearEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes','eventos'));
         return redirect()->route('public.index')->with('success', 'Evento guardado exitosamente');
     }
     
@@ -456,5 +458,26 @@ class EventoController extends Controller
         // Redirigir con un mensaje de éxito a la vista pública de solicitud
         return redirect()->route('public.index')->with('success', 'Evento actualizado exitosamente.');
     }
+
+
+
+
+// validar para solicitud de evento
+
+public function verificarUsuario(Request $request)
+{
+    $credentials = $request->only('par_identificacion', 'password');
+
+    if (Auth::validate($credentials)) {
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'Identificación o contraseña incorrecta.'
+    ]);
+}
+
+
 
 }
