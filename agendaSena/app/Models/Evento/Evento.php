@@ -9,7 +9,7 @@ use App\Models\Categoria\categoria;
 use App\Models\Ambiente\Ambiente;
 use App\Models\Ficha\Ficha;
 use App\Models\fotografiasEvento\FotografiaEvento;
-use App\Models\sep_participante\Participante;
+use App\Models\Participante\Participante;
 
 class Evento extends Model
 {

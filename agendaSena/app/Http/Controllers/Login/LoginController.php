@@ -9,6 +9,7 @@ use App\Models\Usuario\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Evento\ReporteController;
 
 class LoginController extends Controller
 {
@@ -39,6 +40,14 @@ class LoginController extends Controller
             Log::error('Error de inicio de sesión: ' . $request->par_identificacion);
             return redirect()->route('login')->with('error', 'Número de identificación o contraseña incorrectos.');
         } // Si la autenticación falla
+
+        if (Auth::attempt($credentials)) {
+            // Redirigir al usuario a la página a la que intentaba acceder
+            return redirect()->intended(route('evento.reportes.index'))->with('success', 'Inicio de sesión exitoso');
+        } else {
+            // Si las credenciales son incorrectas, redirige al login con un error
+            return redirect()->route('login')->with('error', 'Número de identificación o contraseña incorrectos.');
+        }
 
     }
 
@@ -71,4 +80,45 @@ class LoginController extends Controller
     public function update(Request $request) {}
 
     public function destroy() {}
+
+
+
+
+
+    // public function validarCredencialesPublicas(Request $request)
+    // {
+    //     $request->validate([
+    //         'par_identificacion' => 'required|int',
+    //         'password' => 'required|string',
+    //     ]);
+    
+    //     $user = User::where('par_identificacion', $request->par_identificacion)->first();
+    
+    //     if (!$user || !Hash::check($request->password, $user->password)) {
+    //         return response()->json(['error' => 'Credenciales inválidas'], 401);
+    //     }
+    
+    //     return response()->json(['success' => true]);
+    // }
+    
+
+
+    public function validarCredencialesPublicas(Request $request)
+    {
+        $request->validate([
+            'par_identificacion' => 'required|int',
+            'password' => 'required|string',
+        ]);
+
+        $user = User::where('par_identificacion', $request->par_identificacion)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(['error' => 'Credenciales inválidas'], 401);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+
+
 }

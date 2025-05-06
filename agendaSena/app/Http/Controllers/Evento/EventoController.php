@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Traits\CalendarTrait;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 
 class EventoController extends Controller
@@ -38,6 +39,41 @@ class EventoController extends Controller
 
         return view('Evento.crearEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes'));
     }
+
+
+    public function solicitudPublica(Request $reques)
+    {
+        $categorias = Categoria::all();
+        $fichas = Ficha::all();
+        $calendario = $this->calendarioGenerado();
+        $participantes = Participante::where('est_apr_id', 2)
+            ->select('par_identificacion', 'par_nombres')
+            ->paginate(10);
+        $ambientes = Ambiente::all();
+        // $eventos = Evento::all();  // O cualquier lógica que estés utilizando para obtener los eventos
+        $eventos= null;
+        // Pasar la variable $eventos a la vista
+        // return view('evento.solicitudEvento', compact('eventos'));
+
+
+        return view('public.SolicitudEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes','eventos'));
+        // return view('Evento.crearEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes','eventos'));
+        return redirect()->route('public.index')->with('success', 'Evento guardado exitosamente');
+    }
+    
+    public function authenticated(Request $request, $user)
+    {
+        
+        // Redirige al usuario a la vista para crear un evento
+        return redirect()->route('evento.solicitud');
+    }
+
+
+
+
+
+
+    // Fin publica
 
     public function store(Request $request)
     {
@@ -385,4 +421,63 @@ class EventoController extends Controller
             'estadoEvento' => 'required|integer',
         ]);
     }
+
+    // solicitud evento publico
+    public function updatepublica(Request $request, Evento $evento)
+    {
+        $validatedData = $this->validateRequest($request);
+        $idEvento = $request->__get('idEvento');
+        $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
+        $validatedData['nomSolicitante'] = $participante->par_nombres;
+        $evento = Evento::findOrFail($idEvento);
+
+        if ($request->hasFile('publicidad')) {
+            $rutaImagen = $request->file('publicidad')->store('imagenes', 'public');
+            $validatedData['publicidad'] = $rutaImagen; // Agregar la ruta de la imagen a los datos validados
+        }
+
+        $horario = Horario::find($evento->idHorario);
+        if (!$horario) {
+            return redirect()->back()->with('error', 'Error al crear el horario.');
+        }
+
+        $horario->updatepublica([
+            'inicio' => $request->input('horarioEventoInicio'),
+            'fin' => $request->input('horarioEventoFin'),
+        ]);
+
+        // Actualizar el evento
+        $evento->updatepublica($validatedData);
+
+        if (!$participante) {
+            return redirect()->back()->with('error', 'Participante no encontrado.');
+        }
+
+        $evento->updatepublica($validatedData);
+
+        // Redirigir con un mensaje de éxito a la vista pública de solicitud
+        return redirect()->route('public.index')->with('success', 'Evento actualizado exitosamente.');
+    }
+
+
+
+
+// validar para solicitud de evento
+
+public function verificarUsuario(Request $request)
+{
+    $credentials = $request->only('par_identificacion', 'password');
+
+    if (Auth::validate($credentials)) {
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json([
+        'success' => false,
+        'message' => 'Identificación o contraseña incorrecta.'
+    ]);
+}
+
+
+
 }

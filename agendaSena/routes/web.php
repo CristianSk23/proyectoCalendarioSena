@@ -38,6 +38,13 @@ Route::get("eventosPorNombre", [EventoController::class, 'buscarEventosPorNombre
 route::post("confirmarEvento", [EventoController::class, 'confirmarEvento'])->name('eventos.confirmarEvento');
 //Route::get("eventosPorFecha", [EventoController::class, 'buscarEventosPorFecha'])->name('eventos.buscarEventoPorFecha');
 
+// Evento soliictud publica
+// Ruta para solicitudes públicas SIN autenticación completa
+Route::post('evento/solicitud', [EventoController::class, 'store'])->name('evento.solicitud.store');
+// Ruta protegida solo para usuarios logueados
+// Route::post('evento/crearPost', [EventoController::class, 'store'])->name('eventos.store')->middleware('auth');
+
+
 //+++++ === FOTOGRAFIAS EVENTO  ===  +++++
 Route::get('evento/agregarFotos/{idEvento}', [FotografiaEventoController::class, 'paginaPrincinpal'])->name('eventos.agregarFotos')->middleware('auth');
 Route::post('evento/agregarFotos/bd/{idEvento}', [FotografiaEventoController::class, 'create'])->name('eventos.agregarFotosBd')->middleware('auth');
@@ -47,13 +54,7 @@ Route::delete('evento/agregarFotos/eliminar/{idEvento}', [FotografiaEventoContro
 //  ++++ CALENDARIO  ++++++
 Route::get("calendario/buscarEventos", [CalendarioController::class, 'buscarEventosPorMes'])->name('calendario.buscarEventos');
 
-// // ***Yaque rutas por busqueda***  22-mar-2025
-// Route::get('/buscar-eventos-por-dia', [CalendarioController::class, 'buscarEventosPorDia']);
-// Route::get('/buscar-eventos-por-nombre', [CalendarioController::class, 'buscarEventosPorNombre']);
-// Route::get('/buscar-eventos-por-lugar', [CalendarioController::class, 'buscarEventosPorLugar']);
-// Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico']);
-// // termine adicion d erutas por busqueda*** yaque****
-// Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico'])->name('calendario.publico');
+
 Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendarioPublico'])->name('calendario.publico');
 
 
@@ -93,3 +94,23 @@ Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensu
 
 // **  controlador de vista publica ******* */
 Route::get('/public', [PublicController::class, 'index'])->middleware('guest');
+
+
+
+// se agrega vista e ecuestar para  solicitar evento
+Route::get('/solicitud-evento', [EventoController::class, 'solicitudPublica'])->name('evento.solicitud');
+Route::post('/evento/updatepublica/{evento}', [EventoController::class, 'updatePublica'])->name('evento.updatePublica');
+
+
+
+
+
+// Route::get('/test-session-table', function () {
+//     dd(config('session.table'));
+// });
+
+// validar ruta para solicitud eventos
+//Route::post('/evento/publico/crear', [EventoPublicoController::class, 'validarUsuarioYCrear'])->name('evento.publico.validar');
+
+// Validacion de usurio para solicitud de evento.
+Route::post('/verificar-usuario', [EventoController::class, 'verificarUsuario'])->name('verificar.usuario');
