@@ -40,14 +40,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a href="{{ route('evento.reportes.index') }}" class="nav-link text-white">Reportes</a>
                     </li>
 
                     <!-- Inicio me regresa  a la pagina pricipal eventos -->
                     <li class="nav-item">
                         <a href="{{ route('public.index') }}" class="nav-link text-white">Inicio</a>
-                    </li>
+                    </li> --}}
 
                 </ul>
                 <div class="d-flex align-items-center">
@@ -266,6 +266,7 @@
                         console.error("Error al confirmar el evento:", error);
                     });
             }
+        }
     </script>
 
     @yield('contentReportes')

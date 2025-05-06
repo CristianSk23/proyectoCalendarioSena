@@ -10,7 +10,8 @@
         <h1 class="h3 mb-4 text-gray-800 text-center">Panel de Reportes</h1>
 
         <div class="d-flex justify-content-end mb-4">
-            <button class="btn btn-success">Regresar</button>
+            <a href="{{ route('calendario.index') }}" class="btn btn-success me-2">Regresar</a>
+           
         </div>
         <!-- Estadísticas -->
         <div class="row">
