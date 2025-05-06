@@ -35,7 +35,7 @@ Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index'
 Route::get("evento/PorConfirmar", [EventoController::class, 'eventosPorConfirmar'])->name('eventos.porConfirmar');
 Route::get("cargarParticipantes", [EventoController::class, 'cargarParticipantes'])->name('eventos.buscarParticipantes');
 Route::get("eventosPorNombre", [EventoController::class, 'buscarEventosPorNombre'])->name('eventos.buscarEventoPorNombre');
-route::post("confirmarEvento", [EventoController::class, 'confirmarEvento'])->name('eventos.confirmarEvento');
+Route::post("confirmarEvento", [EventoController::class, 'confirmarEvento'])->name('eventos.confirmarEvento');
 //Route::get("eventosPorFecha", [EventoController::class, 'buscarEventosPorFecha'])->name('eventos.buscarEventoPorFecha');
 
 // Evento soliictud publica
@@ -92,8 +92,11 @@ Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensu
 
 
 
-// **  controlador de vista publica ******* */
-Route::get('/public', [PublicController::class, 'index'])->middleware('guest');
+
+
+
+// // **  controlador de vista publica ******* */
+// Route::get('/public', [PublicController::class, 'index'])->middleware('guest');
 
 
 
@@ -105,6 +108,14 @@ Route::post('/evento/updatepublica/{evento}', [EventoController::class, 'updateP
 
 
 
+
+Route::post('/verificar-credenciales', [LoginController::class, 'validarCredencialesPublicas'])->name('verificar-credenciales');
+
+
+
+
+
+Route::post('/evento/store/externo', [EventoController::class, 'storeExterno'])->name('eventos.storeExterno');
 // Route::get('/test-session-table', function () {
 //     dd(config('session.table'));
 // });
