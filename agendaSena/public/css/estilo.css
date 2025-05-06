@@ -1120,3 +1120,23 @@ body.public-page::before {
     font-size: 1rem;
     font-weight: 500;
 }
+
+
+
+
+
+/* solicitud publica   autenticacion */
+
+    #auth_error {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    .is-invalid {
+        border-color: #dc3545;
+    }
+    .is-valid {
+        border-color: #28a745;
+    }
+
+    

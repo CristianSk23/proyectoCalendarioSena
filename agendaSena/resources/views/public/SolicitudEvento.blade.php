@@ -16,7 +16,10 @@
 </h1>
 
 
-    <form id="formularioEvento" method="POST" action="{{ route('evento.solicitud.store') }}" enctype="multipart/form-data">
+   
+   
+    <form id="formularioEvento" action="{{ route('eventos.storeExterno') }}" method="POST" enctype="multipart/form-data">
+
         @csrf
         <!-- campos del formulario -->
     
@@ -135,10 +138,7 @@
         </div>
 
         
-    <!-- Campos ocultos para insertar identificación y contraseña después de la validación -->
-    <input type="hidden" name="par_identificacion">
-    <input type="hidden" name="password">
-
+  
 
    
 
@@ -146,10 +146,15 @@
    <!-- Modal de Validación de Usuario -->
   
 
-    <button type="button" class="btn btn-success" onclick="abrirModalAutenticacion()"> Enviar Evento </button>
+
+   <button type="button" class="btn btn-success" id="btnEnviarEvento">Enviar Evento</button>
+   
+
+
 
 </form>
 <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    
         <div class="modal-dialog">
             <form id="authForm">
                 <div class="modal-content">
@@ -166,138 +171,305 @@
                             <label for="auth_password" class="form-label">Contraseña</label>
                             <input type="password" class="form-control" id="auth_password" name="auth_password" required>
                         </div>
-                        <div id="auth_error" class="text-danger"></div>
+                        <div id="auth_error_modal" class="text-danger"></div>
                     </div>
+                    <!-- Modifica el footer del modal -->
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Validar y Enviar Evento</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="submitAuthForm">Validar y Enviar Evento</button>
                     </div>
+    
                 </div>
             </form>
         </div>
     </div>
 
-    
+
+    <div id="successMessage" style="display:none;" class="alert alert-success mt-3">
+    Evento creado exitosamente como pendiente
+</div>
+
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Referencia al formulario principal
-        const formulario = document.getElementById('formularioEvento');
+document.addEventListener('DOMContentLoaded', function () {
+    // Referencias a elementos
+    const btnEnviarEvento = document.getElementById('btnEnviarEvento');
+    const authModal = document.getElementById('authModal');
+    const authForm = document.getElementById('authForm');
+    const formularioEvento = document.getElementById('formularioEvento');
+    const successMessage = document.getElementById('successMessage');
+    
+    // Variable para almacenar la instancia del modal
+    let modalInstance = null;
 
-        // Validación en tiempo real
-        formulario.addEventListener('input', function (e) {
-            const input = e.target;
-            validadorInputs(input);
-        });
-
-        // Validación al enviar
-        formulario.addEventListener('submit', function (e) {
-            if (!formulario.checkValidity()) {
-                e.preventDefault();
-                e.stopPropagation();
-                const inputs = formulario.querySelectorAll('input, select, textarea');
-                inputs.forEach(input => validadorInputs(input));
-            }
-
-            formulario.classList.add('was-validated');
-        });
-
-        // Validación personalizada para horarios
-        const horaInicio = formulario.querySelector('[name="horarioEventoInicio"]');
-        const horaFin = formulario.querySelector('[name="horarioEventoFin"]');
-
-        [horaInicio, horaFin].forEach(input => {
-            input.addEventListener('change', function () {
-                if (horaInicio.value && horaFin.value && horaInicio.value >= horaFin.value) {
-                    horaFin.setCustomValidity('La hora de fin debe ser posterior a la de inicio');
-                    horaFin.classList.add('is-invalid');
-                } else {
-                    horaFin.setCustomValidity('');
-                    horaFin.classList.remove('is-invalid');
-                }
-            });
-        });
-
-        // Función para validar los inputs
-        function validadorInputs(input) {
-            if (input.checkValidity()) {
-                input.classList.remove('is-invalid');
-                input.classList.add('is-valid');
-            } else {
-                input.classList.remove('is-valid');
-                input.classList.add('is-invalid');
-            }
+    // Mostrar modal al hacer clic en "Enviar Evento"
+    btnEnviarEvento.addEventListener('click', function() {
+        // Validar formulario primero
+        if (!formularioEvento.checkValidity()) {
+            formularioEvento.classList.add('was-validated');
+            return;
         }
-
-        // Función para abrir el modal de autenticación
-        // function abrirModalAutenticacion() {
-        //     // var authModal = new bootstrap.Modal(document.getElementById('authModal'));
-        //     // authModal.show();
-        //     const modal = document.getElementById('modalAutenticacion');
-        //     const modalInstance = new bootstrap.Modal(modal);
-        //     modalInstance.show();
-        // }
-
-       
-   
-  window.abrirModalAutenticacion = function () {
-    const modal = document.getElementById('authModal'); // OJO: debe coincidir con el ID del modal
-    if (modal) {
-        const modalInstance = new bootstrap.Modal(modal);
+        
+        // Crear instancia del modal si no existe
+        if (!modalInstance) {
+            modalInstance = new bootstrap.Modal(authModal);
+        }
+        
+        // Mostrar modal
         modalInstance.show();
-    } else {
-        console.error('Modal no encontrado');
-    }
-};
+    });
 
-
-
-
-
-
-        // Evento para la validación del formulario de autenticación
-        document.getElementById('authForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            let identificacion = document.getElementById('auth_identificacion').value;
-            let password = document.getElementById('auth_password').value;
-
-            fetch('{{ route("verificar.usuario") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: JSON.stringify({
-                    par_identificacion: identificacion,
-                    password: password
-                })
-            }).then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Asignar los valores al formulario original antes de enviarlo
-                    // document.querySelector('[name="par_identificacion"]').value = identificacion;
-                    // document.querySelector('[name="password"]').value = password;
-                    document.getElementById('auth_error').innerText = '';
-
-
-                    document.querySelector('input[name="par_identificacion"]').value = identificacion;
-                    document.querySelector('input[name="password"]').value = password;
-
-                    // Cerrar el modal y enviar el formulario
-                    bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
-                    formulario.submit();
-                } else {
-                    document.getElementById('auth_error').innerText = data.message;
-                }
-            });
+    // Manejar envío del formulario de autenticación
+    authForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const identificacion = document.getElementById('auth_identificacion').value;
+        const password = document.getElementById('auth_password').value;
+        
+        // Mostrar spinner o indicador de carga
+        const submitBtn = document.getElementById('submitAuthForm');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Validando...';
+        submitBtn.disabled = true;
+        
+        // Validar credenciales
+        fetch('{{ route("verificar-credenciales") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                par_identificacion: identificacion,
+                password: password
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la respuesta del servidor');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Crear inputs ocultos con las credenciales
+                const authIdInput = document.createElement('input');
+                authIdInput.type = 'hidden';
+                authIdInput.name = 'auth_identificacion';
+                authIdInput.value = identificacion;
+                
+                const authPassInput = document.createElement('input');
+                authPassInput.type = 'hidden';
+                authPassInput.name = 'auth_password';
+                authPassInput.value = password;
+                
+                formularioEvento.appendChild(authIdInput);
+                formularioEvento.appendChild(authPassInput);
+                
+                // Ocultar modal
+                modalInstance.hide();
+                
+                // Enviar formulario principal
+                enviarFormularioEvento();
+            } else {
+                throw new Error(data.message || 'Credenciales inválidas');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('auth_error_modal').innerText = error.message;
+        })
+        .finally(() => {
+            // Restaurar botón
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
         });
     });
 
+    // Función para enviar el formulario del evento
+    function enviarFormularioEvento() {
+        const formData = new FormData(formularioEvento);
+        
+        // Mostrar indicador de carga en el botón principal
+        const originalBtnText = btnEnviarEvento.innerHTML;
+        btnEnviarEvento.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enviando...';
+        btnEnviarEvento.disabled = true;
+        
+        fetch(formularioEvento.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Error en la respuesta del servidor');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                successMessage.style.display = 'block';
+                formularioEvento.reset();
+                
+                // Ocultar mensaje después de 5 segundos
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 5000);
+            } else {
+                throw new Error(data.message || 'Error al crear el evento');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error: ' + error.message);
+        })
+        .finally(() => {
+            // Restaurar botón principal
+            btnEnviarEvento.innerHTML = originalBtnText;
+            btnEnviarEvento.disabled = false;
+        });
+    }
 
+    // Validación en tiempo real
+    formularioEvento.addEventListener('input', function(e) {
+        const input = e.target;
+        validadorInputs(input);
+    });
 
+    // Validación personalizada para horarios
+    const horaInicio = formularioEvento.querySelector('[name="horarioEventoInicio"]');
+    const horaFin = formularioEvento.querySelector('[name="horarioEventoFin"]');
 
+    [horaInicio, horaFin].forEach(input => {
+        input.addEventListener('change', function() {
+            if (horaInicio.value && horaFin.value && horaInicio.value >= horaFin.value) {
+                horaFin.setCustomValidity('La hora de fin debe ser posterior a la de inicio');
+                horaFin.classList.add('is-invalid');
+            } else {
+                horaFin.setCustomValidity('');
+                horaFin.classList.remove('is-invalid');
+            }
+        });
+    });
 
+    function validadorInputs(input) {
+        if (input.checkValidity()) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+    }
+});
+
+    // Hacer la función global para que pueda usarse en el onclick del botón
+    window.abrirModalAutenticacion = function () {
+        const modal = document.getElementById('authModal');
+        
+        if (modal) {
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+        } else {
+            console.error('Modal no encontrado');
+        }
+    };
+
+    document.getElementById('authForm').addEventListener('submit', function(e) {
+    e.preventDefault();
     
-</script>
+    const submitBtn = document.getElementById('submitAuthForm');
+    const originalBtnText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Validando...';
+    submitBtn.disabled = true;
+    
+    const errorElement = document.getElementById('auth_error_modal');
+    errorElement.textContent = '';
+    
+    const identificacion = document.getElementById('auth_identificacion').value;
+    const password = document.getElementById('auth_password').value;
 
+    fetch('{{ route("verificar-credenciales") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            par_identificacion: identificacion,
+            password: password
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            // Si el servidor devuelve un error 401 u otro
+            return response.json().then(err => {
+                throw new Error(err.message || 'Error en la autenticación');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // Resto de tu lógica para éxito
+        } else {
+            throw new Error(data.message || 'Credenciales incorrectas');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        errorElement.textContent = error.message;
+        // Muestra el error de forma más amigable
+        alert('Error: ' + error.message);
+    })
+    .finally(() => {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+    });
+});
+
+
+
+// Manejar la respuesta del formulario
+document.getElementById('formularioEvento').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    let formData = new FormData(this);
+    
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('formularioEvento').reset();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Ocurrió un error al enviar el formulario');
+    });
+});
+
+</script>
 @endsection
