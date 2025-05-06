@@ -65,7 +65,7 @@ Route::get('/categorias', [CategoriaController::class, 'index'])->name('categori
 //** */  ++++ LOGIN  ++++++
 Route::get('login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('loginIngresar', [LoginController::class, 'login'])->name('login.ingresar');
-Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');
+Route::post('logout', [LoginController::class, 'logout'])->name('login.logout')->middleware('auth');
 
 //**** reportes*** */
 Route::get('evento/reportes', [ReporteController::class, 'index_report'])->name('evento.reportes.index')->middleware('auth');

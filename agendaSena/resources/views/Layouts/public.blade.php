@@ -58,32 +58,13 @@
 
             
             
-                    <a href="{{route('calendario.index')}}" class="nav-link text-white" aria-current="page">Eventos</a>
+                    <a href="{{route('calendario.index')}}" class="nav-link text-white" aria-current="page">Login</a>
                 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="d-flex align-items-center">
-                <div class="position-relative">
-                    <a id="icono-notificacion" href="http://">
-                        <box-icon id="icono-campana" name='bell' type='solid' color='#ffffff'></box-icon>
-                        <box-icon id="icono-notificacion-activa" name='bell-ring' type='solid' color='#ffffff'
-                            style="display: none;"></box-icon>
-                    </a>
-                    <span id="cantidad-eventos"
-                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        
-                    </span>
-                </div>
-                <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
-                    @csrf
-                    <button type="submit" class="btn btn-danger">
-                        <box-icon name='power-off' color='#ffffff'></box-icon>
-                    </button>
-                </form>
-            </div>
         </div>
     </nav>
     <!-- Sidebar con Calendario -->
