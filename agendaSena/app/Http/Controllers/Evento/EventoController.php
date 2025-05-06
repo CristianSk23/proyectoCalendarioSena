@@ -385,4 +385,118 @@ class EventoController extends Controller
             'estadoEvento' => 'required|integer',
         ]);
     }
+
+
+
+    // solicitud evento publico
+    public function updatepublica(Request $request, Evento $evento)
+    {
+        $validatedData = $this->validateRequest($request);
+        $idEvento = $request->__get('idEvento');
+        $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
+        $validatedData['nomSolicitante'] = $participante->par_nombres;
+        $evento = Evento::findOrFail($idEvento);
+
+        if ($request->hasFile('publicidad')) {
+            $rutaImagen = $request->file('publicidad')->store('imagenes', 'public');
+            $validatedData['publicidad'] = $rutaImagen; // Agregar la ruta de la imagen a los datos validados
+        }
+
+        $horario = Horario::find($evento->idHorario);
+        if (!$horario) {
+            return redirect()->back()->with('error', 'Error al crear el horario.');
+        }
+
+        $horario->updatepublica([
+            'inicio' => $request->input('horarioEventoInicio'),
+            'fin' => $request->input('horarioEventoFin'),
+        ]);
+
+        // Actualizar el evento
+        $evento->updatepublica($validatedData);
+
+        if (!$participante) {
+            return redirect()->back()->with('error', 'Participante no encontrado.');
+        }
+
+        $evento->updatepublica($validatedData);
+
+        // Redirigir con un mensaje de éxito a la vista pública de solicitud
+        return redirect()->route('public.index')->with('success', 'Evento actualizado exitosamente.');
+    }
+
+
+
+
+
+
+
+    // Método para manejar el formulario externo
+    public function storeExterno(Request $request)
+    {
+        // Primero validar las credenciales
+        $authResponse = $this->validarCredencialesPublicas(new Request([
+            'par_identificacion' => $request->auth_identificacion,
+            'password' => $request->auth_password
+        ]));
+
+        $authData = json_decode($authResponse->getContent(), true);
+
+        if (!$authData['success']) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Autenticación fallida: ' . ($authData['message'] ?? 'Credenciales inválidas')
+            ], 401);
+        }
+
+        // Validación del evento
+        $validatedData = $request->validate([
+            'par_identificacion' => 'required|exists:participantes,par_identificacion',
+            'pla_amb_id' => 'required|integer',
+            'horarioEventoInicio' => 'required|date_format:H:i',
+            'horarioEventoFin' => 'required|date_format:H:i|after:horarioEventoInicio',
+            'nomEvento' => 'required|string|min:5|max:100',
+            'descripcion' => 'required|string|min:10|max:500',
+            'fechaEvento' => 'required|date|after_or_equal:today',
+            'aforoEvento' => 'required|integer|min:1|max:500',
+            'fic_numero' => 'required|exists:fichas,fic_numero',
+            'idCategoria' => 'required|exists:categoria,idCategoria',
+            'estadoEvento' => 'required|integer',
+            'publicidad' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        try {
+            // Crear horario
+            $horario = Horario::create([
+                'pla_amb_id' => $validatedData['pla_amb_id'],
+                'inicio' => $validatedData['horarioEventoInicio'],
+                'fin' => $validatedData['horarioEventoFin'],
+            ]);
+
+            // Crear evento
+            $evento = new Evento();
+            $evento->fill($validatedData);
+            $evento->idHorario = $horario->idHora;
+            $evento->nomSolicitante = $authData['participante']['par_nombres'];
+            
+            if ($request->hasFile('publicidad')) {
+                $evento->publicidad = $request->file('publicidad')->store('publicidad', 'public');
+            }
+
+            $evento->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Evento creado exitosamente',
+                'evento_id' => $evento->idEvento
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear el evento: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

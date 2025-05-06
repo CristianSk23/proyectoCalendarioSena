@@ -71,4 +71,44 @@ class LoginController extends Controller
     public function update(Request $request) {}
 
     public function destroy() {}
+
+
+
+    
+
+
+    public function validarCredencialesPublicas(Request $request)
+    {
+        $request->validate([
+            'par_identificacion' => 'required',
+            'password' => 'required'
+        ]);
+    
+        $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
+    
+        if (!$participante) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Identificación no encontrada'
+            ], 200);
+        }
+    
+        // Si las contraseñas están hasheadas en la BD:
+        if (!Hash::check($request->password, $participante->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Contraseña incorrecta'
+            ], 200);
+        }
+    
+        // Si las contraseñas están en texto plano:
+        // if ($participante->password !== $request->password) {
+        //     return response()->json([...]);
+        // }
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Autenticación exitosa'
+        ]);
+    }
 }

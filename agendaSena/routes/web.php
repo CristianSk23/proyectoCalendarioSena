@@ -93,3 +93,18 @@ Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensu
 
 // **  controlador de vista publica ******* */
 Route::get('/public', [PublicController::class, 'index'])->middleware('guest');
+
+
+
+
+// se agrega vista e ecuestar para  solicitar evento
+Route::get('/solicitud-evento', [EventoController::class, 'solicitudPublica'])->name('evento.solicitud');
+Route::post('/evento/updatepublica/{evento}', [EventoController::class, 'updatePublica'])->name('evento.updatePublica');
+
+
+
+Route::post('/verificar-credenciales', [LoginController::class, 'validarCredencialesPublicas'])->name('verificar-credenciales');
+
+
+
+
