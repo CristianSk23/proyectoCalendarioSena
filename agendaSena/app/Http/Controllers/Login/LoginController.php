@@ -10,6 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Evento\ReporteController;
+use App\Models\Participante\Participante;
+
+
 
 class LoginController extends Controller
 {
@@ -85,40 +88,41 @@ class LoginController extends Controller
 
 
 
-    // public function validarCredencialesPublicas(Request $request)
-    // {
-    //     $request->validate([
-    //         'par_identificacion' => 'required|int',
-    //         'password' => 'required|string',
-    //     ]);
-    
-    //     $user = User::where('par_identificacion', $request->par_identificacion)->first();
-    
-    //     if (!$user || !Hash::check($request->password, $user->password)) {
-    //         return response()->json(['error' => 'Credenciales inválidas'], 401);
-    //     }
-    
-    //     return response()->json(['success' => true]);
-    // }
-    
+  
 
 
     public function validarCredencialesPublicas(Request $request)
     {
         $request->validate([
-            'par_identificacion' => 'required|int',
-            'password' => 'required|string',
+            'par_identificacion' => 'required',
+            'password' => 'required'
         ]);
-
-        $user = User::where('par_identificacion', $request->par_identificacion)->first();
-
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['error' => 'Credenciales inválidas'], 401);
+    
+        $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
+    
+        if (!$participante) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Identificación no encontrada'
+            ], 200);
         }
-
-        return response()->json(['success' => true]);
+    
+        // Si las contraseñas están hasheadas en la BD:
+        if (!Hash::check($request->password, $participante->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Contraseña incorrecta'
+            ], 200);
+        }
+    
+        // Si las contraseñas están en texto plano:
+        // if ($participante->password !== $request->password) {
+        //     return response()->json([...]);
+        // }
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Autenticación exitosa'
+        ]);
     }
-
-
-
 }

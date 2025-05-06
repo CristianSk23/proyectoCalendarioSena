@@ -35,7 +35,7 @@ Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index'
 Route::get("evento/PorConfirmar", [EventoController::class, 'eventosPorConfirmar'])->name('eventos.porConfirmar');
 Route::get("cargarParticipantes", [EventoController::class, 'cargarParticipantes'])->name('eventos.buscarParticipantes');
 Route::get("eventosPorNombre", [EventoController::class, 'buscarEventosPorNombre'])->name('eventos.buscarEventoPorNombre');
-route::post("confirmarEvento", [EventoController::class, 'confirmarEvento'])->name('eventos.confirmarEvento');
+Route::post("confirmarEvento", [EventoController::class, 'confirmarEvento'])->name('eventos.confirmarEvento');
 //Route::get("eventosPorFecha", [EventoController::class, 'buscarEventosPorFecha'])->name('eventos.buscarEventoPorFecha');
 
 // Evento soliictud publica
@@ -86,8 +86,8 @@ Route::get('/api/responsables', [ResponsableController::class, 'index']);
 //******PDF REPORTES *************/
 Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensual'])->name('reportes.pdf.mensual');
 
-// **  controlador de vista publica ******* */
-Route::get('/public', [PublicController::class, 'index'])->middleware('guest');
+// // **  controlador de vista publica ******* */
+// Route::get('/public', [PublicController::class, 'index'])->middleware('guest');
 
 
 
@@ -99,12 +99,11 @@ Route::post('/evento/updatepublica/{evento}', [EventoController::class, 'updateP
 
 
 
-// Route::get('/test-session-table', function () {
-//     dd(config('session.table'));
-// });
 
-// validar ruta para solicitud eventos
-Route::post('/evento/publico/crear', [EventoPublicoController::class, 'validarUsuarioYCrear'])->name('evento.publico.validar');
+Route::post('/verificar-credenciales', [LoginController::class, 'validarCredencialesPublicas'])->name('verificar-credenciales');
 
-// Validacion de usurio para solicitud de evento.
-Route::post('/verificar-usuario', [EventoController::class, 'verificarUsuario'])->name('verificar.usuario');
+
+
+
+
+Route::post('/evento/store/externo', [EventoController::class, 'storeExterno'])->name('eventos.storeExterno');
