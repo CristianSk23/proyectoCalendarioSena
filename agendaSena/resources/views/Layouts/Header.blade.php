@@ -43,9 +43,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="{{ route('evento.reportes.index') }}" class="nav-link text-white">Reportes</a>
-                </li>
+                </li> --}}
             </ul>
             <div class="d-flex align-items-center">
                 <div class="position-relative">
@@ -61,13 +61,15 @@
                         0
                     </span>
                 </div>
-                <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
-                    @csrf
-                    <button type="submit" class="btn btn-danger">
-                        <!-- Ícono de power -->
-                        <i class="bx bx-power-off" style="color: #ffffff;"></i>
-                    </button>
-                </form>
+                @auth
+                    <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
+                        @csrf
+                        <button type="submit" class="btn btn-danger">
+                            <!-- Ícono de power -->
+                            <i class="bx bx-power-off" style="color: #ffffff;"></i>
+                        </button>
+                    </form>
+                @endauth
             </div>
         </div>
     </div>

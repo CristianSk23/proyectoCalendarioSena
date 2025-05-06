@@ -56,6 +56,11 @@
                 <i class="bx bxs-add-to-queue" style="color: #ffffff;"></i>
                 Agregar Evento
             </button>
+
+            <button type="submit" class="btn btn-success ms-2 mt-4 btn-sm" id="reportes">
+                <i class="bx bxs-add-to-queue" style="color: #ffffff;"></i>
+                Reportes
+            </button>
         </div>
     </div>
 
@@ -344,9 +349,16 @@
 
 
     const btnAgregarEvento = document.getElementById('agregarEvento');
+    const btnReportes = document.getElementById('reportes');
 
     btnAgregarEvento.addEventListener('click', function () {
         const baseRutaCrearEvento = "{{ route('eventos.crearEvento') }}";
+        // Redirigir a la ruta de creación de eventos
+        window.location.href = `${baseRutaCrearEvento}`;
+    });
+
+    btnReportes.addEventListener('click', function () {
+        const baseRutaCrearEvento = "{{ route('evento.reportes.index') }}";
         // Redirigir a la ruta de creación de eventos
         window.location.href = `${baseRutaCrearEvento}`;
     });

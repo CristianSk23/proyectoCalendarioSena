@@ -11,9 +11,19 @@ class PublicController extends Controller
     public function index()
     {
         // Obtener todos los eventos públicos (estadoEvento = 1)
-        $eventos = Evento::where('estadoEvento', 1)->get();
+        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
+            ->where('estadoEvento', 1) // Filtrar solo los eventos con estado 1
+            ->get();
 
-        // Pasar los datos a la vista
+        
+
+
+        // Verificar que los eventos se están cargando correctamente
+      /*   if ($eventos->isEmpty()) {
+            // Puedes agregar un mensaje de depuración aquí
+            dd('No hay eventos disponibles con estado 1.');
+        }
+ */
         return view('public.index', compact('eventos'));
     }
 

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Evento;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ambiente\Ambiente;
 use Illuminate\Http\Request;
 use App\Models\Evento\Evento;
 use App\Models\Categoria\Categoria;
 use App\Models\Participante\Participante; // Asegúrate de que este modelo esté correctamente importado
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade as PDF;
+use DateTime;
+use Illuminate\Support\Facades\Log;
 
 class ReporteController extends Controller
 {
@@ -16,55 +19,182 @@ class ReporteController extends Controller
 
     public function index_report()
     {
-        // Obtener todas las categorías
-        $categorias = Categoria::pluck('nomCategoria', 'idCategoria');
 
-        // Obtener responsables que han realizado al menos un evento
-        $participantes = Participante::whereIn('par_identificacion', function($query) {
-            $query->select('par_identificacion')
-                ->from('evento') // Asegúrate de que este sea el nombre correcto de tu tabla de eventos
-                ->distinct();
-        })->get();
+
+        // Obtener ambientes con eventos
+        $ambientes = Evento::with('ambiente')
+            ->select('pla_amb_id', DB::raw('count(*) as total'))
+            ->groupBy('pla_amb_id')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'etiqueta' => $item->ambiente->pla_amb_descripcion,
+                    'total' => $item->total,
+                ];
+            });
+
+
+
+
+
+
 
         // Calcular estadísticas
         $estadisticas = [
-            'eventosPorCategoria' => Evento::select('idCategoria', DB::raw('count(*) as total'))
-                ->groupBy('idCategoria')
-                ->get()
-                ->map(function ($item) use ($categorias) {
-                    return [
-                        'nombre' => $categorias[$item->idCategoria],
-                        'total' => $item->total,
-                    ];
-                }),
 
-            // Obtener total de eventos del mes actual
+            'eventosPorAmbiente' => $ambientes,
+
+            // Tarjeta: Total eventos del mes actual
+            'eventosDelMesActual' => Evento::whereMonth('fechaEvento', date('m'))
+                ->whereYear('fechaEvento', date('Y'))
+                ->count(),
+
+            // Gráfico: Total eventos por mes del año actual
             'totalEventosMes' => Evento::whereMonth('fechaEvento', date('m'))
                 ->whereYear('fechaEvento', date('Y'))
                 ->count(),
+
 
             // Obtener total de eventos del año actual
             'totalEventosAnio' => Evento::whereYear('fechaEvento', date('Y'))
                 ->count(),
 
-            // Obtener eventos del día actual
+
+            // Tarjeta: Total eventos del día actual
             'eventosDelDia' => Evento::whereDate('fechaEvento', today())->count(),
 
-            // Obtener eventos por día del mes actual
-            'eventosPorDia' => Evento::select(DB::raw('DAY(fechaEvento) as dia'), DB::raw('count(*) as total'))
-                ->whereMonth('fechaEvento', date('m'))
-                ->whereYear('fechaEvento', date('Y'))
-                ->groupBy('dia')
-                ->orderBy('dia')
-                ->get()
-                ->pluck('total', 'dia'),
+
+
+
+
         ];
 
-        return view('reportes.index_reportes', compact('estadisticas', 'participantes'));
+
+        return view('reportes.index_reportes', compact('estadisticas'));
     }
 
 
-    
+
+
+
+    public function filtrarEventos(Request $request)
+    {
+        $filtro = $request->input('filtro');
+        switch ($filtro) {
+            case 'categoria':
+                $eventos = DB::table('evento')
+                    ->select('categoria.nomCategoria as etiqueta', DB::raw('count(*) as total'))
+                    ->join('categoria', 'evento.idCategoria', '=', 'categoria.idCategoria')
+                    ->groupBy('categoria.nomCategoria')
+                    ->get();
+                break;
+
+            case 'encargado':
+                $eventos = DB::table('evento')
+                    ->join('sep_participante', 'evento.par_identificacion', '=', 'sep_participante.par_identificacion')
+                    ->selectRaw("CONCAT(sep_participante.par_nombres, ' ', sep_participante.par_apellidos) as nombre, COUNT(*) as total")
+                    ->groupBy('sep_participante.par_nombres', 'sep_participante.par_apellidos')
+                    ->get();
+
+                break;
+
+            case 'ambiente':
+                log::info('Ambiente');
+                $eventos = Evento::with('ambiente')
+                    ->select('pla_amb_id', DB::raw('count(*) as total'))
+                    ->groupBy('pla_amb_id')
+                    ->get()
+                    ->map(function ($item) {
+                        return [
+                            'etiqueta' => $item->ambiente->pla_amb_descripcion,
+                            'total' => $item->total,
+                        ];
+                    });
+                break;
+
+            case 'mes':
+                $eventos = DB::table('evento')
+                    ->select(
+                        DB::raw('MONTH(fechaEvento) as mes_numero'),
+                        DB::raw('count(*) as total')
+                    )
+                    ->whereYear('fechaEvento', date('Y')) // Solo eventos del año actual
+                    ->groupBy(DB::raw('MONTH(fechaEvento)'))
+                    ->orderBy(DB::raw('MONTH(fechaEvento)'))
+                    ->get();
+
+                // Convertir número de mes a nombre
+                $meses = [
+                    1 => 'Enero',
+                    2 => 'Febrero',
+                    3 => 'Marzo',
+                    4 => 'Abril',
+                    5 => 'Mayo',
+                    6 => 'Junio',
+                    7 => 'Julio',
+                    8 => 'Agosto',
+                    9 => 'Septiembre',
+                    10 => 'Octubre',
+                    11 => 'Noviembre',
+                    12 => 'Diciembre'
+                ];
+
+                // Agregar la etiqueta del nombre del mes
+                foreach ($eventos as $evento) {
+                    $evento->etiqueta = $meses[$evento->mes_numero] ?? 'Desconocido';
+                }
+
+                return response()->json($eventos);
+
+
+            case 'anio':
+                $eventos = DB::table('evento')
+                    ->select(DB::raw('YEAR(fechaEvento) as etiqueta'), DB::raw('count(*) as total'))
+                    ->groupBy(DB::raw('YEAR(fechaEvento)'))
+                    ->orderBy(DB::raw('YEAR(fechaEvento)'))
+                    ->get();
+
+                break;
+
+
+            default:
+                $eventos = [];
+                break;
+        }
+        Log::info($eventos);
+        return response()->json($eventos);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function filtrarReportes(Request $request)
     {
         $request->validate([
@@ -100,6 +230,7 @@ class ReporteController extends Controller
             'eventosPorCategoria' => $eventos->groupBy('idCategoria')->map->count(),
             'eventosPorResponsable' => $eventos->groupBy('responsable_id')->map->count(),
         ];
+
 
         // Datos para las gráficas
         $eventosPorCategoria = $estadisticas['eventosPorCategoria']->map(function ($count, $idCategoria) {
@@ -167,6 +298,4 @@ class ReporteController extends Controller
             'estadisticas' => $estadisticas,
         ]);
     }
-
-
- }
+}

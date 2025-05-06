@@ -68,10 +68,16 @@ Route::post('loginIngresar', [LoginController::class, 'login'])->name('login.ing
 Route::post('logout', [LoginController::class, 'logout'])->name('login.logout');
 
 //**** reportes*** */
-Route::get('evento/reportes', [ReporteController::class, 'index_report'])->name('evento.reportes.index');
-Route::post('/reportes/mensual', [ReporteController::class, 'generarReporteMensual'])->name('reportes.mensual');
-Route::post('/reportes/anual', [ReporteController::class, 'generarReporteAnual'])->name('reportes.anual');
-Route::get('/reportes/filtrar', [ReporteController::class, 'filtrarReportes'])->name('reportes.filtrar');
+Route::get('evento/reportes', [ReporteController::class, 'index_report'])->name('evento.reportes.index')->middleware('auth');
+Route::get('/reportes/filtrar', [ReporteController::class, 'filtrarEventos'])->name('evento.reportes.filtrar')->middleware('auth');
+
+
+
+
+
+Route::post('/reportes/mensual', [ReporteController::class, 'generarReporteMensual'])->name('reportes.mensual')->middleware('auth');
+Route::post('/reportes/anual', [ReporteController::class, 'generarReporteAnual'])->name('reportes.anual')->middleware('auth');
+Route::get('evento/reportes/filtrar', [ReporteController::class, 'filtrarReportes'])->name('reportes.filtrar')->middleware('auth');
 
 // ************* PDF ********************
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
@@ -81,6 +87,9 @@ Route::get('/api/responsables', [ResponsableController::class, 'index']);
 
 //******PDF REPORTES *************/
 Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensual'])->name('reportes.pdf.mensual');
+
+
+
 
 // **  controlador de vista publica ******* */
 Route::get('/public', [PublicController::class, 'index'])->middleware('guest');

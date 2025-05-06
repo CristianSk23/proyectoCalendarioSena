@@ -1,283 +1,184 @@
-@extends('Layouts.Header')
+@extends('Layouts.plantilla')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 @endsection
 
-@section('contentReportes')
-<div class="container mx-auto p-4">
-    <!-- Encabezado -->
-    <h1 class="text-3xl font-bold mb-4 text-center">Generar Reportes</h1>
+@section('content')
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800 text-center">Panel de Reportes</h1>
 
-    <!-- Contenido Principal -->
-    <div class="bg-white p-6 rounded-lg shadow-md mb-4">
-        <h2 class="text-xl font-semibold mb-4">Filtrar Reportes</h2>
-        
-        <!-- Manejo de Errores -->
-        @if ($errors->any())
-            <div class="bg-red-500 text-white p-4 rounded mb-4">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <!-- Formulario para Filtrar Reportes -->
-        <form action="{{ route('reportes.filtrar') }}" method="GET">
-            @csrf
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                    <label for="mes" class="block text-gray-700">Mes:</label>
-                    <select name="mes" class="border rounded px-3 py-2 w-full">
-                        <option value="">Seleccione</option>
-                        @foreach (['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] as $index => $mes)
-                            <option value="{{ $index + 1 }}">{{ $mes }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label for="anio" class="block text-gray-700">Año:</label>
-                    <input type="number" name="anio" class="border rounded px-3 py-2 w-full" placeholder="Año">
-                </div>
-                <div>
-                    <label for="dia" class="block text-gray-700">Día:</label>
-                    <input type="number" name="dia" class="border rounded px-3 py-2 w-full" placeholder="Día">
-                </div>
-                <div>
-                    <label for="responsable_id" class="block text-gray-700">Encargado:</label>
-                    <select name="responsable_id" class="border rounded px-3 py-2 w-full">
-                        <option value="">Seleccione</option>
-                        @foreach ($participantes as $participante)
-                            <option value="{{ $participante->par_identificacion }}">{{ $participante->par_nombres }} {{ $participante->par_apellidos }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200 mt-4">Filtrar Reportes</button>
-        </form>
-    </div>
-
-    <!-- Tablero de Eventos -->
-    <div class="bg-white p-6 rounded-lg shadow-md mb-4">
-        <h2 class="text-xl font-semibold mb-4">Eventos hasta la Fecha</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-blue-100 p-4 rounded-lg text-center">
-                <h3 class="text-lg font-semibold">Eventos del Día</h3>
-                <p class="text-2xl font-bold">{{ $estadisticas['eventosDelDia'] }}</p>
-            </div>
-            <div class="bg-green-100 p-4 rounded-lg text-center">
-                <h3 class="text-lg font-semibold">Eventos del Mes</h3>
-                <p class="text-2xl font-bold">{{ $estadisticas['totalEventosMes'] }}</p>
-            </div>
-            <div class="bg-yellow-100 p-4 rounded-lg text-center">
-                <h3 class="text-lg font-semibold">Eventos del Año</h3>
-                <p class="text-2xl font-bold">{{ $estadisticas['totalEventosAnio'] }}</p>
-            </div>
+        <div class="d-flex justify-content-end mb-4">
+            <button class="btn btn-success">Regresar</button>
         </div>
-    </div>
-
-        <!-- Gráficos -->
-        <div class="flex flex-wrap justify-center mb-4">
-        <div class="chart-container" style="width: 300px; height: 200px;">
-            <canvas id="eventosPorCategoriaChart"></canvas>
-        </div>
-        <div class="chart-container" style="width: 300px; height: 200px;">
-            <canvas id="eventosMensualesChart"></canvas>
-        </div>
-        <div class="chart-container" style="width: 300px; height: 200px;">
-            <canvas id="eventosAnualesChart"></canvas>
-        </div>
-    </div>
-
-    <!-- Reportes -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <!-- Formulario para Reporte Mensual -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold mb-4">Reporte Mensual</h2>
-            <form action="{{ route('reportes.mensual') }}" method="POST">
-                @csrf
-                <div class="mb-4">
-                    <label for="mes" class="block text-gray-700">Mes:</label>
-                    <select name="mes" required class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        @foreach (['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'] as $index => $mes)
-                            <option value="{{ $index + 1 }}">{{ $mes }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label for="anio" class="block text-gray-700">Año:</label>
-                    <input type="number" name="anio" required class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200">Generar Reporte Mensual</button>
-            </form>
-        </div>
-
-        <!-- Formulario para Reporte Anual -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-xl font-semibold mb-4">Reporte Anual</h2>
-            <!-- Formulario para Reporte Anual -->
-                <form action="{{ route('reportes.anual') }}" method="POST">
-                    @csrf
-                    <div class="mb-4">
-                        <label for="anio" class="block text-gray-700">Año:</label>
-                        <input type="number" name="anio" required class="border rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-green-500">
+        <!-- Estadísticas -->
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Eventos del Día</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $estadisticas['eventosDelDia'] }}</div>
                     </div>
-                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-200">Generar Reporte Anual</button>
-                </form>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Eventos del Mes</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $estadisticas['totalEventosMes'] }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Eventos del Año</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $estadisticas['totalEventosAnio'] }}</div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <h2 class="text-2xl font-semibold mb-4 text-center">Estadísticas de Eventos</h2>
-</div>
+        <!-- Filtros y Gráficas -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="dropdown">
+                    <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Filtrar Por: <span id="filtro-actual">Ambiente</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item filtro-opcion active" data-filtro="ambiente">Ambiente</a></li>
+                        <li><a class="dropdown-item filtro-opcion" data-filtro="encargado">Encargado</a></li>
+                        <li><a class="dropdown-item filtro-opcion" data-filtro="categoria">Categoría</a></li>
+                        <li><a class="dropdown-item filtro-opcion" data-filtro="mes">Mes</a></li>
+                        <li><a class="dropdown-item filtro-opcion" data-filtro="anio">Año</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-<!-- Scripts para Gráficos -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+        <!-- Contenedor de la gráfica -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto mb-4">
+                <div class="card shadow">
+                    <div class="card-header" id="titulo-grafica">Eventos por Ambiente</div>
+                    <div class="card-body">
+                        <canvas id="grafica-principal"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
-<!-- <script>
-    $(document).ready(function() {
-        $('#responsableSelect').select2();
-    });
-</script> -->
+        <script>
+            $(document).ready(function () {
+                // Inicializar gráfica con datos de ambiente por defecto
+                const ctx = document.getElementById('grafica-principal').getContext('2d');
+                let graficaPrincipal = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: {!! json_encode($estadisticas['eventosPorAmbiente']->pluck('etiqueta')) !!},
+                        datasets: [{
+                            label: 'Eventos por Ambiente',
+                            data: {!! json_encode($estadisticas['eventosPorAmbiente']->pluck('total')) !!},
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
 
+                // Manejar selección de filtros
+                $('.filtro-opcion').click(function (e) {
+                    e.preventDefault();
 
-<!-- responsable -->
-<script>
-    $(document).ready(function() {
-        $('#responsableSelect').select2({
-            ajax: {
-                url: '/api/responsables', // Cambia esta URL a la ruta de tu API
-                dataType: 'json',
-                delay: 250, // Retraso en milisegundos para evitar demasiadas solicitudes
-                processResults: function(data) {
-                    return {
-                        results: data.map(function(item) {
-                            return {
-                                id: item.par_identificacion,
-                                text: item.par_nombres + ' ' + item.par_apellidos
-                            };
+                    // Remover clase active de todos los items
+                    $('.filtro-opcion').removeClass('active');
+                    // Agregar clase active al seleccionado
+                    $(this).addClass('active');
+
+                    const filtro = $(this).data('filtro');
+                    $('#filtro-actual').text(
+                        filtro === 'ambiente' ? 'Ambiente' :
+                            filtro === 'encargado' ? 'Encargado' :
+                                filtro === 'categoria' ? 'Categoría' :
+                                    filtro === 'mes' ? 'Mes' : 'Año'
+                    );
+
+                    // Hacer petición al backend
+                    fetch(`/reportes/filtrar?filtro=${filtro}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Error al cargar datos');
+                            return response.json();
                         })
-                    };
-                },
-                cache: true
-            },
-            minimumInputLength: 1 // Mínimo de caracteres para iniciar la búsqueda
-        });
-    });
-</script>
+                        .then(data => {
+                            console.log(data);
+                            actualizarGrafica(data, filtro);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Mostrar notificación de error si es necesario
+                        });
+                });
 
+                function actualizarGrafica(data, filtro) {
+                    // Configurar título y tipo de gráfica según el filtro
+                    console.log(data);
+                    
+                    let titulo = '';
+                    let tipoGrafica = 'bar'; // Por defecto usamos barras
+                    let color = 'rgba(54, 162, 235, 0.2)';
+                    let borderColor = 'rgba(54, 162, 235, 1)';
 
-
-<script>
-    // Gráfico de Eventos por Categoría
-    var ctx1 = document.getElementById('eventosPorCategoriaChart').getContext('2d');
-    var myChart1 = new Chart(ctx1, {
-        type: 'bar',
-        data: {
-            labels: {!! json_encode($estadisticas['eventosPorCategoria']->pluck('nombre')) !!},
-            datasets: [{
-                label: 'Eventos por Categoría',
-                data: {!! json_encode($estadisticas['eventosPorCategoria']->pluck('total')) !!},
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Categorías'
+                    switch (filtro) {
+                        case 'ambiente':
+                            titulo = 'Eventos por Ambiente';
+                            break;
+                        case 'encargado':
+                            titulo = 'Eventos por Encargado';
+                            break;
+                        case 'categoria':
+                            titulo = 'Eventos por Categoría';
+                            break;
+                        case 'mes':
+                            titulo = 'Eventos Mensuales';
+                            tipoGrafica = 'line'; // Para meses usamos gráfica de líneas
+                            color = 'rgba(75, 192, 192, 0.2)';
+                            borderColor = 'rgba(75, 192, 192, 1)';
+                            break;
+                        case 'anio':
+                            titulo = 'Eventos Anuales';
+                            break;
                     }
-                },
-                y: {
-                    beginAtZero: true,
-                    min: 0, // Establece el valor mínimo
-                    max: 20, // Establece el valor máximo
-                    title: {
-                        display: true,
-                        text: 'Número de Eventos' // Título del eje Y
-                    }
+
+                    // Actualizar título
+                    $('#titulo-grafica').text(titulo);
+
+                    // Actualizar datos de la gráfica
+                    graficaPrincipal.data.labels = data.map(item => item.etiqueta || item.nombre || item.mes);
+                    graficaPrincipal.data.datasets[0].data = data.map(item => item.total);
+                    graficaPrincipal.data.datasets[0].label = titulo;
+                    graficaPrincipal.data.datasets[0].backgroundColor = color;
+                    graficaPrincipal.data.datasets[0].borderColor = borderColor;
+                    graficaPrincipal.type = tipoGrafica;
+
+                    // Actualizar gráfica
+                    graficaPrincipal.update();
                 }
-            }
-        }
-    });
-
-    // Gráfico de Eventos Mensuales
-    var ctx2 = document.getElementById('eventosMensualesChart').getContext('2d');
-    var myChart2 = new Chart(ctx2, {
-        type: 'bar',
-        data: {
-            labels: ['Total Eventos Este Mes'],
-            datasets: [{
-                label: 'Eventos',
-                data: [{{ $estadisticas['totalEventosMes'] }}],
-                backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                borderColor: 'rgba(255, 206, 86, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Mes'
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    min: 0, // Establece el valor mínimo
-                    max: 20, // Establece el valor máximo
-                    title: {
-                        display: true,
-                        text: 'Número de Eventos' // Título del eje Y
-                    }
-                }
-            }
-        }
-    });
-
-    // Gráfico de Eventos Anuales
-    var ctx3 = document.getElementById('eventosAnualesChart').getContext('2d');
-    var myChart3 = new Chart(ctx3, {
-        type: 'bar',
-        data: {
-            labels: ['Total Eventos Este Año'],
-            datasets: [{
-                label: 'Eventos',
-                data: [{{ $estadisticas['totalEventosAnio'] }}],
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Año'
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    min: 0, // Establece el valor mínimo
-                    max: 20, // Establece el valor máximo
-                    title: {
-                        display: true,
-                        text: 'Número de Eventos' // Título del eje Y
-                    }
-                }
-            }
-        }
-    });
-</script>
-
+            });
+        </script>
 @endsection
