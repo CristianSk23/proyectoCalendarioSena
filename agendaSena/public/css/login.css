@@ -1,19 +1,30 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 .bg-cover {
-  background: url('../css/loginResources/Texturas.png') no-repeat center center;
   background-size: cover;
+  background-position: center;
+  transition: background-image 1s ease-in-out;
 }
 
-.bg-opacity-90 {
-  background-color: rgba(255, 255, 255, 0.95);
+/* Estilo glassmorphism */
+.bg-glass {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Sombra normal */
+/* Sombras suaves */
 .shadow-lg {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-/* Más sombra y elevación al hacer hover */
 .shadow-lg:hover {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
   transform: translateY(-5px);
@@ -30,15 +41,13 @@
   background-color: #218838;
 }
 
-/* Mejora el input-group */
 .input-group-text {
   background-color: #e9ecef;
   border: none;
 }
 
-
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
