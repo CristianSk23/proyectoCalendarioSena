@@ -1140,3 +1140,50 @@ body.public-page::before {
     }
 
     
+
+
+
+
+
+/* solicitud publica   autenticacion */
+
+    #auth_error {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    .is-invalid {
+        border-color: #dc3545;
+    }
+    .is-valid {
+        border-color: #28a745;
+    }
+
+    
+
+
+/* estilos css para el boton de configuracion y el modal del header */
+
+.dropdown-menu {
+    background-color: transparent !important;
+    border: none;
+    box-shadow: none;
+}
+
+.dropdown-item {
+    color: #fff !important;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.imagen-checkbox img {
+    border: 3px solid transparent;
+    transition: border 0.3s;
+    cursor: pointer;
+}
+
+.imagen-checkbox.seleccionada img {
+    border: 3px solid #0d6efd !important;
+}

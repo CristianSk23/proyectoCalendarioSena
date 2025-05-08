@@ -11,6 +11,8 @@ use App\Http\Controllers\Evento\ResponsableController;
 use App\Http\Controllers\Public\PublicController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\FotografiaEvento\FotografiaEventoController;
+use App\Http\Controllers\FondoController;
+
 
 // Rutas públicas
 Route::get('/', [PublicController::class, 'index'])->name('public.index');
@@ -123,3 +125,7 @@ Route::post('/evento/store/externo', [EventoController::class, 'storeExterno'])-
 
 // Validacion de usurio para solicitud de evento.
 Route::post('/verificar-usuario', [EventoController::class, 'verificarUsuario'])->name('verificar.usuario');
+
+// rutas para subir imagenes al fondo del login
+Route::post('/fondos/subir', [FondoController::class, 'subir'])->name('fondos.subir');
+Route::post('/fondos/seleccionar', [FondoController::class, 'seleccionar'])->name('fondos.seleccionar');
