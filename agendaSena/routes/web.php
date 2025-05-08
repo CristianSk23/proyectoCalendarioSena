@@ -89,6 +89,8 @@ Route::get('/api/responsables', [ResponsableController::class, 'index']);
 //******PDF REPORTES *************/
 Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensual'])->name('reportes.pdf.mensual');
 
+<<<<<<<<< Temporary merge branch 1
+
 
 
 // // **  controlador de vista publica ******* */
