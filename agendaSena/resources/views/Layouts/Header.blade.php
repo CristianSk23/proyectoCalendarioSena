@@ -68,6 +68,21 @@
 
                     <!-- Verificar si el usuario está autenticado -->
                     @auth
+
+                        <div class="dropdown ms-4">
+                            <button class="btn dropdown-toggle text-dark border-0" id="menuConfiguracion"
+                                data-bs-toggle="dropdown" style="background-color: transparent; color: #fff;">
+                                <i class="bx bx-cog fs-4"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="menuConfiguracion">
+                                <li>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalFondos">
+                                        <i class="bx bx-image-alt"></i> Cambiar fondo de inicio
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
                         <!-- Si el usuario está autenticado, mostrar el botón de cierre de sesión -->
                         <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
                             @csrf
