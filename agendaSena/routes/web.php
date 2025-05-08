@@ -125,3 +125,9 @@ Route::post('/evento/store/externo', [EventoController::class, 'storeExterno'])-
 
 // Validacion de usurio para solicitud de evento.
 Route::post('/verificar-usuario', [EventoController::class, 'verificarUsuario'])->name('verificar.usuario');
+
+
+
+//*Cambio de fondos pagina de login
+Route::post('/fondos/subir', [FondoController::class, 'subir'])->name('fondos.subir');
+Route::post('/fondos/seleccionar', [FondoController::class, 'seleccionar'])->name('fondos.seleccionar');
