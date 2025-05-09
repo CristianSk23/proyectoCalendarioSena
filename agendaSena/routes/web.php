@@ -10,6 +10,7 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\Evento\ResponsableController;
 use App\Http\Controllers\Public\PublicController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\FondoController;
 use App\Http\Controllers\FotografiaEvento\FotografiaEventoController;
 
 // Rutas públicas
