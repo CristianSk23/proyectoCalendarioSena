@@ -12,7 +12,6 @@ use App\Http\Controllers\Public\PublicController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\FondoController;
 use App\Http\Controllers\FotografiaEvento\FotografiaEventoController;
-use App\Http\Controllers\FondoController;
 
 
 // Rutas públicas
@@ -92,7 +91,7 @@ Route::get('/api/responsables', [ResponsableController::class, 'index']);
 //******PDF REPORTES *************/
 Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensual'])->name('reportes.pdf.mensual');
 
-<<<<<<<<< Temporary merge branch 1
+
 
 
 
