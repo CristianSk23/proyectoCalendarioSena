@@ -17,7 +17,7 @@
             <div class="text-center mb-4">
                 <img src="{{ asset('images/inicio/logoverde.png') }}" alt="Logo SENA" class="mb-3" style="width: 80px;">
                 <h1 class="display-6 fw-bold">AGENDA SENA</h1>
-                <p class="fs-5 fw-semibold">Ingreso de Usuarios Registrados</p>
+                <p class="text-success fs-5 fw-semibold">Utiliza tu cuenta de SetalPro.</p>
             </div>
 
             <form method="POST" action="{{ route('login.ingresar') }}">

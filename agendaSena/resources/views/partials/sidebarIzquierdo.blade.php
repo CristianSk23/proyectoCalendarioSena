@@ -6,7 +6,7 @@
             Eventos del {{ now()->day }} de {{ now()->locale('es')->monthName }}
         </h3>
         <div id="event-list-sideBar" class="row" style="max-height: 200px; overflow-y: auto; padding-right: 10px;">
-            <!-- Aquí se insertarán las cards dinámicamente -->
+            <!-- Aquí se insertan las cards dinámicamente -->
 
         </div>
         <p id="no-events" class="d-none">No hay nada agendado.</p>
@@ -58,8 +58,13 @@
             </button>
 
             <button type="submit" class="btn btn-success ms-2 mt-4 btn-sm" id="reportes">
-                <i class="bx bxs-add-to-queue" style="color: #ffffff;"></i>
+                <i class='bx bxs-report' style="color: #ffffff;"></i>
                 Reportes
+            </button>
+
+            <button type="submit" class="btn btn-success ms-2 mt-4 btn-sm" id="reportes">
+                <i class='bx bxs-calendar-edit' style='color:#ffffff'  ></i>
+                Diseño Calendario
             </button>
         </div>
     </div>

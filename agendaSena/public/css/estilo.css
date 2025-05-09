@@ -113,7 +113,24 @@ body {
   }
 
 
+  .hover-cell {
+    transition: all 0.3s ease;
+    background-color: rgba(255, 255, 255, 0.7);
+    text-shadow: 1px 1px 2px black;
+}
 
+.hover-cell:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    position: relative;
+}
+
+/* Para celdas con eventos */
+.bg-success, .bg-warning, .bg-info {
+    opacity: 0.9;
+    font-weight: bold;
+}
 
 
 
@@ -1164,19 +1181,28 @@ body.public-page::before {
 
 /* estilos css para el boton de configuracion y el modal del header */
 
-.dropdown-menu {
-    background-color: transparent !important;
-    border: none;
-    box-shadow: none;
-}
+/* Estilos específicos para este dropdown */
+.custom-config-dropdown .dropdown-menu {
+    background-color: rgba(255, 255, 255, 0.2);
 
-.dropdown-item {
-    color: #fff !important;
-}
-
-.dropdown-item:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-}
+  }
+  
+  .custom-config-dropdown .dropdown-item {
+    color: #fff;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s;
+  }
+  
+  .custom-config-dropdown .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Estilo para el ícono dentro del dropdown-item */
+  .custom-config-dropdown .dropdown-item i {
+    margin-right: 0.5rem;
+    font-size: 1.1em;
+  }
 
 .imagen-checkbox img {
     border: 3px solid transparent;

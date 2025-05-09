@@ -61,7 +61,7 @@
                     <!-- Verificar si el usuario está autenticado -->
                     @auth
 
-                        <div class="dropdown ms-4">
+                        <div class="dropdown ms-4 custom-config-dropdown">
                             <button class="btn dropdown-toggle text-dark border-0" id="menuConfiguracion"
                                 data-bs-toggle="dropdown" style="background-color: transparent; color: #fff;">
                                 <i class="bx bx-cog fs-4"></i>
