@@ -277,7 +277,7 @@
         }
 
 
-
+        //*Login
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.imagen-checkbox').forEach(label => {
                 const checkbox = label.querySelector('input[type="checkbox"]');
@@ -289,19 +289,18 @@
                         e.preventDefault(); // vitamos que el label active el checkbox por defecto
                         checkbox.checked = !checkbox.checked;
                         label.classList.toggle('seleccionada', checkbox.checked);
-                        console.log('Checkbox:', checkbox);
-
                     }
                 });
 
                 // Asegura que la clase 'seleccionada' se aplique al cargar si ya está marcado
                 if (checkbox.checked) {
-                    console.log('Checkbox ya está marcado');
-
                     label.classList.add('seleccionada');
                 }
             });
         });
+
+
+
 
 
     </script>
@@ -313,6 +312,8 @@
             SENA | CENTRO DE DISEÑO TECNOLÓGICO INDUSTRIAL &copy; {{ date('Y') }}
         </div>
     </footer>
+
+
 
     <div class="modal fade" id="modalFondos" tabindex="-1" aria-labelledby="modalFondosLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -354,6 +355,7 @@
             </div>
         </div>
     </div>
+
 
 </body>
 
