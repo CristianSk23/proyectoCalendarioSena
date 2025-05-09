@@ -41,14 +41,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    {{-- <li class="nav-item">
-                        <a href="{{ route('evento.reportes.index') }}" class="nav-link text-white">Reportes</a>
-                    </li>
-
-                    <!-- Inicio me regresa  a la pagina pricipal eventos -->
-                    <li class="nav-item">
-                        <a href="{{ route('public.index') }}" class="nav-link text-white">Inicio</a>
-                    </li> --}}
 
                 </ul>
                 <div class="d-flex align-items-center">
@@ -297,11 +289,15 @@
                         e.preventDefault(); // vitamos que el label active el checkbox por defecto
                         checkbox.checked = !checkbox.checked;
                         label.classList.toggle('seleccionada', checkbox.checked);
+                        console.log('Checkbox:', checkbox);
+
                     }
                 });
 
                 // Asegura que la clase 'seleccionada' se aplique al cargar si ya está marcado
                 if (checkbox.checked) {
+                    console.log('Checkbox ya está marcado');
+
                     label.classList.add('seleccionada');
                 }
             });
