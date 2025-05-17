@@ -20,6 +20,7 @@ Route::get('/public/{id}', [PublicController::class, 'show'])->name('public.show
 
 // Ruta del calendario (cambiada a /calendario)
 Route::get('/calendario', [CalendarioController::class, 'generarCalendario'])->name('calendario.index')->middleware('auth');
+Route::post('/calendario/diseno', [CalendarioController::class, 'subirMes'])->name('calendario.subirMes')->middleware('auth');
 
 //+++++  ===  Horarios  === +++++
 Route::resource('horarios', HorarioController::class);

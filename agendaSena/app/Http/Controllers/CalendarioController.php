@@ -6,9 +6,7 @@ use App\Http\Controllers\Evento\EventoController;
 use App\Models\Evento\Evento;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
-use function Illuminate\Log\log;
 
 class CalendarioController extends Controller
 {
@@ -65,6 +63,38 @@ class CalendarioController extends Controller
             return view('index', compact('calendario', 'mes', 'anio'));
         }
     }
+
+    public function subirMes(Request $request)
+    {
+        $request->validate([
+            'mes' => 'required|string',
+            'imagen_' . strtolower($request->mes) => 'required|image|max:5120',
+        ]);
+
+        $mes = strtolower($request->mes);
+        $fileInputName = 'imagen_' . $mes;
+
+        if ($request->hasFile($fileInputName)) {
+            $image = $request->file($fileInputName);
+            $filename = $mes . '.jpg';
+            $outputPath = storage_path('app/public/calendario/' . $filename);
+
+            // Crear imagen desde el archivo temporal
+            $source = \imagecreatefromstring(file_get_contents($image));
+
+
+            // Guardar la imagen con compresión (calidad 75%)
+            \imagejpeg($source, $outputPath, 75);
+            \imagedestroy($source);
+
+            return redirect()->back()->with('success', 'Imagen subida Correctamente.');
+        }
+
+        return redirect()->back()->with('error', 'No se pudo subir la imagen.');
+    }
+
+
+    //*Fin Funciones Realizadas por CRISTIAN
 
 
     public function buscarEventosPorMes(Request $request)

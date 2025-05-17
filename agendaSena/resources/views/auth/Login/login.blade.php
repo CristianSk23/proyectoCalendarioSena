@@ -16,7 +16,7 @@
         <div class="bg-glass p-5 rounded-4 shadow-lg w-100" style="max-width: 600px;">
             <div class="text-center mb-4">
                 <img src="{{ asset('images/inicio/logoverde.png') }}" alt="Logo SENA" class="mb-3" style="width: 80px;">
-                <h1 class="display-6 fw-bold">AGENDA SENA</h1>
+                <h1 class="display-6 fw-bold">AGENDA SENA</h1>  
                 <p class="text-success fs-5 fw-semibold">Utiliza tu cuenta de SetalPro.</p>
             </div>
 

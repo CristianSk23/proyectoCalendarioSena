@@ -41,35 +41,6 @@ class EventoController extends Controller
     }
 
 
-    public function solicitudPublica(Request $reques)
-    {
-        $categorias = Categoria::all();
-        $fichas = Ficha::all();
-        $calendario = $this->calendarioGenerado();
-        $participantes = Participante::where('est_apr_id', 2)
-            ->select('par_identificacion', 'par_nombres')
-            ->paginate(10);
-        $ambientes = Ambiente::all();
-        // $eventos = Evento::all();  // O cualquier lógica que estés utilizando para obtener los eventos
-        $eventos= null;
-        // Pasar la variable $eventos a la vista
-        // return view('evento.solicitudEvento', compact('eventos'));
-
-
-        return view('public.SolicitudEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes','eventos'));
-        return redirect()->route('public.index')->with('success', 'Evento guardado exitosamente');
-    }
-    
-    public function authenticated(Request $request, $user)
-    {
-        
-        // Redirige al usuario a la vista para crear un evento
-        return redirect()->route('evento.solicitud');
-    }
-
-
-
-
 
 
     // Fin publica
@@ -351,7 +322,7 @@ class EventoController extends Controller
     public function confirmarEvento(Request $request)
     {
         $idEvento = $request->input('idEvento');
-       
+
         $evento = Evento::find($idEvento);
 
         if ($evento) {
@@ -421,6 +392,37 @@ class EventoController extends Controller
             'estadoEvento' => 'required|integer',
         ]);
     }
+
+
+    //*Fin Funciones Realizadas por CRISTIAN
+
+
+    public function solicitudPublica(Request $reques)
+    {
+        $categorias = Categoria::all();
+        $fichas = Ficha::all();
+        $calendario = $this->calendarioGenerado();
+        $participantes = Participante::where('est_apr_id', 2)
+            ->select('par_identificacion', 'par_nombres')
+            ->paginate(10);
+        $ambientes = Ambiente::all();
+        // $eventos = Evento::all();  // O cualquier lógica que estés utilizando para obtener los eventos
+        $eventos = null;
+        // Pasar la variable $eventos a la vista
+        // return view('evento.solicitudEvento', compact('eventos'));
+
+
+        return view('public.SolicitudEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes', 'eventos'));
+        return redirect()->route('public.index')->with('success', 'Evento guardado exitosamente');
+    }
+
+    public function authenticated(Request $request, $user)
+    {
+
+        // Redirige al usuario a la vista para crear un evento
+        return redirect()->route('evento.solicitud');
+    }
+
 
     // solicitud evento publico
     public function updatepublica(Request $request, Evento $evento)
@@ -512,7 +514,7 @@ class EventoController extends Controller
             $evento->fill($validatedData);
             $evento->idHorario = $horario->idHora;
             $evento->nomSolicitante = $authData['participante']['par_nombres'];
-            
+
             if ($request->hasFile('publicidad')) {
                 $evento->publicidad = $request->file('publicidad')->store('publicidad', 'public');
             }
@@ -524,7 +526,6 @@ class EventoController extends Controller
                 'message' => 'Evento creado exitosamente',
                 'evento_id' => $evento->idEvento
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -532,16 +533,4 @@ class EventoController extends Controller
             ], 500);
         }
     }
-
-
-
-
-    
 }
-
-
-
-
-
-
-

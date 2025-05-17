@@ -6,50 +6,74 @@
 
 @section('content')
 
-    <div class="container mx-auto p-4">
-        <h1 class="display-4 text-center mb-4">Calendario de Eventos</h1>
+    <h1 class="display-4 text-center mb-4">Calendario de Eventos</h1>
 
-        <!-- Navegación entre meses -->
-        <div class="d-flex justify-content-between align-items-center mb-6">
-            <a href="javascript:void(0);" class="btn btn-success" id="prevMonth">
-                <i class="bx bxs-left-arrow" style="transform: scaleY(-1);"></i>
-            </a>
+    <!-- Navegación entre meses -->
+    <div class="d-flex justify-content-between align-items-center mb-6">
+        <a href="javascript:void(0);" class="btn btn-success" id="prevMonth">
+            <i class="bx bxs-left-arrow" style="transform: scaleY(-1);"></i>
+        </a>
 
-            <h2 id="mesAnio" class="h5 font-weight-bold"></h2>
+        <h2 id="mesAnio" class="h5 font-weight-bold"></h2>
 
-            <a href="javascript:void(0);" class="btn btn-success" id="nextMonth">
-                <i class="bx bxs-right-arrow" style="transform: scaleY(-1);"></i>
-            </a>
-        </div>
+        <a href="javascript:void(0);" class="btn btn-success" id="nextMonth">
+            <i class="bx bxs-right-arrow" style="transform: scaleY(-1);"></i>
+        </a>
+    </div>
 
-        <table id="calendario" class="table table-bordered table-responsive"></table>
 
-        <!-- Modal de Confirmación -->
-        <div id="confirmModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-title"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal-title">Eliminar Evento</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="text-sm text-gray-500" id="modalMessage">¿Está seguro que desea eliminar este evento?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="confirmDelete" type="button" class="btn btn-danger">Eliminar</button>
-                        <button id="cancelDelete" type="button" class="btn btn-secondary"
-                            data-dismiss="modal">Cancelar</button>
-                    </div>
+
+
+    <div class="container my-2">
+        <div class="row g-2">
+            <div class="col-auto">
+                <div class="alert alert-warning p-1 m-0 d-flex align-items-center small" role="alert">
+                    <span class="me-2"
+                        style="width: 12px; height: 12px; background-color: #ffc107; display: inline-block; border-radius: 2px;"></span>
+                    Evento Pendiente por confirmar
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="alert alert-info p-1 m-0 d-flex align-items-center small" role="alert">
+                    <span class="me-2"
+                        style="width: 12px; height: 12px; background-color: #0dcaf0; display: inline-block; border-radius: 2px;"></span>
+                    Evento Realizado
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="alert alert-success p-1 m-0 d-flex align-items-center small" role="alert">
+                    <span class="me-1"
+                        style="width: 12px; height: 12px; background-color: #198754; display: inline-block; border-radius: 2px;"></span>
+                    Evento Confirmado
                 </div>
             </div>
         </div>
+    </div>
 
 
-        <input type="file" id="backgroundUpload" accept="image/*" style="display: none;">
-        <button onclick="document.getElementById('backgroundUpload').click()">Cambiar fondo del calendario</button>
+    <table id="calendario" class="table table-bordered table-responsive"></table>
+
+    <!-- Modal de Confirmación -->
+    <div id="confirmModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-title">Eliminar Evento</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-sm text-gray-500" id="modalMessage">¿Está seguro que desea eliminar este evento?</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmDelete" type="button" class="btn btn-danger">Eliminar</button>
+                    <button id="cancelDelete" type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     </div>
 
@@ -90,31 +114,19 @@
 
                 // Limpiar tabla
                 calendarioTabla.innerHTML = `
-                                                                                                                                                                                    <thead>
-                                                                                                                                                                                        <tr class="table-light table-bordered">
-                                                                                                                                                                                            <th class="text-center">Dom</th>
-                                                                                                                                                                                            <th class="text-center">Lun</th>
-                                                                                                                                                                                            <th class="text-center">Mar</th>
-                                                                                                                                                                                            <th class="text-center">Mié</th>
-                                                                                                                                                                                            <th class="text-center">Jue</th>
-                                                                                                                                                                                            <th class="text-center">Vie</th>
-                                                                                                                                                                                            <th class="text-center">Sáb</th>
-                                                                                                                                                                                        </tr>
-                                                                                                                                                                                    </thead>
-                                                                                                                                                                                    <tbody></tbody>
-                                                                                                                                                                                `;
-
-
-
-                // Aplicar imagen de fondo si existe
-                const savedBackground = localStorage.getItem('calendarBackground');
-                if (savedBackground) {
-                    calendarioTabla.style.backgroundImage = `url(${savedBackground})`;
-                    calendarioTabla.style.backgroundSize = 'cover';
-                    calendarioTabla.style.backgroundPosition = 'center';
-                    calendarioTabla.style.backgroundRepeat = 'no-repeat';
-                }
-
+                                                                                                                                                                                                                                                                    <thead>
+                                                                                                                                                                                                                                                                        <tr class="table-light table-bordered">
+                                                                                                                                                                                                                                                                            <th class="text-center">Dom</th>
+                                                                                                                                                                                                                                                                            <th class="text-center">Lun</th>
+                                                                                                                                                                                                                                                                            <th class="text-center">Mar</th>
+                                                                                                                                                                                                                                                                            <th class="text-center">Mié</th>
+                                                                                                                                                                                                                                                                            <th class="text-center">Jue</th>
+                                                                                                                                                                                                                                                                            <th class="text-center">Vie</th>
+                                                                                                                                                                                                                                                                            <th class="text-center">Sáb</th>
+                                                                                                                                                                                                                                                                        </tr>
+                                                                                                                                                                                                                                                                    </thead>
+                                                                                                                                                                                                                                                                    <tbody></tbody>
+                                                                                                                                                                                                                                                                `;
                 const tbody = calendarioTabla.querySelector('tbody');
                 let fila = document.createElement('tr');
 
@@ -253,9 +265,9 @@
                         nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toUpperCase();
 
                         const contenedorEventos = `
-                                                                                                                                                <h2 class="font-weight-bold text-center" id="tituloEventos"></h2>
-                                                                                                                                                <div id="eventosList"></div>
-                                                                                                                                            `;
+                                                                                                                                                                                                                                <h2 class="font-weight-bold text-center" id="tituloEventos"></h2>
+                                                                                                                                                                                                                                <div id="eventosList"></div>
+                                                                                                                                                                                                                            `;
 
                         modalBody.innerHTML = contenedorEventos;
 
@@ -281,24 +293,24 @@
 
 
                                 return `
-                                                                                                                    <div class="col-6 mb-4"> 
-                                                                                                                        <div class="card col-6" style="width: 100%;">
-                                                                                                                            <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento" style="max-width: 100%; height: auto;">
-                                                                                                                            <div class="card-body">
-                                                                                                                                <h5 class="card-title text-success">${evento.nomEvento}</h5>
-                                                                                                                                <p class="card-text"><b>Descripción:</b> ${evento.descripcion}</p>
-                                                                                                                                <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
-                                                                                                                                <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
-                                                                                                                                <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
-                                                                                                                                <p class="card-text"><b>Encargado:</b> ${encargado.par_nombres}</p>
-                                                                                                                                <div class="d-flex justify-content-between">
-                                                                                                                                    ${botonAccion}
-                                                                                                                                    <button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>
-                                                                                                                                </div>
-                                                                                                                            </div>
-                                                                                                                        </div>
-                                                                                                                    </div>
-                                                                                                                `;
+                                                                                                                                                                                                    <div class="col-6 mb-4"> 
+                                                                                                                                                                                                        <div class="card col-6" style="width: 100%;">
+                                                                                                                                                                                                            <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento" style="max-width: 100%; height: auto;">
+                                                                                                                                                                                                            <div class="card-body">
+                                                                                                                                                                                                                <h5 class="card-title text-success">${evento.nomEvento}</h5>
+                                                                                                                                                                                                                <p class="card-text"><b>Descripción:</b> ${evento.descripcion}</p>
+                                                                                                                                                                                                                <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
+                                                                                                                                                                                                                <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
+                                                                                                                                                                                                                <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
+                                                                                                                                                                                                                <p class="card-text"><b>Encargado:</b> ${encargado.par_nombres}</p>
+                                                                                                                                                                                                                <div class="d-flex justify-content-between">
+                                                                                                                                                                                                                    ${botonAccion}
+                                                                                                                                                                                                                    <button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>
+                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                            </div>
+                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                `;
                             }).join('');
                             tituloEventos.className = "text-center";
                             tituloEventos.innerHTML = `Eventos para: <b>${dia}-${nombreMes}-${anio}</b>`;
@@ -343,15 +355,18 @@
             });
             // Generar calendario inicial
             generarCalendario(fechaActual);
+            cargarFondoCalendario(fechaActual);
 
             anteriorMesBtn.addEventListener('click', function () {
                 fechaActual.setMonth(fechaActual.getMonth() - 1);
                 generarCalendario(fechaActual);
+                cargarFondoCalendario(fechaActual);
             });
 
             siguienteMesBtn.addEventListener('click', function () {
                 fechaActual.setMonth(fechaActual.getMonth() + 1);
                 generarCalendario(fechaActual);
+                cargarFondoCalendario(fechaActual);
             });
 
             function eliminarEvento(idEvento) {
@@ -359,36 +374,38 @@
                 const urlEliminar = `${baseRutaEliminarEvento}/${idEvento}`;
                 window.location.href = urlEliminar;
                 generarCalendario(fechaActual);
+                cargarFondoCalendario(fechaActual);
             }
 
 
 
-            document.getElementById('backgroundUpload').addEventListener('change', function (e) {
-                const file = e.target.files[0];
-                if (!file) return;
+            function cargarFondoCalendario(fecha) {
+                const calendarioTabla = document.getElementById('calendario');
+                if (!calendarioTabla) return;
 
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    const imageUrl = event.target.result;
+                const fechaActual = fecha;
+                console.log("Fecha actual:", fechaActual);
 
-                    // Guardar en localStorage para persistencia
-                    localStorage.setItem('calendarBackground', imageUrl);
+                const numeroMes = fechaActual.getMonth();
 
-                    // Aplicar al calendario
-                    calendarioTabla.style.backgroundImage = `url(${imageUrl})`;
-                    calendarioTabla.style.backgroundSize = 'cover';
-                    calendarioTabla.style.backgroundPosition = 'center';
-                    calendarioTabla.style.backgroundRepeat = 'no-repeat';
+                const meses = [
+                    'enero', 'febrero', 'marzo', 'abril',
+                    'mayo', 'junio', 'julio', 'agosto',
+                    'septiembre', 'octubre', 'noviembre', 'diciembre'
+                ];
 
-                    // Asegurarse de que el texto sea legible
-                    const celdas = calendarioTabla.querySelectorAll('td, th');
-                    celdas.forEach(celda => {
-                        celda.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
-                        celda.style.textShadow = '1px 1px 2px black';
-                    });
-                };
-                reader.readAsDataURL(file);
-            });
+                const mesActual = meses[numeroMes];
+                console.log("Mes actual:", mesActual);
+                const rutaFondo = `/storage/calendario/${mesActual}.jpg`;
+
+                calendarioTabla.style.backgroundImage = `url(${rutaFondo})`;
+                calendarioTabla.style.backgroundSize = 'cover';
+                calendarioTabla.style.backgroundPosition = 'center';
+                calendarioTabla.style.backgroundRepeat = 'no-repeat';
+            }
+
+
+
 
 
 
@@ -397,7 +414,11 @@
             @if(session('success'))
                 notyf.success('{{ session('success') }}');
             @endif
-                                                                                                                });
+
+            @if(session('error'))
+                notyf.error('{{ session('error') }}');
+            @endif
+                                                                                                                                                                                                });
     </script>
 
 @endsection

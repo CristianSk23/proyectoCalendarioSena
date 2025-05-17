@@ -134,7 +134,42 @@ body {
 
 
 
-  
+  #calendario {
+        width: 90%;
+        max-width: 1200px;
+        margin: 40px auto;
+        border-collapse: collapse;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    #calendario th, #calendario td {
+        border: 1px solid #ccc;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.2rem;
+        background-color: rgba(255, 255, 255, 0.514); /* semitransparente */
+    }
+
+    #calendario th {
+        background-color: rgba(57,169,0, 0.9); /* azul Bootstrap */
+        color: white;
+        font-weight: bold;
+    }
+    /* Responsive */
+    @media (max-width: 768px) {
+        #calendario {
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        #calendario th, #calendario td {
+            padding: 12px;
+        }
+    }
 
 
 

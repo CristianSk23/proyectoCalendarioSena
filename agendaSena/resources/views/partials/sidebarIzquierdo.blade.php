@@ -62,10 +62,12 @@
                 Reportes
             </button>
 
-            <button type="submit" class="btn btn-success ms-2 mt-4 btn-sm" id="reportes">
-                <i class='bx bxs-calendar-edit' style='color:#ffffff'  ></i>
+            <button type="submit" class="btn btn-success ms-2 mt-4 btn-sm" data-bs-toggle="modal"
+                data-bs-target="#modalCalendarioMensual">
+                <i class='bx bxs-calendar-edit' style='color:#ffffff'></i>
                 Diseño Calendario
             </button>
+
         </div>
     </div>
 
@@ -277,7 +279,6 @@
                 mostrarEventosEnSidebar(data.data);
             })
             .catch(error => {
-                console.error('Error:', error);
                 notyf.error('Error al buscar eventos');
             });
     }
@@ -298,9 +299,8 @@
                 nombreInput.value = '';
             })
             .catch(error => {
-                console.error('Error:', error);
                 nombreInput.value = '';
-                notyf.error('Error al buscar eventos');
+                notyf.error('No se encontraron eventos con ese nombre');
             });
     }
 
@@ -328,7 +328,7 @@
                 });
             })
             .catch(error => {
-                notyf.error('Error al buscar eventos por fecha');
+                notyf.error('No se encontraron eventos para la fecha seleccionada');
             });
     }
 
@@ -355,6 +355,7 @@
 
     const btnAgregarEvento = document.getElementById('agregarEvento');
     const btnReportes = document.getElementById('reportes');
+    const btnDisenoCalendario = document.getElementById('disenoCalendario');
 
     btnAgregarEvento.addEventListener('click', function () {
         const baseRutaCrearEvento = "{{ route('eventos.crearEvento') }}";
@@ -364,9 +365,13 @@
 
     btnReportes.addEventListener('click', function () {
         const baseRutaCrearEvento = "{{ route('evento.reportes.index') }}";
-        // Redirigir a la ruta de creación de eventos
+        // Redirigir a la ruta de reportes
         window.location.href = `${baseRutaCrearEvento}`;
     });
 
+
+
 </script>
+@include('partials.modalCargarImagenesCalendario');
+
 </nav>
