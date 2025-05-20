@@ -17,7 +17,7 @@ class PublicController extends Controller
     {
        
         $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
-            ->where('estadoEvento', 1)
+            ->where('estadoEvento',[1,3])
             ->get();
 
         // Asumimos que quieres una imagen por evento como banner (sin nueva columna)

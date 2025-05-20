@@ -1,3 +1,8 @@
+
+@php
+    $ocultarBanner = true;
+@endphp
+
 @extends('layouts.public')
 
 @section('content')
@@ -6,14 +11,12 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<h1 class="h2 mb-4" style="color: grey; text-shadow: -1px 0 green, 0 1px green, 1px 0 white, 0 -1px white;">
-    Solicitar Evento
-</h1>
 
-<!-- BOTÓN para abrir el modal de autenticación -->
-<button type="button" class="btn btn-success mb-4" id="btnAbrirAutenticacion">
-    Agregar Evento
-</button>
+<!-- Titulo formulario -->
+<h1 class="h2 mb-4" style="color: grey; text-shadow: -1px 0 green, 0 1px green, 1px 0 white, 0 -1px white;">
+    Solicitar Evento </h1>
+
+
 
 <!-- MODAL de autenticación -->
 <div class="modal fade" id="authModalAgregarEvento" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
@@ -38,31 +41,24 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="btnValidar">Validasssssssr</button>
+                    <button type="submit" class="btn btn-primary" id="btnValidar">Validar</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
 
-<!-- FORMULARIO del evento (oculto inicialmente) -->
-<!-- Solicitud para quien  -->
+<!--Fin Modal  autenticar -->
 
 
-
-<h1 class="h2 font-weight-bold mb-4" style="color: grey; text-shadow: -1px 0 green, 0 1px green, 1px 0 white, 0 -1px white;">
-    Crear Eventosssss
-</h1>
+<!-- FORMULARIO de Solicitar evento (oculto inicialmente) -->
 
 <form action="{{ route('eventos.storeExterno') }}"
       method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded shadow" id="formularioEvento">
     @csrf
 
-
-
-
         <div class="mb-3">
-            <label for="par_identificacion" class="form-label">Encargado del EventoSSSSSSSSS:</label>
+            <label for="par_identificacion" class="form-label">Encargado del Evento:</label>
             <select name="par_identificacion" id="par_identificacion" class="form-select" required>
                 <option value="">Seleccionar Encargado</option>
                 @foreach ($participantes as $participante)
@@ -174,7 +170,7 @@
         </div>
 
         <button type="submit" class="btn btn-success" id="btnCrearEvento">
-            {{ isset($evento) ? 'Actualizar Evento' : 'Crear Eventoss' }}
+            {{ isset($evento) ? 'Actualizar Evento' : 'Solicitar Evento' }}
         </button>
     </form>
 
@@ -189,7 +185,7 @@
 @push('scripts')
 <script>
 
-    // Funcionar yaque 12 am
+    
 
 // envio de evento 
 document.addEventListener('DOMContentLoaded', function () {
@@ -253,8 +249,7 @@ function validadorInputs(input) {
     }
 }
 
-
-    //Fin  Funcionar yaque 12 am
+// Fin manejo de Datos d eformulario para solicitar eventos estado = 2
 
 
 

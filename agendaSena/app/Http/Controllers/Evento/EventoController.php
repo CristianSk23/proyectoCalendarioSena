@@ -23,7 +23,7 @@ class EventoController extends Controller
     {
         // Carga eventos nuevos 
         $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
-            ->where('estadoEvento', 1,3) // Filtrar solo los eventos con estado 1
+            ->where('estadoEvento', 1) // Filtrar solo los eventos con estado 1
             ->get();
         return view('Evento.inicioEvento', compact('eventos'));
     }
