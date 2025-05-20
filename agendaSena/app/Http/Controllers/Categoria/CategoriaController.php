@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Categoria;
 
+use App\Http\Controllers\Controller;
 use App\Models\Categoria\Categoria;
 use Illuminate\Http\Request;
 
@@ -52,4 +53,11 @@ class CategoriaController extends Controller
         $categoria->delete(); // Eliminar la categoría
         return redirect()->route('categorias.index')->with('success', 'Categoría eliminada exitosamente.');
     }
+    // Retorna todas las categorías en formato JSON (para uso en JS)
+    public function apiIndex()
+    {
+        $categorias = Categoria::where('estadoCategoria', 1)->get();
+        return response()->json($categorias);
+    }
+
 }

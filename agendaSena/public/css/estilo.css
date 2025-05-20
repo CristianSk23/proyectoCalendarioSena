@@ -797,6 +797,12 @@ body {
 /* === GENERAL  PARA LA PÁGINA PÚBLICA === */
 .public-page * {
     box-sizing: border-box;
+    /* font-size: 1.25rem; */
+    /* transform: scale(0.9);  */
+    /* 90% del tamaño original */
+    /* transform-origin: top left; */
+    zoom: 95%;
+
 }
 .public-page body {
     margin: 0;
@@ -970,11 +976,21 @@ body.public-page::before {
 }
 
 /* === CONTENIDO PRINCIPAL === */
-.public-page .content-area {
+/* .public-page .content-area {
     margin-left: 420px; /* espacio para el sidebar */
-    margin-top: 70px;   /* espacio para el navbar */
+    /*margin-top: 70px;   /* espacio para el navbar */
+    /*padding: 20px;
+} */
+.public-content-area {
+    margin-left: 410px; /* exactamente el ancho del sidebar */
+    margin-top: 70px;   /* altura de la navbar fija */
     padding: 20px;
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
+
 
 /* === TARJETAS DE EVENTOS === */
 .public-page .card-container {
@@ -1107,6 +1123,9 @@ body.public-page::before {
 /* FOOTER   -°|>><<|°-  PIE DE PAGINA */
 
 
+
+
+
 .agensena-footer {
     background-color: #4caf50;
     padding: 1rem 0;
@@ -1121,6 +1140,28 @@ body.public-page::before {
     font-weight: 500;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.public-footer {
+    background-color: #4caf50;
+    padding: 1rem 0;
+    text-align: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.public-footer-content {
+    font-family: 'Work Sans', 'Calibri', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+}
 
 
 
@@ -1187,3 +1228,67 @@ body.public-page::before {
 .imagen-checkbox.seleccionada img {
     border: 3px solid #0d6efd !important;
 }
+
+
+
+/* SECCION PUBLICA CARRUSEL BANNER */
+/* Banner público - Carrusel */
+
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 472px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.hero-section img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+@media (max-width: 768px) {
+    .hero-section {
+        height: 300px;
+    }
+}
+@media (max-width: 480px) {
+    .hero-section {
+        height: 220px;
+    }
+}
+
+.hero-carousel {
+    max-height: 472px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+.hero-carousel img {
+    width: 100%;
+    height: 472px;
+    object-fit: cover;
+}
+@media (max-width: 768px) {
+    .hero-carousel img {
+        height: 300px;
+    }
+}
+
+#bannerCarousel .carousel-item {
+            height: 472px;
+            position: relative;
+            background-color: #000;
+        }
+
+        #bannerCarousel .carousel-item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-caption {
+            z-index: 10;
+        }

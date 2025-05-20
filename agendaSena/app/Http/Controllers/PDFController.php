@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\PdfController;
 
 use Illuminate\Http\Request;
 use App\Models\Evento\Evento; // Asegúrate de que este modelo esté correctamente importado
-use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPdf\Facade as Pdf;
 
 class PdfController extends Controller
 {
@@ -22,7 +22,7 @@ class PdfController extends Controller
             ->get();
 
         // Pasar los datos a la vista
-        $pdf = PDF::loadView('reportes.pdf.mensual', compact('eventos', 'request'));
+        $pdf = Pdf::loadView('reportes.pdf.mensual', compact('eventos', 'request'));
 
         // Descargar el PDF
         return $pdf->download('reporte_mensual_' . $request->mes . '_' . $request->anio . '.pdf');

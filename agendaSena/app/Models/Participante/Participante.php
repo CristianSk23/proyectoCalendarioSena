@@ -49,4 +49,6 @@ class Participante extends Authenticatable
     {
         return 'par_correo'; // Especifica que 'par_correo' es el campo utilizado para la autenticación
     }
+
+    
 }

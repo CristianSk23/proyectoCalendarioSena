@@ -31,4 +31,5 @@ class User extends Authenticatable
     {
         return 'par_identificacion';
     }
+    
 }

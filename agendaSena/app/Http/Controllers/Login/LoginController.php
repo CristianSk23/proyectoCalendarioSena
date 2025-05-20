@@ -44,13 +44,6 @@ class LoginController extends Controller
             return redirect()->route('login')->with('error', 'Número de identificación o contraseña incorrectos.');
         } // Si la autenticación falla
 
-        if (Auth::attempt($credentials)) {
-            // Redirigir al usuario a la página a la que intentaba acceder
-            return redirect()->intended(route('evento.reportes.index'))->with('success', 'Inicio de sesión exitoso');
-        } else {
-            // Si las credenciales son incorrectas, redirige al login con un error
-            return redirect()->route('login')->with('error', 'Número de identificación o contraseña incorrectos.');
-        }
 
     }
 
@@ -89,40 +82,45 @@ class LoginController extends Controller
 
 
   
-
-
-    public function validarCredencialesPublicas(Request $request)
-    {
+    // Valicadion  de credencialespara solicitar un evento desde vista publica
+   public function validarCredencialesPublicas(Request $request)
+{
+    try {
         $request->validate([
             'par_identificacion' => 'required',
             'password' => 'required'
         ]);
-    
-        $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
-    
-        if (!$participante) {
+
+        // Buscar el usuario directamente por par_identificacion
+        $user = User::where('par_identificacion', $request->par_identificacion)->first();
+
+        if (!$user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Identificación no encontrada'
-            ], 200);
+                'message' => 'Credenciales incorrectas.'
+            ], 401);
         }
-    
-        // Si las contraseñas están hasheadas en la BD:
-        if (!Hash::check($request->password, $participante->password)) {
+
+        // Verificar la contraseña
+        if (!Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Contraseña incorrecta'
-            ], 200);
+                'message' => 'Credenciales incorrectas.'
+            ], 401);
         }
-    
-        // Si las contraseñas están en texto plano:
-        // if ($participante->password !== $request->password) {
-        //     return response()->json([...]);
-        // }
-    
+
         return response()->json([
             'success' => true,
-            'message' => 'Autenticación exitosa'
+            'message' => 'Autenticación exitosa.'
         ]);
+
+    } catch (\Exception $e) {
+        Log::error('Error en validarCredencialesPublicas: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error en el servidor.'
+        ], 500);
     }
+}
+
 }
