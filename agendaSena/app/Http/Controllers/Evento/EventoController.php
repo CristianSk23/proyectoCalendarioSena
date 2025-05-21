@@ -23,7 +23,7 @@ class EventoController extends Controller
     {
         // Carga eventos nuevos 
         $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
-            ->where('estadoEvento', 1) // Filtrar solo los eventos con estado 1
+            ->whereIn('estadoEvento',[1,3]) // Filtrar solo los eventos con estado 1
             ->get();
         return view('Evento.inicioEvento', compact('eventos'));
     }
@@ -468,12 +468,7 @@ class EventoController extends Controller
 
 
 
-
-
-
-    // Funcionar yaque 12 am
-
-    // Método para manejar el formulario externo
+    // Método para manejar el formulario externo  -oky
     public function storeExterno(Request $request)
     {
         
@@ -541,8 +536,6 @@ class EventoController extends Controller
         }
     }
 
-
-    //Fin Funcionar yaque 12 am
 
     // Fin Método para manejar el formulario externo
 

@@ -1,11 +1,8 @@
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 @include('layouts.header') {{-- o tus estilos/scripts directamente --}}
 <!-- <script src="{{ asset('js/app.js') }}"></script> -->
-
 
 </head>
 
@@ -67,7 +64,9 @@
                 <!-- Filtro por Nombre del Evento -->
                 <div class="search-input-container">
                     <label for="search-input">Buscar por nombre:</label>
-                    <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre..." oninput="searchEvent()">
+                    <!-- <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre..." oninput="searchEvent()"> -->
+                    <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre" oninput="searchEvent()">
+
                 </div>
         
 
@@ -78,7 +77,6 @@
                     </button>
                 </div>
 
-
                 <!-- boton Solicitud de eventos desde vista publica -->
                 <div class="mt-3">                                   
                         <button id="abrirModalAgregar" class="btn btn-outline-primary w-100">
@@ -87,7 +85,6 @@
                     </div>
                  </div>        
 
-
     </div>
 
     
@@ -95,10 +92,10 @@
     <!-- Contenido Principal -->
     <div class="public-content-area">
 
-
     <!-- Bloque BANNER -->
-    @if(!isset($ocultarBanner) || !$ocultarBanner)
-    
+
+     @if(!isset($ocultarBanner) || !$ocultarBanner)
+        <!-- BANNER -->
         @if(isset($imagenesBanner) && $imagenesBanner->isNotEmpty())
             <div id="bannerCarousel" class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="5000" data-bs-wrap="true">
                 <div class="carousel-inner">
@@ -135,9 +132,8 @@
                 <p class="text-muted">No hay imágenes disponibles por el momento.</p>
             </div>
         @endif
-    @endif    
+         @endif    
         <!-- FIN DE BANNER -->
-
 
         <!--INICIO CONTENIDO DE EVENTOS -->
             <div id="event-details" class="mt-4"></div> 
@@ -145,7 +141,6 @@
             @yield('content') <!-- secciones de contenido -->
 
         <!--FIN CONTENIDO DE EVENTOS -->
-
 
         <!-- Modal para autenticación antes de agregar evento -->
         <div class="modal fade" id="authModalAgregarEvento" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
@@ -179,7 +174,6 @@
 
 
 
-
          <!-- Pie de pagina -->
         <footer class="public-footer">
             <div class="public-footer-content">
@@ -191,7 +185,7 @@
 
     
 
-    
+</body>
     
 
     <!-- Cargar Bootstrap JS y dependencias -->
@@ -199,7 +193,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 
    <script>
-
 
 
 
@@ -249,11 +242,14 @@
             });
         }
     });
-    // -- FIN Manejo de formulario publico para agregar eventos
+    // -- FIN Manejo de formulario publico para agregar eventos -ok
 
 
 
-    // Visualizacion de eventos  calendario 
+
+
+
+
 
     let currentDate = new Date();
       let eventos = @json($eventos);
@@ -268,7 +264,7 @@
         if (!Array.isArray(eventos)) {
             eventos = [];
         }
-            // Mostrar el nombre del mes
+
         document.getElementById('month-name').innerText = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
         let calendarBody = document.getElementById('calendar-body');
         calendarBody.innerHTML = "";
@@ -281,7 +277,7 @@
         for (let day = 1; day <= daysInMonth; day++) {
             let cell = document.createElement('td');
             cell.innerText = day;
-            // Verificar si hay eventos para ese día
+
             const eventForDay = eventos.filter(event => {
                 const [year, month, dayStr] = event.fechaEvento.split('-');
                 const eventDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(dayStr));
@@ -293,7 +289,7 @@
             if (eventForDay.length > 0) {
                 cell.classList.add('event-day');
             }
-            // click para mostrar los eventos del día
+
             cell.addEventListener('click', function () {
                 showEventDetails(day);
             });
@@ -314,10 +310,8 @@
     // Cargar funcion del calendario y sus eventos
     document.addEventListener('DOMContentLoaded', function () {
         loadCalendar();
-        showAllEvents();
         document.getElementById('categoria_id').addEventListener('change', searchByCategory);
     });
-
 
 
     // Cambiar al mes anterior
@@ -336,10 +330,7 @@
 
 
 
-
-
-
-// NUEVO REAL Autenticacion
+// NUEVO REAL ok
 
 document.addEventListener('DOMContentLoaded', function () {
     const modal = new bootstrap.Modal(document.getElementById('authModalAgregarEvento'));
@@ -420,12 +411,182 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+// visualizacion de eventos en el contenido
+function showEventDetails(day) {
+    const eventosDelDia = eventos.filter(event => {
+        const [year, month, dayStr] = event.fechaEvento.split('-');
+        const eventDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(dayStr));
+        return eventDate.getDate() === day &&
+            eventDate.getMonth() === currentDate.getMonth() &&
+            eventDate.getFullYear() === currentDate.getFullYear();
+    });
+
+    const container = document.getElementById("event-details");
+    container.innerHTML = ""; // Limpiar contenido anterior
+
+    if (eventosDelDia.length === 0) {
+        container.innerHTML = `
+            <div class="card mt-3">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-muted">No hay eventos para este día.</h5>
+                    <p class="text-muted">¡Pero no te preocupes! Vuelve más tarde para descubrir nuevos eventos.</p>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    const row = document.createElement("div");
+    row.classList.add("row");
+
+    eventosDelDia.forEach(evento => {
+        const col = document.createElement("div");
+        col.classList.add("col-md-4", "mb-4");
+
+        // Reutilizamos la función que ya tienes definida para crear tarjetas de evento
+        col.innerHTML = createEventCard(evento);
+
+        row.appendChild(col);
+    });
+
+    container.appendChild(row);
+}
 
 
 
 
-   loadCalendar()
-   showAllEvents();
+
+///filtros 
+
+
+async function searchEvent() {
+    const term = document.getElementById('search-input').value.toLowerCase().trim();
+    limpiarOtrosFiltros('nombre');
+
+    if (!term) {
+        mostrarTodosEventos();
+        return;
+    }
+
+    try {
+        const response = await fetch(`/eventos/buscar-por-nombre?nombre=${encodeURIComponent(term)}`);
+        const data = await response.json();
+
+        if (data.evento && data.evento.length > 0) {
+            const eventosProcesados = data.evento.map(item => item.evento);
+            displayEventsInGrid(eventosProcesados);
+        } else {
+            mostrarMensajeSinEventos("No se encontraron eventos.");
+        }
+    } catch (error) {
+        console.error('Error en la búsqueda por nombre:', error);
+        mostrarMensajeSinEventos("Error al buscar eventos.");
+    }
+}
+
+async function searchByCategory() {
+    const categoriaId = document.getElementById('categoria_id').value;
+    limpiarOtrosFiltros('categoria');
+
+    if (!categoriaId) {
+        mostrarTodosEventos();
+        return;
+    }
+
+    try {
+        const response = await fetch(`/eventos/buscar-por-categoria?idCategoria=${categoriaId}`);
+        const data = await response.json();
+
+        if (data.eventos && data.eventos.length > 0) {
+            displayEventsInGrid(data.eventos);
+        } else {
+            mostrarMensajeSinEventos("No se encontraron eventos.");
+        }
+    } catch (error) {
+        console.error('Error en la búsqueda por categoría:', error);
+        mostrarMensajeSinEventos("Error al buscar eventos.");
+    }
+}
+
+
+
+// 📅 Buscar por fecha
+function searchByDate() {
+    const date = document.getElementById('date-search').value;
+    limpiarOtrosFiltros('fecha');
+
+    if (!date) {
+        mostrarTodosEventos();
+        return;
+    }
+
+    const filtrados = eventos.filter(evento => {
+        const fechaEvento = new Date(evento.fechaEvento).toISOString().split('T')[0];
+        return fechaEvento === date;
+    });
+
+    displayEventsInGrid(filtrados);
+}
+
+
+
+
+
+
+// 🧹 Limpiar los filtros que no se están usando
+function limpiarOtrosFiltros(excepto) {
+    if (excepto !== 'nombre') document.getElementById('search-input').value = '';
+    if (excepto !== 'fecha') document.getElementById('date-search').value = '';
+    if (excepto !== 'categoria') document.getElementById('categoria_id').value = '';
+}
+
+// 🗂 Mostrar todos los eventos sin filtro
+function mostrarTodosEventos() {
+    document.getElementById('search-input').value = '';
+    document.getElementById('date-search').value = '';
+    document.getElementById('categoria_id').value = '';
+    displayEventsInGrid(eventos);
+}
+
+// 🖼 Mostrar eventos en forma de tarjetas
+function displayEventsInGrid(listaEventos) {
+    const container = document.getElementById("event-details");
+    container.innerHTML = "";
+
+    if (!listaEventos || listaEventos.length === 0) {
+        mostrarMensajeSinEventos("No se encontraron eventos.");
+        return;
+    }
+
+    const row = document.createElement("div");
+    row.classList.add("row");
+
+    listaEventos.forEach(evento => {
+        const col = document.createElement("div");
+        col.classList.add("col-md-4", "mb-4");
+        col.innerHTML = createEventCard(evento); // Reutiliza tu función que crea la tarjeta
+        row.appendChild(col);
+    });
+
+    container.appendChild(row);
+}
+
+// ⚠️ Mostrar mensaje si no hay eventos
+function mostrarMensajeSinEventos(mensaje) {
+    const container = document.getElementById("event-details");
+    container.innerHTML = `
+        <div class="card mt-3">
+            <div class="card-body text-center">
+                <h5 class="card-title">${mensaje}</h5>
+            </div>
+        </div>
+    `;
+}
+
+
+
+
+
 
 
 
@@ -434,7 +595,7 @@ document.addEventListener('DOMContentLoaded', function () {
 @stack('scripts')
 </body>
 
- <!--alerta  Evento creado correctamente. -->
+ <!-- yaque 12 am alerta "bonita" -->
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -462,35 +623,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
-
-
-
 </script>
  <!-- fin yaque 12 am alerta "bonita" -->
 
-
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

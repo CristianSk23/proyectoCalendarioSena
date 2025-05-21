@@ -65,6 +65,7 @@ Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendar
 // Route::get('/categoria', [CategoriaController::class, 'index'])->name('categoria.index');
 Route::get('/categorias', [CategoriaController::class, 'index']);
 Route::get('/categorias-json', [CategoriaController::class, 'apiIndex']);
+Route::get('eventos/buscar-por-categoria', [EventoController::class, 'buscarEventosPorCategoria']);
 
 
 //** */  ++++ LOGIN  ++++++

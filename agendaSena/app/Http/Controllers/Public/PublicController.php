@@ -17,12 +17,12 @@ class PublicController extends Controller
     {
        
         $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
-            ->where('estadoEvento',[1,3])
+            ->where('estadoEvento',1)
             ->get();
 
         // Asumimos que quieres una imagen por evento como banner (sin nueva columna)
         // $imagenesBanner = collect();
-         $eventosRealizados = Evento::where('estadoEvento', 3)->pluck('idEvento');
+         $eventosRealizados = Evento::where('estadoEvento',[1,3])->pluck('idEvento');
         // foreach ($eventos as $evento) {
         //     $foto = FotografiaEvento::where('idEvento', $evento->idEvento)->first();
         //     if ($foto) {
