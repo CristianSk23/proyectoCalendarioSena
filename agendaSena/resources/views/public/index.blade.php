@@ -1,52 +1,9 @@
 @extends('layouts.public')
 
 @section('content')
-    <div class="container" id="event-details">
+    <div class="container" id="future-events"></div>
         
-        <h1 class="text-center my-4">Proximos Eventos</h1>
-
-        <div class="row">
-            @foreach($eventos as $evento)
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        @if($evento->publicidad)
-                            <img src="{{ asset('storage/' . $evento->publicidad) }}" class="card-img-top" alt="Imagen del evento" style="height: 200px; object-fit: cover;">
-                        @else
-                            <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Sin imagen">
-                        @endif
-
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ $evento->nomEvento }}</h5>
-                            <p class="card-text">{{ Str::limit($evento->descripcion, 100) }}</p>
-                            <p class="card-text"><strong>Fecha:</strong> {{ \Carbon\Carbon::parse($evento->fechaEvento)->format('d/m/Y') }}</p>
-
-                            @if($evento->horario)
-                                <p class="card-text">
-                                    <strong>Hora:</strong>
-                                    {{ \Carbon\Carbon::parse($evento->horario->inicio)->format('H:i') }} -
-                                    {{ \Carbon\Carbon::parse($evento->horario->fin)->format('H:i') }}
-                                </p>
-                            @endif
-
-                            @if($evento->ambiente)
-                                <p class="card-text"><strong>Ambiente:</strong> {{ $evento->ambiente->nombre }}</p>
-                            @endif
-
-                            @if($evento->categoria)
-                                <p class="card-text"><strong>Categoría:</strong> {{ $evento->categoria->nombre }}</p>
-                            @endif
-
-                            <button class="btn btn-primary mt-auto" onclick='openModal({{json_encode($evento)}})'>
-                                Ver más
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-
-        <button class="btn btn-secondary mt-4" onclick="mostrarTodosEventos()">Mostrar Todos los Eventos</button>
-    </div>
+        
 
    
     <!-- Modal de Detalle de Evento -->

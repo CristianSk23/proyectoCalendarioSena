@@ -136,7 +136,7 @@
         <!-- FIN DE BANNER -->
 
         <!--INICIO CONTENIDO DE EVENTOS -->
-            <div id="event-details" class="mt-4"></div> 
+        <div id="event-details" class="mt-4 card-container"></div> 
   
             @yield('content') <!-- secciones de contenido -->
 
@@ -459,58 +459,72 @@ function showEventDetails(day) {
 ///filtros 
 
 
-async function searchEvent() {
-    const term = document.getElementById('search-input').value.toLowerCase().trim();
-    limpiarOtrosFiltros('nombre');
+function searchEvent() {
+    const searchInput = document.getElementById('search-input').value.toLowerCase();
+    
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
 
-    if (!term) {
-        mostrarTodosEventos();
-        return;
-    }
+    // Filtrar los eventos que coincidan con cualquier palabra en los campos relevantes
+    const filteredEvents = eventos.filter(event => {
+        // Concatenar los campos relevantes para la búsqueda
+        const eventText = `${event.nomEvento} ${event.descripcion} ${event.categoria}`.toLowerCase();
+        return eventText.includes(searchInput); // Verificar si la entrada de búsqueda está en el texto concatenado
+    });
 
-    try {
-        const response = await fetch(`/eventos/buscar-por-nombre?nombre=${encodeURIComponent(term)}`);
-        const data = await response.json();
-
-        if (data.evento && data.evento.length > 0) {
-            const eventosProcesados = data.evento.map(item => item.evento);
-            displayEventsInGrid(eventosProcesados);
-        } else {
-            mostrarMensajeSinEventos("No se encontraron eventos.");
-        }
-    } catch (error) {
-        console.error('Error en la búsqueda por nombre:', error);
-        mostrarMensajeSinEventos("Error al buscar eventos.");
-    }
-}
-
-async function searchByCategory() {
-    const categoriaId = document.getElementById('categoria_id').value;
-    limpiarOtrosFiltros('categoria');
-
-    if (!categoriaId) {
-        mostrarTodosEventos();
-        return;
-    }
-
-    try {
-        const response = await fetch(`/eventos/buscar-por-categoria?idCategoria=${categoriaId}`);
-        const data = await response.json();
-
-        if (data.eventos && data.eventos.length > 0) {
-            displayEventsInGrid(data.eventos);
-        } else {
-            mostrarMensajeSinEventos("No se encontraron eventos.");
-        }
-    } catch (error) {
-        console.error('Error en la búsqueda por categoría:', error);
-        mostrarMensajeSinEventos("Error al buscar eventos.");
+    if (filteredEvents.length > 0) {
+        // Si se encuentran eventos, generamos las tarjetas usando createEventCard
+        filteredEvents.forEach(event => {
+            const cardHTML = createEventCard(event); // Generar la tarjeta para cada evento
+            eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
+        });
+    } else {
+        // Si no se encuentran eventos después del filtro, llamar a la función mostrarMensajeSinEventos
+        mostrarMensajeSinEventos("No se encontraron eventos que coincidan con tu búsqueda.");
     }
 }
 
 
+// Filtrar por categoria seleccionada
+function searchByCategory() {
+    const categoryInput = document.getElementById('categoria_id').value;  // Obtener la categoría seleccionada
+    console.log("Categoría seleccionada:", categoryInput);  // Verificar la categoría seleccionada
 
-// 📅 Buscar por fecha
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
+
+    console.log(categoryInput);
+    
+    // Si no se seleccionó una categoría, no filtramos y mostramos todos los eventos
+    if (!categoryInput) {
+        displayAllEvents(); // Función que muestra todos los eventos sin filtro
+        return;
+    }
+
+    // Filtrar eventos por la categoría seleccionada
+    const filteredEvents = eventos.filter(event => {
+        return event.idCategoria == categoryInput;  // Comparar el ID de la categoría
+    });
+
+    // Mostrar los eventos filtrados
+    if (filteredEvents.length > 0) {
+        displayEventsInGrid(filteredEvents);
+    } else {
+        // Si no se encuentran eventos después del filtro por categoría
+        eventDetailsContainer.innerHTML = `
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">No se encontraron eventos para la categoría seleccionada.</h5>
+                    <p class="card-text">No hay eventos programados para esta categoría.</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+
+
+//  Buscar por fecha
 function searchByDate() {
     const date = document.getElementById('date-search').value;
     limpiarOtrosFiltros('fecha');
@@ -571,7 +585,7 @@ function displayEventsInGrid(listaEventos) {
     container.appendChild(row);
 }
 
-// ⚠️ Mostrar mensaje si no hay eventos
+//  Mostrar mensaje si no hay eventos
 function mostrarMensajeSinEventos(mensaje) {
     const container = document.getElementById("event-details");
     container.innerHTML = `

@@ -655,6 +655,10 @@ body {
     background-color: #0056b3;
 }
 
+
+
+
+
 /* Contenedor general del sidebar */
 .sidebar {
     height: 100vh;
@@ -863,6 +867,18 @@ body.public-page::before {
     z-index: 999;
     border-right: 3px solid #edf3ec;
 }
+
+/* sidebar public de adapte mejor a paginas pequeñas */
+@media (max-width: 768px) {
+    .public-page .sidebar {
+        width: 100%; /* Ancho completo en pantallas pequeñas */
+        height: auto; /* Permitir que el alto se ajuste al contenido */
+        position: relative; /* Cambiar a posición relativa */
+        box-shadow: none; /* Eliminar la sombra para un diseño más limpio */
+        border-right: none; /* Eliminar el borde derecho */
+    }
+}
+
 
 /* === CALENDARIO === */
 .public-page .calendar-nav {
@@ -1292,3 +1308,79 @@ html, body {
         .carousel-caption {
             z-index: 10;
         }
+
+
+
+
+
+
+
+/* Contenedor de tarjetas */
+
+/* Contenedor de tarjetas */
+.public-page .card-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas de igual tamaño */
+    gap: 20px; /* Espacio entre las tarjetas */
+    padding: 20px; /* Espacio interno */
+}
+
+/* Estilo de las tarjetas */
+.public-page .card {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.public-page .card:hover {
+    transform: scale(1.05); /* Efecto de aumento al pasar el ratón */
+}
+
+.public-page .card-img-top {
+    width: 100%;
+    height: 200px; /* Ajusta la altura de la imagen */
+    object-fit: cover; /* Asegura que la imagen se ajuste sin deformarse */
+}
+
+.public-page .card-body {
+    padding: 15px;
+}
+
+
+
+#event-details {
+    display: flex; /* Usar flexbox para alinear las tarjetas */
+    flex-wrap: wrap; /* Permitir que las tarjetas se envuelvan en varias líneas */
+    justify-content: space-between; /* Espaciado entre las tarjetas */
+    padding: 30px; /* Espaciado interno */
+    margin-top: 40px; /* Espacio superior para separar del contenido anterior */
+}
+
+
+
+
+.card {
+    flex: 1 1 calc(30% - 20px); /* Cada tarjeta ocupa un 30% del ancho menos el margen */
+    margin: 10px; /* Espacio entre las tarjetas */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    border-radius: 8px; /* Bordes redondeados */
+    transition: transform 0.2s; /* Efecto de transformación al pasar el ratón */
+}
+.card:hover {
+    transform: scale(1.05); /* Aumentar ligeramente el tamaño al pasar el ratón */
+}
+
+
+
+@media (max-width: 768px) {
+    .public-page .card-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas en pantallas más pequeñas */
+    }
+}
+@media (max-width: 480px) {
+    .public-page .card-container {
+        grid-template-columns: 1fr; /* 1 columna en pantallas muy pequeñas */
+    }
+}
