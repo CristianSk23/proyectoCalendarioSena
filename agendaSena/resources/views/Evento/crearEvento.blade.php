@@ -7,29 +7,28 @@
         method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded shadow" id="forularioEvento">
         @csrf
 
-        <div class="mb-3">
-            <label for="par_identificacion" class="form-label">Encargado del Evento:</label>
-            <select name="par_identificacion" id="par_identificacion" class="form-select" required>
-                <option value="">Seleccionar Encargado</option>
-                @foreach ($participantes as $participante)
-                    <option value="{{ $participante->par_identificacion }}" {{ isset($evento) && $evento->par_identificacion == $participante->par_identificacion ? 'selected' : '' }}>
-                        {{ $participante->par_nombres }}
-                    </option>
-                @endforeach
-            </select>
+        <div class="mb-3 position-relative" style="z-index: 9999;">
+            <label for="par_nombre" class="form-label">Encargado del Evento:</label>
+            <input type="text" id="par_nombre" class="form-control" placeholder="Buscar participante..." autocomplete="off"
+                value="{{ isset($evento) ? $nombreParticipante : '' }}" required>
+            <input type="hidden" name="par_identificacion" id="par_identificacion"
+                value="{{ isset($evento) ? $evento['par_identificacion'] : '' }}">
+            <ul id="resultados" class="list-group position-absolute w-100" style="max-height: 200px; overflow-y: auto;">
+            </ul>
             <div class="invalid-feedback">Por favor selecciona un encargado</div>
-            <button type="button" class="btn btn-success mt-2" id="cargarMas">Cargar más participantes</button>
         </div>
 
-        <div class="mb-3">
-            <label for="pla_amb_id" class="form-label">Espacio del Evento:</label>
-            <select name="pla_amb_id" class="form-select" required>
-                <option value="">Seleccionar Espacio</option>
-                <option value="153" {{ isset($evento) && $evento->pla_amb_id == 153 ? 'selected' : '' }}>Biblioteca</option>
-                <option value="180" {{ isset($evento) && $evento->pla_amb_id == 180 ? 'selected' : '' }}>Auditorio</option>
-            </select>
+
+        <div class="mb-3 position-relative">
+            <label for="pla_amb_nombre" class="form-label">Espacio del Evento:</label>
+            <input type="text" id="pla_amb_nombre" class="form-control" placeholder="Buscar ambiente..." autocomplete="off"
+                value="{{ isset($evento) ? $nombreAmbiente : '' }}">
+            <input type="hidden" name="pla_amb_id" id="pla_amb_id"
+                value="{{ isset($evento) ? $evento['pla_amb_id'] : '' }}">
+            <ul id="resultadosAmbientes" class="list-group position-absolute w-100" style="z-index: 1000;"></ul>
             <div class="invalid-feedback">Por favor selecciona un espacio</div>
         </div>
+
 
         <div class="mb-3">
             <label class="form-label">Horario del Evento:</label>
@@ -183,32 +182,107 @@
 
         let page = 1;
 
-        function cargarParticipantes() {
-            fetch(`/cargarParticipantes?page=${page}`)
-                .then(response => response.json())
+
+
+
+        const input = document.getElementById('par_nombre');
+        const inputHidden = document.getElementById('par_identificacion');
+        const resultados = document.getElementById('resultados');
+
+        input.addEventListener('input', () => {
+            const termino = input.value.trim();
+
+            if (termino.length < 2) {
+                resultados.innerHTML = '';
+                return;
+            }
+            const baseRuta = "{{ route('eventos.buscarParticipantes') }}";
+            const ruta = `${baseRuta}?term=${encodeURIComponent(termino)}`;
+
+            fetch(ruta)
+                .then(res => res.json())
                 .then(data => {
-                    const select = document.getElementById('par_identificacion');
-                    data.items.forEach(participante => {
-                        const option = document.createElement('option');
-                        option.value = participante.par_identificacion;
-                        option.textContent = participante.par_nombres;
-                        select.appendChild(option);
+                    resultados.innerHTML = '';
+                    data.forEach(p => {
+                        const li = document.createElement('li');
+                        li.classList.add('list-group-item', 'list-group-item-action');
+                        li.textContent = `${p.nombre} ${p.apellido}`;
+                        li.dataset.id = p.id;
+                        li.dataset.nombre = `${p.nombre} ${p.apellido}`;
+                        resultados.appendChild(li);
                     });
-                    page++;
                 });
-        }
-
-        document.getElementById('cargarMas').addEventListener('click', cargarParticipantes);
-
-        // Cargar la primera página al inicio
-        cargarParticipantes();
-
-        const notyf = new Notyf({
-            position: {
-                x: 'center',
-                y: 'top',
-            },
         });
+
+        resultados.addEventListener('click', e => {
+            if (e.target && e.target.matches('li')) {
+                input.value = e.target.dataset.nombre;
+                inputHidden.value = e.target.dataset.id;
+                resultados.innerHTML = '';
+            }
+        });
+
+        // Cerrar lista si se hace clic fuera
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.mb-3')) {
+                resultados.innerHTML = '';
+            }
+        });
+
+
+        const inputAmbiente = document.getElementById('pla_amb_nombre');
+        const inputAmbienteId = document.getElementById('pla_amb_id');
+        const resultadosAmbientes = document.getElementById('resultadosAmbientes');
+
+        let timeout;
+
+        inputAmbiente.addEventListener('input', function () {
+            const valor = this.value.trim();
+            resultadosAmbientes.innerHTML = '';
+
+            clearTimeout(timeout);
+            const baseRuta = "{{ route('eventos.buscarAmbientes') }}";
+            const ruta = `${baseRuta}?term=${encodeURIComponent(valor)}`;
+
+
+
+            if (valor.length >= 2) {
+                timeout = setTimeout(() => {
+                    fetch(ruta)
+                        .then(response => response.json())
+                        .then(data => {
+                            resultadosAmbientes.innerHTML = '';
+                            data.forEach(a => {
+                                const li = document.createElement('li');
+                                li.classList.add('list-group-item', 'list-group-item-action');
+                                li.textContent = `${a.nombre} `; // ejemplo: Biblioteca (Sala)
+                                li.dataset.id = a.id;
+                                li.dataset.nombre = a.nombre;
+                                resultadosAmbientes.appendChild(li);
+                            });
+                        });
+                }, 300);
+            }
+        });
+
+        resultadosAmbientes.addEventListener('click', function (e) {
+            if (e.target && e.target.matches('li')) {
+                inputAmbiente.value = e.target.dataset.nombre;
+                inputAmbienteId.value = e.target.dataset.id;
+                resultadosAmbientes.innerHTML = '';
+            }
+        });
+
+        // Ocultar sugerencias al perder foco
+        document.addEventListener('click', function (e) {
+            if (!resultadosAmbientes.contains(e.target) && e.target !== inputAmbiente) {
+                resultadosAmbientes.innerHTML = '';
+            }
+        });
+
+
+
+
 
         @if(session('error'))
             console.log('{{ session('error') }}');

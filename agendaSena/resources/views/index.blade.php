@@ -384,7 +384,7 @@
                 if (!calendarioTabla) return;
 
                 const fechaActual = fecha;
-                console.log("Fecha actual:", fechaActual);
+                
 
                 const numeroMes = fechaActual.getMonth();
 

@@ -41,10 +41,6 @@ class EventoController extends Controller
     }
 
 
-
-
-    // Fin publica
-
     public function store(Request $request)
     {
         try {
@@ -127,15 +123,19 @@ class EventoController extends Controller
         $fecha = sprintf('%04d-%02d-%02d', $anio, $mes, $dia);
         $categorias = Categoria::all();
         //*BUSCO LOS PARTICIPANTES
-        $participantes = Participante::where('est_apr_id',  2)->select('par_identificacion', 'par_nombres')->paginate(10);
+        $idParticipante = $evento->par_identificacion;
+        $participantes = Participante::where('par_identificacion', $idParticipante)->select('par_identificacion', 'par_nombres', 'par_apellidos')->first();
+        $nombreParticipante= $participantes->par_nombres . ' ' . $participantes->par_apellidos;
         $fichas = Ficha::all();
 
         $idHorario = $evento->idHorario;
         $horario = Horario::find($idHorario);
+        $ambiente = Ambiente::find($evento->pla_amb_id);
+        $nombreAmbiente = $ambiente->pla_amb_descripcion;
         $inicioEvento = $horario->inicio;
         $finalEvento = $horario->fin;
         if ($evento) {
-            return view('Evento.crearEvento', compact('evento', 'categorias', 'fichas', 'participantes', 'dia', 'mes', 'anio', 'fecha', 'calendario', 'inicioEvento', 'finalEvento'));
+            return view('Evento.crearEvento', compact('evento', 'categorias', 'fichas', 'nombreParticipante', 'dia', 'mes', 'anio', 'fecha', 'calendario', 'inicioEvento', 'finalEvento', 'nombreAmbiente'));
         }
     }
 
@@ -277,19 +277,40 @@ class EventoController extends Controller
 
 
 
-    public function cargarParticipantes(Request $request)
+    public function buscarParticipantes(Request $request)
     {
-        $page = $request->input('page', 1);
-        $perPage = 10;
+        $term = $request->input('term');
 
-        $participantes = Participante::where('est_apr_id', 2)
-            ->select('par_identificacion', 'par_nombres')
-            ->paginate($perPage, ['*'], 'page', $page);
+        $participantes = Participante::where('par_nombres', 'LIKE', '%' . $term . '%')
+            ->get(['par_identificacion', 'par_nombres', 'par_apellidos']);
 
-        return response()->json([
-            'items' => $participantes->items(),
-            'more' => $participantes->hasMorePages()
-        ]);
+        $resultado = $participantes->map(function ($p) {
+            return [
+                'id' => $p->par_identificacion,
+                'nombre' => $p->par_nombres,
+                'apellido' => $p->par_apellidos,
+            ];
+        });
+
+        return response()->json($resultado);
+    }
+
+    public function buscarAmbientes(Request $request)
+    {
+        $term = $request->input('term');
+
+        $ambientes = Ambiente::where('pla_amb_descripcion', 'LIKE', '%' . $term . '%')
+            ->limit(10)
+            ->get(['pla_amb_id', 'pla_amb_descripcion']);
+
+        $resultado = $ambientes->map(function ($p) {
+            return [
+                'id' => $p->pla_amb_id,
+                'nombre' => $p->pla_amb_descripcion,
+            ];
+        });
+
+        return response()->json($resultado);
     }
 
     public function eventosPorConfirmar()

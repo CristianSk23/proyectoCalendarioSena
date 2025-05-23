@@ -372,6 +372,6 @@
 
 
 </script>
-@include('partials.modalCargarImagenesCalendario');
+@include('partials.modalCargarImagenesCalendario')
 
 </nav>

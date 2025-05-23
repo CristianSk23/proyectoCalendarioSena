@@ -34,12 +34,6 @@ class ReporteController extends Controller
             });
 
 
-
-
-
-
-
-        // Calcular estadísticas
         $estadisticas = [
 
             'eventosPorAmbiente' => $ambientes,
@@ -47,6 +41,7 @@ class ReporteController extends Controller
             // Tarjeta: Total eventos del mes actual
             'eventosDelMesActual' => Evento::whereMonth('fechaEvento', date('m'))
                 ->whereYear('fechaEvento', date('Y'))
+                ->select('nomEvento', 'fechaEvento', 'nomSolicitante', 'idCategoria')
                 ->count(),
 
             // Gráfico: Total eventos por mes del año actual
@@ -68,6 +63,8 @@ class ReporteController extends Controller
 
 
         ];
+
+
 
 
         return view('reportes.index_reportes', compact('estadisticas'));
@@ -166,7 +163,44 @@ class ReporteController extends Controller
     }
 
 
+    public function eventosMesJson()
+    {
+        $eventos = Evento::with('categoria', 'ambiente')
+            ->where('estadoEvento', '!=', '0')
+            ->whereMonth('fechaEvento', date('m'))
+            ->whereYear('fechaEvento', date('Y'))
+            ->get()
+            ->map(function ($evento) {
+                return [
+                    'nomEvento' => $evento->nomEvento,
+                    'fechaEventoFormatted' => \Carbon\Carbon::parse($evento->fechaEvento)->format('d/m/Y'),
+                    'nomSolicitante' => $evento->nomSolicitante,
+                    'ambiente' => $evento->ambiente->pla_amb_descripcion ?? null,
+                    'categoria' => $evento->categoria->nomCategoria ?? null,
+                ];
+            });
 
+        return response()->json($eventos);
+    }
+
+    public function eventosAnioJson()
+    {
+        $eventos = Evento::with('categoria', 'ambiente')
+            ->where('estadoEvento', '!=', '0')
+            ->whereYear('fechaEvento', date('Y'))
+            ->get()
+            ->map(function ($evento) {
+                return [
+                    'nomEvento' => $evento->nomEvento,
+                    'fechaEventoFormatted' => \Carbon\Carbon::parse($evento->fechaEvento)->format('d/m/Y'),
+                    'nomSolicitante' => $evento->nomSolicitante,
+                    'ambiente' => $evento->ambiente->pla_amb_descripcion ?? null,
+                    'categoria' => $evento->categoria->nomCategoria ?? null,
+                ];
+            });
+
+        return response()->json($eventos);
+    }
 
 
 

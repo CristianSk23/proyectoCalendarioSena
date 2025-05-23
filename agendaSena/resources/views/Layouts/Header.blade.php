@@ -307,16 +307,9 @@
 
     @yield('contentReportes')
 
-    <footer class="agensena-footer">
-        <div class="agensena-footer-content">
-            SENA | CENTRO DE DISEÑO TECNOLÓGICO INDUSTRIAL &copy; {{ date('Y') }}
-        </div>
-    </footer>
-
-
     @include('partials.modalCargarImagenes')
 
-    
+
 
 
 </body>

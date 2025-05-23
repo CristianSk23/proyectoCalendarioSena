@@ -33,12 +33,14 @@ Route::get("evento/crear", [EventoController::class, 'create'])->name('eventos.c
 Route::get("evento/editar/{idEvento}", [EventoController::class, 'edit'])->name('eventos.editarEvento')->middleware('auth');
 Route::post("evento/actualizar/{idEvento}", [EventoController::class, 'update'])->name('eventos.actualizarEvento')->middleware('auth');
 Route::get("evento/eliminar/{idEvento}", [EventoController::class, 'delete'])->name('eventos.eliminarEvento')->middleware('auth');
-Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index');
+
+
 
 Route::get("evento/PorConfirmar", [EventoController::class, 'eventosPorConfirmar'])->name('eventos.porConfirmar');
-Route::get("cargarParticipantes", [EventoController::class, 'cargarParticipantes'])->name('eventos.buscarParticipantes');
-Route::get("eventosPorNombre", [EventoController::class, 'buscarEventosPorNombre'])->name('eventos.buscarEventoPorNombre');
-Route::post("confirmarEvento", [EventoController::class, 'confirmarEvento'])->name('eventos.confirmarEvento');
+Route::get("evento/buscarParticipantes", [EventoController::class, 'buscarParticipantes'])->name('eventos.buscarParticipantes');
+Route::get("evento/buscarAmbientes", [EventoController::class, 'buscarAmbientes'])->name('eventos.buscarAmbientes');
+Route::get("evento/eventosPorNombre", [EventoController::class, 'buscarEventosPorNombre'])->name('eventos.buscarEventoPorNombre');
+Route::post("evento/confirmarEvento", [EventoController::class, 'confirmarEvento'])->name('eventos.confirmarEvento');
 //Route::get("eventosPorFecha", [EventoController::class, 'buscarEventosPorFecha'])->name('eventos.buscarEventoPorFecha');
 
 // Evento soliictud publica
@@ -74,6 +76,8 @@ Route::post('logout', [LoginController::class, 'logout'])->name('login.logout')-
 //**** reportes*** */
 Route::get('evento/reportes', [ReporteController::class, 'index_report'])->name('evento.reportes.index')->middleware('auth');
 Route::get('/reportes/filtrar', [ReporteController::class, 'filtrarEventos'])->name('evento.reportes.filtrar')->middleware('auth');
+Route::get('/reportes/eventos/mes', [ReporteController::class, 'eventosMesJson'])->middleware('auth');
+Route::get('/reportes/eventos/anio', [ReporteController::class, 'eventosAnioJson'])->middleware('auth');
 
 
 
