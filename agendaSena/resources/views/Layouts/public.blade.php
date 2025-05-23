@@ -136,13 +136,20 @@
         <!-- FIN DE BANNER -->
 
         <!--INICIO CONTENIDO DE EVENTOS -->
+        @if(!isset($ocultarEventDetails) || !$ocultarEventDetails)
         <div id="event-details" class="mt-4 card-container"></div> 
+        @endif
+
+
+        <!-- aqui me llevara a otras seciones -->
   
             @yield('content') <!-- secciones de contenido -->
 
         <!--FIN CONTENIDO DE EVENTOS -->
 
-        <!-- Modal para autenticación antes de agregar evento -->
+
+
+        <!-- Modal para autenticación antes de Solicitar evento-->
         <div class="modal fade" id="authModalAgregarEvento" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <form id="authFormAgregar">

@@ -3,6 +3,10 @@
     $ocultarBanner = true;
 @endphp
 
+@php
+    $ocultarEventDetails = true;
+@endphp
+
 @extends('layouts.public')
 
 @section('content')
@@ -222,6 +226,106 @@ function validadorInputs(input) {
         input.classList.add('is-invalid');
     }
 }
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('par_nombre');
+    const inputHidden = document.getElementById('par_identificacion');
+    const resultados = document.getElementById('resultados');
+
+    input.addEventListener('input', () => {
+        const termino = input.value.trim();
+
+        if (termino.length < 2) {
+            resultados.innerHTML = '';
+            inputHidden.value = '';
+            return;
+        }
+
+        
+        const baseRuta = "{{ route('eventos.buscarParticipantes') }}";
+        const ruta = `${baseRuta}?term=${encodeURIComponent(termino)}`;
+
+        fetch(ruta)
+            .then(res => res.json())
+            .then(data => {
+                resultados.innerHTML = '';
+                data.forEach(p => {
+                    const li = document.createElement('li');
+                    li.classList.add('list-group-item', 'list-group-item-action');
+                    li.textContent = `${p.nombre} ${p.apellido}`;
+                    li.dataset.id = p.id;
+                    li.dataset.nombre = `${p.nombre} ${p.apellido}`;
+                    resultados.appendChild(li);
+                });
+            })
+            .catch(() => {
+                resultados.innerHTML = '';
+            });
+    });
+
+    resultados.addEventListener('click', e => {
+        if (e.target && e.target.matches('li')) {
+            input.value = e.target.dataset.nombre;
+            inputHidden.value = e.target.dataset.id;
+            resultados.innerHTML = '';
+        }
+    });
+
+    // Opcional: Si cambias manualmente el texto sin seleccionar un participante
+    input.addEventListener('blur', () => {
+        setTimeout(() => { resultados.innerHTML = ''; }, 100);
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const inputAmb = document.getElementById('pla_amb_nombre');
+    const inputAmbId = document.getElementById('pla_amb_id');
+    const resultadosAmb = document.getElementById('resultadosAmbientes');
+
+    inputAmb.addEventListener('input', () => {
+        const termino = inputAmb.value.trim();
+
+        if (termino.length < 2) {
+            resultadosAmb.innerHTML = '';
+            inputAmbId.value = '';
+            return;
+        }
+
+        const baseRutaAmb = "{{ route('eventos.buscarAmbientes') }}";
+        const rutaAmb = `${baseRutaAmb}?term=${encodeURIComponent(termino)}`;
+
+        fetch(rutaAmb)
+            .then(res => res.json())
+            .then(data => {
+                resultadosAmb.innerHTML = '';
+                data.forEach(a => {
+                    const li = document.createElement('li');
+                    li.classList.add('list-group-item', 'list-group-item-action');
+                    li.textContent = a.nombre;
+                    li.dataset.id = a.id;
+                    li.dataset.nombre = a.nombre;
+                    resultadosAmb.appendChild(li);
+                });
+            })
+            .catch(() => {
+                resultadosAmb.innerHTML = '';
+            });
+    });
+
+    resultadosAmb.addEventListener('click', e => {
+        if (e.target && e.target.matches('li')) {
+            inputAmb.value = e.target.dataset.nombre;
+            inputAmbId.value = e.target.dataset.id;
+            resultadosAmb.innerHTML = '';
+        }
+    });
+
+    inputAmb.addEventListener('blur', () => {
+        setTimeout(() => { resultadosAmb.innerHTML = ''; }, 100);
+    });
+});
 
 
 
