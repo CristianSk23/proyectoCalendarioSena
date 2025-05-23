@@ -212,7 +212,7 @@
         });
 
         function validarCredenciales(identificacion, password) {
-            fetch("/ruta-de-tu-api/storeExterno", {
+            fetch("/evento/storeExterno", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -330,7 +330,8 @@
 
 
 
-// NUEVO REAL ok
+// Manejo de datos de autenticador 
+//  para el ingreso al formulario solicitud de eventos
 
 document.addEventListener('DOMContentLoaded', function () {
     const modal = new bootstrap.Modal(document.getElementById('authModalAgregarEvento'));
@@ -408,6 +409,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+//FIN Manejo de datos de autenticador  para el ingreso al formulario solicitud de eventos
 
 
 

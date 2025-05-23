@@ -13,40 +13,15 @@
 
 
 <!-- Titulo formulario -->
+
+<!-- Titulo formulario -->
 <h1 class="h2 mb-4" style="color: grey; text-shadow: -1px 0 green, 0 1px green, 1px 0 white, 0 -1px white;">
     Solicitar Evento </h1>
 
 
 
-<!-- MODAL de autenticación -->
-<div class="modal fade" id="authModalAgregarEvento" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form id="authFormAgregar">
-            @csrf
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Verifica tu identidad</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="auth_identificacion" class="form-label">Identificación</label>
-                        <input type="text" class="form-control" id="auth_identificacion" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="auth_password" class="form-label">Contraseña</label>
-                                             <input type="password" class="form-control" id="auth_password" required>
-                    </div>
-                    <div id="auth_error_modal" class="text-danger mt-1"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="btnValidar">Validar</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
+
+
 
 <!--Fin Modal  autenticar -->
 
@@ -57,29 +32,28 @@
       method="POST" enctype="multipart/form-data" class="bg-white p-4 rounded shadow" id="formularioEvento">
     @csrf
 
-        <div class="mb-3">
-            <label for="par_identificacion" class="form-label">Encargado del Evento:</label>
-            <select name="par_identificacion" id="par_identificacion" class="form-select" required>
-                <option value="">Seleccionar Encargado</option>
-                @foreach ($participantes as $participante)
-                    <option value="{{ $participante->par_identificacion }}" {{ isset($evento) && $evento->par_identificacion == $participante->par_identificacion ? 'selected' : '' }}>
-                        {{ $participante->par_nombres }}
-                    </option>
-                @endforeach
-            </select>
+        <div class="mb-3 position-relative" style="z-index: 9999;">
+            <label for="par_nombre" class="form-label">Encargado del Evento:</label>
+            <input type="text" id="par_nombre" class="form-control" placeholder="Buscar participante..." autocomplete="off"
+                value="{{ isset($evento) ? $nombreParticipante : '' }}" required>
+            <input type="hidden" name="par_identificacion" id="par_identificacion"
+                value="{{ isset($evento) ? $evento['par_identificacion'] : '' }}">
+            <ul id="resultados" class="list-group position-absolute w-100" style="max-height: 200px; overflow-y: auto;">
+            </ul>
             <div class="invalid-feedback">Por favor selecciona un encargado</div>
-            <button type="button" class="btn btn-success mt-2" id="cargarMas">Cargar más participantes</button>
         </div>
 
-        <div class="mb-3">
-            <label for="pla_amb_id" class="form-label">Espacio del Evento:</label>
-            <select name="pla_amb_id" class="form-select" required>
-                <option value="">Seleccionar Espacio</option>
-                <option value="153" {{ isset($evento) && $evento->pla_amb_id == 153 ? 'selected' : '' }}>Biblioteca</option>
-                <option value="180" {{ isset($evento) && $evento->pla_amb_id == 180 ? 'selected' : '' }}>Auditorio</option>
-            </select>
+
+        <div class="mb-3 position-relative">
+            <label for="pla_amb_nombre" class="form-label">Espacio del Evento:</label>
+            <input type="text" id="pla_amb_nombre" class="form-control" placeholder="Buscar ambiente..." autocomplete="off"
+                value="{{ isset($evento) ? $nombreAmbiente : '' }}">
+            <input type="hidden" name="pla_amb_id" id="pla_amb_id"
+                value="{{ isset($evento) ? $evento['pla_amb_id'] : '' }}">
+            <ul id="resultadosAmbientes" class="list-group position-absolute w-100" style="z-index: 1000;"></ul>
             <div class="invalid-feedback">Por favor selecciona un espacio</div>
         </div>
+
 
         <div class="mb-3">
             <label class="form-label">Horario del Evento:</label>
@@ -231,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log(`${key}: ${value}`);
             }
 
-            // El formulario se envía normalmente si todo está correcto
+            // El formulario se envia normalmente si todo está correcto
         }
 
         formulario.classList.add('was-validated');
@@ -249,69 +223,11 @@ function validadorInputs(input) {
     }
 }
 
-// Fin manejo de Datos d eformulario para solicitar eventos estado = 2
 
 
 
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const modal = new bootstrap.Modal(document.getElementById('authModalAgregarEvento'));
-        const eventoForm = document.getElementById('eventoForm');
-        const btnAbrir = document.getElementById('btnAbrirAutenticacion');
-        const errorBox = document.getElementById('auth_error_modal');
-        const btnValidar = document.getElementById('btnValidar');
-        const inputHiddenIdentificacion = document.getElementById('par_identificacion_autenticado');
 
-        // Abrir modal de autenticación
-        btnAbrir.addEventListener('click', () => {
-            modal.show();
-        });
-
-        // Validar credenciales
-        document.getElementById('authFormAgregar').addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const identificacion = document.getElementById('auth_identificacion').value;
-            const password = document.getElementById('auth_password').value;
-
-            errorBox.textContent = '';
-            btnValidar.disabled = true;
-            btnValidar.textContent = 'Validando...';
-
-            fetch("{{ route('validar.credenciales.publicas') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({
-                    par_identificacion: identificacion,
-                    password: password
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                btnValidar.disabled = false;
-                btnValidar.textContent = 'Validar';
-
-                if (data.success) {
-                    modal.hide();
-                    document.getElementById('authFormAgregar').reset();
-                    inputHiddenIdentificacion.value = identificacion;
-
-                    eventoForm.style.display = 'block';
-                    eventoForm.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    errorBox.textContent = data.message;
-                }
-            })
-            .catch(() => {
-                btnValidar.disabled = false;
-                btnValidar.textContent = 'Validar';
-                errorBox.textContent = 'Error en la solicitud. Intenta nuevamente.';
-            });
-        });
-    });
 </script>
 @endpush
                         

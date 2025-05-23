@@ -41,6 +41,10 @@ Route::get("evento/buscarParticipantes", [EventoController::class, 'buscarPartic
 Route::get("evento/buscarAmbientes", [EventoController::class, 'buscarAmbientes'])->name('eventos.buscarAmbientes');
 Route::get("evento/eventosPorNombre", [EventoController::class, 'buscarEventosPorNombre'])->name('eventos.buscarEventoPorNombre');
 Route::post("evento/confirmarEvento", [EventoController::class, 'confirmarEvento'])->name('eventos.confirmarEvento');
+// ruta para funcion d ela vista publica
+Route::post('evento/storeExterno', [EventoController::class, 'storeExterno'])->name('evento.storeExterno');
+
+
 //Route::get("eventosPorFecha", [EventoController::class, 'buscarEventosPorFecha'])->name('eventos.buscarEventoPorFecha');
 
 // Evento soliictud publica
@@ -94,7 +98,7 @@ Route::get('evento/reportes/filtrar', [ReporteController::class, 'filtrarReporte
 Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 
 //********+responsable**** */
-Route::get('/api/responsables', [ResponsableController::class, 'index']);
+// Route::get('/api/responsables', [ResponsableController::class, 'index']);
 
 //******PDF REPORTES *************/
 Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensual'])->name('reportes.pdf.mensual');
