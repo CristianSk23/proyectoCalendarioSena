@@ -26,4 +26,28 @@ class FotografiaEvento extends Model
     {
         return $this->belongsTo(Evento::class, 'idEvento', 'idEvento');
     }
+
+
+    public function fotosEvento()
+    {
+        return $this->hasMany(\App\Models\fotografiasEvento\FotografiaEvento::class, 'idEvento', 'idEvento');
+    }
+
+
+
+   
+
+public function obtenerFotosMesActual()
+{
+    $inicioMes = Carbon::now()->startOfMonth();
+    $finMes = Carbon::now()->endOfMonth();
+
+    return FotografiaEvento::with('evento')
+        ->whereHas('evento', function ($query) use ($inicioMes, $finMes) {
+            $query->whereBetween('fecha', [$inicioMes, $finMes]);
+        })
+        ->get();
+}
+
+
 }

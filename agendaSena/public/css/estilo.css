@@ -707,6 +707,10 @@ body {
     background-color: #0056b3;
 }
 
+
+
+
+
 /* Contenedor general del sidebar */
 .sidebar {
     height: 100vh;
@@ -849,6 +853,12 @@ body {
 /* === GENERAL  PARA LA PÁGINA PÚBLICA === */
 .public-page * {
     box-sizing: border-box;
+    /* font-size: 1.25rem; */
+    /* transform: scale(0.9);  */
+    /* 90% del tamaño original */
+    /* transform-origin: top left; */
+    zoom: 95%;
+
 }
 .public-page body {
     margin: 0;
@@ -909,6 +919,18 @@ body.public-page::before {
     z-index: 999;
     border-right: 3px solid #edf3ec;
 }
+
+/* sidebar public de adapte mejor a paginas pequeñas */
+@media (max-width: 768px) {
+    .public-page .sidebar {
+        width: 100%; /* Ancho completo en pantallas pequeñas */
+        height: auto; /* Permitir que el alto se ajuste al contenido */
+        position: relative; /* Cambiar a posición relativa */
+        box-shadow: none; /* Eliminar la sombra para un diseño más limpio */
+        border-right: none; /* Eliminar el borde derecho */
+    }
+}
+
 
 /* === CALENDARIO === */
 .public-page .calendar-nav {
@@ -1022,11 +1044,21 @@ body.public-page::before {
 }
 
 /* === CONTENIDO PRINCIPAL === */
-.public-page .content-area {
+/* .public-page .content-area {
     margin-left: 420px; /* espacio para el sidebar */
-    margin-top: 70px;   /* espacio para el navbar */
+    /*margin-top: 70px;   /* espacio para el navbar */
+    /*padding: 20px;
+} */
+.public-content-area {
+    margin-left: 410px; /* exactamente el ancho del sidebar */
+    margin-top: 70px;   /* altura de la navbar fija */
     padding: 20px;
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
+
 
 /* === TARJETAS DE EVENTOS === */
 .public-page .card-container {
@@ -1159,6 +1191,9 @@ body.public-page::before {
 /* FOOTER   -°|>><<|°-  PIE DE PAGINA */
 
 
+
+
+
 .agensena-footer {
     background-color: #4caf50;
     padding: 1rem 0;
@@ -1173,6 +1208,28 @@ body.public-page::before {
     font-weight: 500;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.public-footer {
+    background-color: #4caf50;
+    padding: 1rem 0;
+    text-align: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.public-footer-content {
+    font-family: 'Work Sans', 'Calibri', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+}
 
 
 
@@ -1247,4 +1304,144 @@ body.public-page::before {
 
 .imagen-checkbox.seleccionada img {
     border: 3px solid #0d6efd !important;
+}
+
+
+
+/* SECCION PUBLICA CARRUSEL BANNER */
+/* Banner público - Carrusel */
+
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 472px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.hero-section img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+@media (max-width: 768px) {
+    .hero-section {
+        height: 300px;
+    }
+}
+@media (max-width: 480px) {
+    .hero-section {
+        height: 220px;
+    }
+}
+
+.hero-carousel {
+    max-height: 472px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+.hero-carousel img {
+    width: 100%;
+    height: 472px;
+    object-fit: cover;
+}
+@media (max-width: 768px) {
+    .hero-carousel img {
+        height: 300px;
+    }
+}
+
+#bannerCarousel .carousel-item {
+            height: 472px;
+            position: relative;
+            background-color: #000;
+        }
+
+        #bannerCarousel .carousel-item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-caption {
+            z-index: 10;
+        }
+
+
+
+
+
+
+
+/* Contenedor de tarjetas */
+
+/* Contenedor de tarjetas */
+.public-page .card-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas de igual tamaño */
+    gap: 20px; /* Espacio entre las tarjetas */
+    padding: 20px; /* Espacio interno */
+}
+
+/* Estilo de las tarjetas */
+.public-page .card {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.public-page .card:hover {
+    transform: scale(1.05); /* Efecto de aumento al pasar el ratón */
+}
+
+.public-page .card-img-top {
+    width: 100%;
+    height: 200px; /* Ajusta la altura de la imagen */
+    object-fit: cover; /* Asegura que la imagen se ajuste sin deformarse */
+}
+
+.public-page .card-body {
+    padding: 15px;
+}
+
+
+
+#event-details {
+    display: flex; /* Usar flexbox para alinear las tarjetas */
+    flex-wrap: wrap; /* Permitir que las tarjetas se envuelvan en varias líneas */
+    justify-content: space-between; /* Espaciado entre las tarjetas */
+    padding: 30px; /* Espaciado interno */
+    margin-top: 40px; /* Espacio superior para separar del contenido anterior */
+}
+
+
+
+
+.card {
+    flex: 1 1 calc(30% - 20px); /* Cada tarjeta ocupa un 30% del ancho menos el margen */
+    margin: 10px; /* Espacio entre las tarjetas */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    border-radius: 8px; /* Bordes redondeados */
+    transition: transform 0.2s; /* Efecto de transformación al pasar el ratón */
+}
+.card:hover {
+    transform: scale(1.05); /* Aumentar ligeramente el tamaño al pasar el ratón */
+}
+
+
+
+@media (max-width: 768px) {
+    .public-page .card-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas en pantallas más pequeñas */
+    }
+}
+@media (max-width: 480px) {
+    .public-page .card-container {
+        grid-template-columns: 1fr; /* 1 columna en pantallas muy pequeñas */
+    }
 }

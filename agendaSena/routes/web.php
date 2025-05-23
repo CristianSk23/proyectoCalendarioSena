@@ -65,7 +65,10 @@ Route::get('/calendario-publico', [CalendarioController::class, 'generarCalendar
 
 
 // Ruta para las categorías
-Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias.index');
+// Route::get('/categoria', [CategoriaController::class, 'index'])->name('categoria.index');
+Route::get('/categorias', [CategoriaController::class, 'index']);
+Route::get('/categorias-json', [CategoriaController::class, 'apiIndex']);
+Route::get('eventos/buscar-por-categoria', [EventoController::class, 'buscarEventosPorCategoria']);
 
 
 //** */  ++++ LOGIN  ++++++
@@ -118,19 +121,17 @@ Route::post('/verificar-credenciales', [LoginController::class, 'validarCredenci
 
 
 
+    // Funcionar yaque 12 am
 
-
-Route::post('/evento/store/externo', [EventoController::class, 'storeExterno'])->name('eventos.storeExterno');
+Route::post('/evento/storeExterno', [EventoController::class, 'storeExterno'])->name('eventos.storeExterno');
 // Route::get('/test-session-table', function () {
 //     dd(config('session.table'));
 // });
+    // Fin Funcionar yaque 12 am
 
-// validar ruta para solicitud eventos
-//Route::post('/evento/publico/crear', [EventoPublicoController::class, 'validarUsuarioYCrear'])->name('evento.publico.validar');
 
-// Validacion de usurio para solicitud de evento.
-Route::post('/verificar-usuario', [EventoController::class, 'verificarUsuario'])->name('verificar.usuario');
 
+Route::post('/validar-credenciales-publicas', [LoginController::class, 'validarCredencialesPublicas'])->name('validar.credenciales.publicas');
 
 
 //*Cambio de fondos pagina de login

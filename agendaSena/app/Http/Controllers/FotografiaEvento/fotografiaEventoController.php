@@ -18,7 +18,19 @@ class FotografiaEventoController extends Controller
     {
         $fotografiasEvento = FotografiaEvento::where('idEvento', $idEvento)->get(); // Obtener las fotografías del evento
 
-        return view('Evento.fotosEvento', compact('idEvento', 'fotografiasEvento'));
+        
+
+        $imagenesBanner = FotografiaEvento::where('idEvento', $idEvento)->get();
+        // $imagenesBanner = FotografiaEvento::where('idEvento', $idEvento)
+        //                               ->where('es_banner', true)
+        //                               ->get();
+
+        // return view('Evento.fotosEvento', compact('idEvento', 'fotografiasEvento'));
+        return view('Evento.fotosEvento', [
+        'idEvento' => $idEvento,
+        'fotografiasEvento' => $fotografiasEvento,
+        'imagenesBanner' => $fotografiasEvento, // O usa un filtro si necesitas solo algunas
+    ]);
     }
 
     public function create(Request $request)
@@ -66,4 +78,11 @@ class FotografiaEventoController extends Controller
         }
         return redirect()->back()->with('success', 'La fotografía se ha eliminado correctamente.');
     }
+
+
+    public function evento()
+    {
+        return $this->belongsTo(\App\Models\Evento\Evento::class, 'idEvento', 'idEvento');
+    }
+
 }

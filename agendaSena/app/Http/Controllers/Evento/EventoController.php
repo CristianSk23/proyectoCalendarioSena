@@ -23,7 +23,7 @@ class EventoController extends Controller
     {
         // Carga eventos nuevos 
         $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
-            ->where('estadoEvento', 1) // Filtrar solo los eventos con estado 1
+            ->whereIn('estadoEvento',[1,3]) // Filtrar solo los eventos con estado 1
             ->get();
         return view('Evento.inicioEvento', compact('eventos'));
     }
@@ -40,6 +40,46 @@ class EventoController extends Controller
         return view('Evento.crearEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes'));
     }
 
+
+    public function solicitudPublica(Request $reques)
+    {
+        // $categorias = Categoria::all();
+        $categorias = Categoria::where('estadoCategoria', 1)->get();
+
+        $fichas = Ficha::all();
+        $calendario = $this->calendarioGenerado();
+        $participantes = Participante::where('est_apr_id', 2)
+            ->select('par_identificacion', 'par_nombres')
+            ->paginate(10);
+        $ambientes = Ambiente::all();
+        // $eventos = Evento::all();  // O cualquier lógica que estés utilizando para obtener los eventos
+        $eventos= null;
+        // Pasar la variable $eventos a la vista
+        // return view('evento.solicitudEvento', compact('eventos'));
+
+
+        return view('public.SolicitudEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes','eventos'));
+        return redirect()->route('public.index')->with('success', 'Evento guardado exitosamente');
+    }
+    
+    public function authenticated(Request $request, $user)
+    {
+        
+        // Redirige al usuario a la vista para crear un evento
+        return redirect()->route('evento.solicitud');
+    }
+
+
+// public function obtenerCategorias()
+// {
+//     $categorias = Categoria::select('id', 'nomCategoria')->get();
+//     return response()->json($categorias);
+// }
+
+
+
+
+    // Fin publica
 
     public function store(Request $request)
     {
@@ -484,74 +524,84 @@ class EventoController extends Controller
 
 
 
-
-
-
-
-    // Método para manejar el formulario externo
+    // Método para manejar el formulario externo  -oky
     public function storeExterno(Request $request)
     {
-        // Primero validar las credenciales
-        $authResponse = $this->validarCredencialesPublicas(new Request([
-            'par_identificacion' => $request->auth_identificacion,
-            'password' => $request->auth_password
-        ]));
-
-        $authData = json_decode($authResponse->getContent(), true);
-
-        if (!$authData['success']) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Autenticación fallida: ' . ($authData['message'] ?? 'Credenciales inválidas')
-            ], 401);
-        }
-
-        // Validación del evento
-        $validatedData = $request->validate([
-            'par_identificacion' => 'required|exists:participantes,par_identificacion',
-            'pla_amb_id' => 'required|integer',
-            'horarioEventoInicio' => 'required|date_format:H:i',
-            'horarioEventoFin' => 'required|date_format:H:i|after:horarioEventoInicio',
-            'nomEvento' => 'required|string|min:5|max:100',
-            'descripcion' => 'required|string|min:10|max:500',
-            'fechaEvento' => 'required|date|after_or_equal:today',
-            'aforoEvento' => 'required|integer|min:1|max:500',
-            'fic_numero' => 'required|exists:fichas,fic_numero',
-            'idCategoria' => 'required|exists:categoria,idCategoria',
-            'estadoEvento' => 'required|integer',
-            'publicidad' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-
+        
         try {
-            // Crear horario
-            $horario = Horario::create([
-                'pla_amb_id' => $validatedData['pla_amb_id'],
-                'inicio' => $validatedData['horarioEventoInicio'],
-                'fin' => $validatedData['horarioEventoFin'],
-            ]);
+           
 
-            // Crear evento
-            $evento = new Evento();
-            $evento->fill($validatedData);
-            $evento->idHorario = $horario->idHora;
-            $evento->nomSolicitante = $authData['participante']['par_nombres'];
 
+         $validatedData = $this->validateRequest($request);
+            log::info('Datos validados: ', $request->all());
+            //* Guardar la imagen en el sistema de archivos si se proporciona
             if ($request->hasFile('publicidad')) {
-                $evento->publicidad = $request->file('publicidad')->store('publicidad', 'public');
+                $rutaImagen = $request->file('publicidad')->store('imagenes', 'public');
+                log::info('ruta imagen: ' . $rutaImagen);
+
+                $validatedData['publicidad'] = $rutaImagen; // Agregar la ruta de la imagen a los datos validados
             }
 
-            $evento->save();
+            // Buscar al participante
+            $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Evento creado exitosamente',
-                'evento_id' => $evento->idEvento
+            if (!$participante) {
+                return redirect()->back()->with('error', 'Participante no encontrado.');
+            }
+
+            // Agregar el nombre del participante a los datos validados
+            $validatedData['nomSolicitante'] = $participante->par_nombres;
+
+            // Crear el horario
+            $horario = Horario::create([
+                'pla_amb_id' => $request->pla_amb_id,
+                'inicio' => $request->horarioEventoInicio,
+                'fin' => $request->horarioEventoFin,
             ]);
+
+            if (!$horario) {
+                return redirect()->back()->with('error', 'Error al crear el horario.');
+            }
+
+            // Agregar el ID del horario a los datos validados
+            $validatedData['idHorario'] = $horario->idHora;
+            Log::info('numero de la ficha ' . $validatedData['fic_numero']);
+
+            // Crear el evento utilizando los datos validados
+            Evento::create([
+                'par_identificacion' => $validatedData['par_identificacion'],
+                'pla_amb_id' => $validatedData['pla_amb_id'],
+                'idHorario' => $validatedData['idHorario'],
+                'nomEvento' => $validatedData['nomEvento'],
+                'descripcion' => $validatedData['descripcion'],
+                'fechaEvento' => $validatedData['fechaEvento'],
+                'aforoEvento' => $validatedData['aforoEvento'],
+                'fic_numero' => $validatedData['fic_numero'],
+                'idCategoria' => $validatedData['idCategoria'],
+                'publicidad' => $validatedData['publicidad'] ?? null, // Usar null si no se proporciona una imagen
+                'estadoEvento' => $validatedData['estadoEvento'],
+                'nomSolicitante' => $validatedData['nomSolicitante'], // Agregado desde la búsqueda del participante
+            ]);
+
+          return redirect()->route('public.index')->with('success', '¡Evento creado exitosamente!');
+
+        
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al crear el evento: ' . $e->getMessage()
-            ], 500);
+          return redirect()->route('public.index')->with('error', 'Error al crear el evento: ' . $e->getMessage());
+
         }
     }
+
+
+    // Fin Método para manejar el formulario externo
+
+
+    
 }
+
+
+
+
+
+
+
