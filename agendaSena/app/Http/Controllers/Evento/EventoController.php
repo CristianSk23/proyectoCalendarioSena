@@ -19,14 +19,7 @@ use Illuminate\Support\Facades\Auth;
 class EventoController extends Controller
 {
     use CalendarTrait;
-    public function index()
-    {
-        // Carga eventos nuevos 
-        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
-            ->whereIn('estadoEvento',[1,3]) // Filtrar solo los eventos con estado 1
-            ->get();
-        return view('Evento.inicioEvento', compact('eventos'));
-    }
+
 
     public function create(Request $request)
     {
@@ -41,45 +34,7 @@ class EventoController extends Controller
     }
 
 
-    public function solicitudPublica(Request $reques)
-    {
-        // $categorias = Categoria::all();
-        $categorias = Categoria::where('estadoCategoria', 1)->get();
 
-        $fichas = Ficha::all();
-        $calendario = $this->calendarioGenerado();
-        $participantes = Participante::where('est_apr_id', 2)
-            ->select('par_identificacion', 'par_nombres')
-            ->paginate(10);
-        $ambientes = Ambiente::all();
-        // $eventos = Evento::all();  // O cualquier lógica que estés utilizando para obtener los eventos
-        $eventos= null;
-        // Pasar la variable $eventos a la vista
-        // return view('evento.solicitudEvento', compact('eventos'));
-
-
-        return view('public.SolicitudEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes','eventos'));
-        return redirect()->route('public.index')->with('success', 'Evento guardado exitosamente');
-    }
-    
-    public function authenticated(Request $request, $user)
-    {
-        
-        // Redirige al usuario a la vista para crear un evento
-        return redirect()->route('evento.solicitud');
-    }
-
-
-// public function obtenerCategorias()
-// {
-//     $categorias = Categoria::select('id', 'nomCategoria')->get();
-//     return response()->json($categorias);
-// }
-
-
-
-
-    // Fin publica
 
     public function store(Request $request)
     {
@@ -165,7 +120,7 @@ class EventoController extends Controller
         //*BUSCO LOS PARTICIPANTES
         $idParticipante = $evento->par_identificacion;
         $participantes = Participante::where('par_identificacion', $idParticipante)->select('par_identificacion', 'par_nombres', 'par_apellidos')->first();
-        $nombreParticipante= $participantes->par_nombres . ' ' . $participantes->par_apellidos;
+        $nombreParticipante = $participantes->par_nombres . ' ' . $participantes->par_apellidos;
         $fichas = Ficha::all();
 
         $idHorario = $evento->idHorario;
@@ -419,6 +374,12 @@ class EventoController extends Controller
     }
 
 
+
+
+
+
+
+
     public function delete(Request $request)
     {
         $idEvento = $request->__get('idEvento');
@@ -457,10 +418,20 @@ class EventoController extends Controller
 
     //*Fin Funciones Realizadas por CRISTIAN
 
+    public function index()
+    {
+        // Carga eventos nuevos 
+        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
+            ->whereIn('estadoEvento', [1, 3]) // Filtrar solo los eventos con estado 1
+            ->get();
+        return view('Evento.inicioEvento', compact('eventos'));
+    }
 
     public function solicitudPublica(Request $reques)
     {
-        $categorias = Categoria::all();
+        // $categorias = Categoria::all();
+        $categorias = Categoria::where('estadoCategoria', 1)->get();
+
         $fichas = Ficha::all();
         $calendario = $this->calendarioGenerado();
         $participantes = Participante::where('est_apr_id', 2)
@@ -527,12 +498,12 @@ class EventoController extends Controller
     // Método para manejar el formulario externo  -oky
     public function storeExterno(Request $request)
     {
-        
+
         try {
-           
 
 
-         $validatedData = $this->validateRequest($request);
+
+            $validatedData = $this->validateRequest($request);
             log::info('Datos validados: ', $request->all());
             //* Guardar la imagen en el sistema de archivos si se proporciona
             if ($request->hasFile('publicidad')) {
@@ -583,12 +554,9 @@ class EventoController extends Controller
                 'nomSolicitante' => $validatedData['nomSolicitante'], // Agregado desde la búsqueda del participante
             ]);
 
-          return redirect()->route('public.index')->with('success', '¡Evento creado exitosamente!');
-
-        
+            return redirect()->route('public.index')->with('success', '¡Evento creado exitosamente!');
         } catch (\Exception $e) {
-          return redirect()->route('public.index')->with('error', 'Error al crear el evento: ' . $e->getMessage());
-
+            return redirect()->route('public.index')->with('error', 'Error al crear el evento: ' . $e->getMessage());
         }
     }
 
@@ -596,12 +564,5 @@ class EventoController extends Controller
     // Fin Método para manejar el formulario externo
 
 
-    
+
 }
-
-
-
-
-
-
-
