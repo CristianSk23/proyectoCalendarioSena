@@ -83,7 +83,14 @@
                             Agregar Evento
                         </button>
                     </div>
-                 </div>        
+                 </div>  
+                 
+                <div class="mt-3">
+                    <a href="{{ route('public.index') }}" class="btn btn-outline-secondary w-100">
+                        INICIO
+                    </a>
+                </div>
+
 
     </div>
 
@@ -114,8 +121,13 @@
                             @endif
 
                             <div class="carousel-caption d-none d-md-block">
-                                <h5 class="text-white m-0">{{ $banner->evento->nombreEvento ?? 'Evento sin nombre' }}</h5>
+                                <div class="banner-caption-bg">
+                                    <h5 class="banner-caption-text">
+                                        {{ $banner->evento->nomEvento ?? 'Evento sin nombre' }}
+                                    </h5>
+                                </div>
                             </div>
+
                         </div>
                     @endforeach
                 </div>
@@ -149,35 +161,45 @@
 
 
 
-        <!-- Modal para autenticación antes de Solicitar evento-->
-        <div class="modal fade" id="authModalAgregarEvento" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <form id="authFormAgregar">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        <h5 class="modal-title">Verifica tu identidadaaaa</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                        </div>
-                        <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="auth_identificacion" class="form-label">Identificación</label>
-                            <input type="text" class="form-control" id="auth_identificacion" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="auth_password" class="form-label">Contraseña</label>
-                            <input type="password" class="form-control" id="auth_password" required>
-                        </div>
-                        <div id="auth_error_modal" class="text-danger mt-1"></div>
-                        </div>
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" id="submitAuthForm" class="btn btn-primary">ValidarEsta si</button>
-                        </div>
-                    </div>
-                    </form>
+      <!-- Modal de Autenticación -->
+<div class="modal fade" id="authModalAgregarEvento" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form id="authFormAgregar" class="w-100">
+            <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+                
+                <!-- Encabezado limpio y elegante -->
+                <div class="modal-header" style="background: linear-gradient(135deg, #38b000, #aacc00); color: white;">
+                    <h5 class="modal-title fw-bold" id="authModalLabel">🔐 Acceso Seguro</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-        </div>
-        <!-- FIN Modal para autenticación -->
+
+                <!-- Cuerpo del formulario -->
+                <div class="modal-body bg-white px-4 py-4">
+                    <p class="text-muted text-center mb-4">Introduce tus datos de acceso para continuar con la solicitud del evento.</p>
+
+                    <div class="mb-3">
+                        <label for="auth_identificacion" class="form-label">📇 Identificación</label>
+                        <input type="text" class="form-control form-control-lg" id="auth_identificacion" placeholder="Ej. 1098765432" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="auth_password" class="form-label">🔑 Contraseña</label>
+                        <input type="password" class="form-control form-control-lg" id="auth_password" placeholder="Tu contraseña" required>
+                    </div>
+
+                    <div id="auth_error_modal" class="text-danger mt-2 text-center small"></div>
+                </div>
+
+                <!-- Footer con botones -->
+                <div class="modal-footer bg-light justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" id="submitAuthForm" class="btn btn-success px-4">Validar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- fin modal autenticacion -->
 
 
 
@@ -198,6 +220,8 @@
     <!-- Cargar Bootstrap JS y dependencias -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+   
 
    <script>
 
@@ -260,6 +284,7 @@
 
     let currentDate = new Date();
       let eventos = @json($eventos);
+    //   const eventos = @json(session('eventos', $eventos)); // Usar eventos de la sesión si están disponibles
     
 
     // funcionamiento  calendario y sus fechas
@@ -291,6 +316,7 @@
                 return eventDate.getDate() === day &&
                     eventDate.getMonth() === currentDate.getMonth() &&
                     eventDate.getFullYear() === currentDate.getFullYear();
+                (event.estadoEvento === 1 || event.estadoEvento === 3); 
             });
 
             if (eventForDay.length > 0) {
@@ -420,7 +446,7 @@ document.addEventListener('DOMContentLoaded', function () {
 //FIN Manejo de datos de autenticador  para el ingreso al formulario solicitud de eventos
 
 
-
+let eventosOriginales = [...eventos];  
 // visualizacion de eventos en el contenido
 function showEventDetails(day) {
     const eventosDelDia = eventos.filter(event => {
@@ -446,20 +472,9 @@ function showEventDetails(day) {
         return;
     }
 
-    const row = document.createElement("div");
-    row.classList.add("row");
-
     eventosDelDia.forEach(evento => {
-        const col = document.createElement("div");
-        col.classList.add("col-md-4", "mb-4");
-
-        // Reutilizamos la función que ya tienes definida para crear tarjetas de evento
-        col.innerHTML = createEventCard(evento);
-
-        row.appendChild(col);
+        container.innerHTML += createEventCard(evento);
     });
-
-    container.appendChild(row);
 }
 
 
@@ -468,7 +483,7 @@ function showEventDetails(day) {
 
 ///filtros 
 
-
+// FILTRAR POR NOMBRE
 function searchEvent() {
     const searchInput = document.getElementById('search-input').value.toLowerCase();
     
@@ -572,7 +587,30 @@ function mostrarTodosEventos() {
     displayEventsInGrid(eventos);
 }
 
-// 🖼 Mostrar eventos en forma de tarjetas
+//  Mostrar eventos actual o siguiente
+function filtrarEventosDiaOMesSiguiente(eventos) {
+    const hoy = new Date();
+    const finMesActual = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0); // último día del mes actual
+    const mesSiguiente = hoy.getMonth() + 1;
+    const añoSiguiente = hoy.getMonth() === 11 ? hoy.getFullYear() + 1 : hoy.getFullYear();
+
+    return eventos.filter(event => {
+        const eventDate = new Date(event.fechaEvento);
+
+        // Evento desde hoy hasta fin de mes actual
+        const enMesActualDesdeHoy = eventDate >= hoy && eventDate <= finMesActual;
+
+        // Evento en cualquier día del mes siguiente
+        const enMesSiguiente = eventDate.getMonth() === mesSiguiente &&
+                              eventDate.getFullYear() === añoSiguiente;
+
+        return enMesActualDesdeHoy || enMesSiguiente;
+    });
+}
+
+
+
+// Muestra los eventos en el contenido
 function displayEventsInGrid(listaEventos) {
     const container = document.getElementById("event-details");
     container.innerHTML = "";
@@ -582,18 +620,19 @@ function displayEventsInGrid(listaEventos) {
         return;
     }
 
-    const row = document.createElement("div");
-    row.classList.add("row");
+    // Aquí aplicamos el filtro antes de mostrar
+    const eventosFiltrados = filtrarEventosDiaOMesSiguiente(listaEventos);
 
-    listaEventos.forEach(evento => {
-        const col = document.createElement("div");
-        col.classList.add("col-md-4", "mb-4");
-        col.innerHTML = createEventCard(evento); // Reutiliza tu función que crea la tarjeta
-        row.appendChild(col);
+    if (eventosFiltrados.length === 0) {
+        mostrarMensajeSinEventos("No hay eventos para hoy ni para el mes siguiente.");
+        return;
+    }
+
+    eventosFiltrados.forEach(evento => {
+        container.innerHTML += createEventCard(evento);
     });
-
-    container.appendChild(row);
 }
+
 
 //  Mostrar mensaje si no hay eventos
 function mostrarMensajeSinEventos(mensaje) {

@@ -20,7 +20,7 @@
 
 <!-- Titulo formulario -->
 <h1 class="h2 mb-4" style="color: grey; text-shadow: -1px 0 green, 0 1px green, 1px 0 white, 0 -1px white;">
-    Solicitar Evento </h1>
+   📝 Solicitar Evento </h1>
 
 
 

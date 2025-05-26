@@ -4,6 +4,7 @@
 }
 
 
+
 body {
     margin: 0;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -821,7 +822,7 @@ body {
 
 
 
-/* ESTILO VISTA PUBLICA */
+/* ESTILO VISTA PUBLICA INICIO */
 
 
 
@@ -851,6 +852,11 @@ body {
 
             
 /* === GENERAL  PARA LA PÁGINA PÚBLICA === */
+
+
+
+
+
 .public-page * {
     box-sizing: border-box;
     /* font-size: 1.25rem; */
@@ -1061,33 +1067,6 @@ body.public-page::before {
 
 
 /* === TARJETAS DE EVENTOS === */
-.public-page .card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.public-page .card {
-    background-color: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
-}
-
-.public-page .card:hover {
-    transform: scale(1.05);
-}
-
-.public-page .card-img-top {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-}
-
-.public-page .card-body {
-    padding: 15px;
-}
 
 /* === BOTONES === */
 .public-page .btn-outline-primary,
@@ -1099,92 +1078,40 @@ body.public-page::before {
 
 
 
+/* Contenedor de tarjetas */
+.public-page .card-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas de igual tamaño */
+    gap: 20px; /* Espacio entre las tarjetas */
+    padding: 20px; /* Espacio interno */
+}
 
-
-/* MODAL PUBLIC */
-
-/* Imagen del modal: más grande y destacada */
-.modal-body img {
-    width: 100%;
-    max-height: 400px; /* Máxima altura controlada */
-    object-fit: contain; /* Garantiza que la imagen se ajuste bien sin deformarse */
+/* Estilo de las tarjetas */
+.public-page .card {
+    background-color: #fff;
     border-radius: 10px;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra sutil */
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
 }
 
-/* Mejorar legibilidad del texto */
-#publicModalBody h5 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 0.75rem;
+.public-page .card:hover {
+    transform: scale(1.05); /* Efecto de aumento al pasar el ratón */
 }
 
-#publicModalBody p {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    color: #333;
-    line-height: 1.6;
+.public-page .card-img-top {
+    width: 100%;
+    height: 200px; /* Ajusta la altura de la imagen */
+    object-fit: cover; /* Asegura que la imagen se ajuste sin deformarse */
 }
 
-/* Animación personalizada para el modal */
-.modal.fade .modal-dialog {
-    transform: translateY(-50px);
-    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-    opacity: 0;
+.public-page .card-body {
+    padding: 15px;
 }
 
-.modal.fade.show .modal-dialog {
-    transform: translateY(0);
-    opacity: 1;
-}
 
-/* Header del modal con borde iluminado y color verde elegante */
-.custom-modal-header {
-    background: linear-gradient(90deg, #218a39, #885d21); /* Verde elegante */
-    color: white;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    box-shadow: 0 0 12px rgba(40, 167, 69, 0.5); /* Efecto glow */
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
 
-.custom-modal-header h5 {
-    font-family: 'Segoe UI', sans-serif;
-    font-weight: 600;
-    font-size: 1.25rem;
-    margin: 0;
-}
 
-/* Botón de cerrar del modal */
-.custom-modal-header .btn-close {
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-}
-
-/* Efecto de animación para el modal en la apertura */
-.modal-dialog {
-    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
-}
-
-.modal.fade .modal-dialog {
-    opacity: 0;
-    transform: translateY(-50px);
-}
-
-.modal.fade.show .modal-dialog {
-    opacity: 1;
-    transform: translateY(0);
-}
 
 
 
@@ -1272,6 +1199,128 @@ html, body {
 
 
 /* estilos css para el boton de configuracion y el modal del header */
+
+/* MODAL DE VER MAS EVENTO PUBLIC*/
+
+/* Estilo del modal */
+/* --- MODAL GENERAL --- */
+#showPublicModal .modal-dialog {
+    width: 95%;
+    max-width: 1300px;
+    margin: auto;
+    min-height: 90vh;
+}
+
+.modal-content {
+    min-height: 85vh;
+    border-radius: 15px;
+    overflow: hidden;
+    background-color: #ffffff; /* Fondo blanco */
+    color: #333; /* Texto oscuro para buen contraste */
+    font-size: 1.15rem;
+}
+
+/* --- HEADER del modal --- */
+.modal-header {
+    background: linear-gradient(to right, #3fa34d, #ffae42); /* verde sapote degradado */
+    color: white;
+    padding: 1.5rem;
+    border-bottom: none;
+}
+
+.modal-title {
+    font-size: 2rem;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Cierre del modal */
+.modal-header .btn-close {
+    filter: invert(1);
+    opacity: 0.9;
+}
+
+/* --- CUERPO del modal --- */
+#publicModalBody {
+    padding: 2rem;
+    overflow-y: auto;
+    background: url('../images/inicio/Texturas.png') no-repeat center center;
+    background-size: cover;
+}
+
+/* Imagen principal */
+#publicModalBody img {
+    width: 100%;
+    max-height: 450px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Título del evento */
+#publicModalBody h4 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 1rem;
+}
+
+/* Descripción */
+#publicModalBody p {
+    font-size: 1.8rem;
+    color: #444;
+    line-height: 1.7;
+}
+
+/* Lista de detalles */
+#publicModalBody ul {
+    padding-left: 1.8rem;
+    list-style: none;
+    margin-top: 1rem;
+}
+
+#publicModalBody li {
+    font-size: 1.8rem !important;   /* Fuerza el tamaño más grande */
+    line-height: 1.7;
+    color: #222 !important;         /* Color oscuro para fondo blanco */
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+}
+
+
+/* Footer */
+.modal-footer {
+    background-color: rgba(63, 163, 77, 0.1); /* Verde claro transparente */
+    border-top: none;
+    padding: 1.5rem;
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-title {
+        font-size: 1.5rem;
+    }
+
+    #publicModalBody p,
+    #publicModalBody li {
+        font-size: 1rem;
+    }
+}
+
+
+
+
+
+/* FIN MODAL VER MAS PUBLIC EVENTO */
+
+
+
+
+
 
 /* Estilos específicos para este dropdown */
 .custom-config-dropdown .dropdown-menu {
@@ -1369,14 +1418,23 @@ html, body {
         .carousel-caption {
             z-index: 10;
         }
+.banner-caption-bg {
+    background-color: rgba(0, 0, 0, 0.5); /* fondo oscuro con transparencia */
+    padding: 0.5rem;
+    border-radius: 5px;
+}
+
+.banner-caption-text {
+    color: white;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* sombra al texto */
+}
+
+/* Fin banner Public*/
 
 
 
 
-
-
-
-/* Contenedor de tarjetas */
 
 /* Contenedor de tarjetas */
 .public-page .card-container {
@@ -1386,7 +1444,6 @@ html, body {
     padding: 20px; /* Espacio interno */
 }
 
-/* Estilo de las tarjetas */
 .public-page .card {
     background-color: #fff;
     border-radius: 10px;
@@ -1409,39 +1466,189 @@ html, body {
     padding: 15px;
 }
 
-
-
-#event-details {
-    display: flex; /* Usar flexbox para alinear las tarjetas */
-    flex-wrap: wrap; /* Permitir que las tarjetas se envuelvan en varias líneas */
-    justify-content: space-between; /* Espaciado entre las tarjetas */
-    padding: 30px; /* Espaciado interno */
-    margin-top: 40px; /* Espacio superior para separar del contenido anterior */
-}
-
-
-
-
-.card {
-    flex: 1 1 calc(30% - 20px); /* Cada tarjeta ocupa un 30% del ancho menos el margen */
-    margin: 10px; /* Espacio entre las tarjetas */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra suave */
-    border-radius: 8px; /* Bordes redondeados */
-    transition: transform 0.2s; /* Efecto de transformación al pasar el ratón */
-}
-.card:hover {
-    transform: scale(1.05); /* Aumentar ligeramente el tamaño al pasar el ratón */
-}
-
-
-
 @media (max-width: 768px) {
     .public-page .card-container {
         grid-template-columns: repeat(2, 1fr); /* 2 columnas en pantallas más pequeñas */
     }
 }
+
 @media (max-width: 480px) {
     .public-page .card-container {
         grid-template-columns: 1fr; /* 1 columna en pantallas muy pequeñas */
     }
 }
+
+
+
+
+
+
+
+/* VALIDACION PARA SOLICITUD EVENTO */
+
+/* Estilos para el modal de autenticación */
+.modal-content {
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+.modal-header {
+    background-color: #007bff; /* Color de fondo del encabezado */
+    color: white; /* Color del texto */
+    border-top-left-radius: 10px; /* Bordes redondeados */
+    border-top-right-radius: 10px; /* Bordes redondeados */
+}
+
+.modal-title {
+    font-weight: bold; /* Negrita para el título */
+}
+
+.modal-body {
+    padding: 2rem; /* Espaciado interno */
+}
+
+.form-label {
+    font-weight: bold; /* Negrita para las etiquetas */
+}
+
+.form-control {
+    border-radius: 5px; /* Bordes redondeados para los campos de entrada */
+    border: 1px solid #ced4da; /* Color del borde */
+    transition: border-color 0.3s; /* Transición suave para el borde */
+}
+
+.form-control:focus {
+    border-color: #007bff; /* Color del borde al enfocar */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sombra al enfocar */
+}
+
+.btn-primary {
+    background-color: #007bff; /* Color de fondo del botón */
+    border-color: #007bff; /* Color del borde del botón */
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Color de fondo al pasar el ratón */
+    border-color: #0056b3; /* Color del borde al pasar el ratón */
+}
+
+.btn-secondary {
+    background-color: #6c757d; /* Color de fondo del botón secundario */
+    border-color: #6c757d; /* Color del borde del botón secundario */
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268; /* Color de fondo al pasar el ratón */
+    border-color: #5a6268; /* Color del borde al pasar el ratón */
+}
+
+.text-danger {
+    font-weight: bold; /* Negrita para el mensaje de error */
+}
+.modal-body {
+    padding: 2rem; /* Aumentar el espaciado interno */
+}
+
+
+
+
+
+/* FIN VALIDACION SOLICTUD EVENTO  */
+
+
+
+/*  modal de autenticación */
+#authModalAgregarEvento .modal-content {
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+}
+
+#authModalAgregarEvento .modal-header {
+    border-bottom: none;
+}
+
+#authModalAgregarEvento .modal-footer {
+    border-top: 1px solid #ddd;
+}
+/* fin modal autenticacion */
+
+
+
+/* estilo de formulario publico solicitud evento  */
+ #formularioEvento {
+  max-width: 1200px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 2rem 3rem;
+  box-sizing: border-box;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  overflow-wrap: break-word;
+  overflow-x: hidden; /* <-- esto evita que haya scroll horizontal */
+}
+
+#formularioEvento * {
+  max-width: 100%; /* asegura que todos los hijos no sobrepasen el ancho */
+  box-sizing: border-box;
+}
+
+/* Si tienes listas desplegables o elementos con position absolute dentro, añade también */
+#formularioEvento ul,
+#formularioEvento select,
+#formularioEvento input,
+#formularioEvento textarea {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+
+    #formularioEvento .form-label::after {
+        content: "*";
+        color: red;
+        margin-left: 4px;
+    }
+
+    #formularioEvento .invalid-feedback {
+        font-size: 0.875rem;
+        color: #d9534f;
+    }
+
+    #formularioEvento button[type="submit"] {
+        background: linear-gradient(135deg, #38b000, #aacc00);
+        border: none;
+        padding: 0.75rem 2rem;
+        font-weight: bold;
+        color: white;
+        border-radius: 0.5rem;
+        transition: background 0.3s ease-in-out;
+    }
+
+    #formularioEvento button[type="submit"]:hover {
+        background: linear-gradient(135deg, #2d8600, #8ca900);
+    }
+
+    .list-group-item-action:hover {
+        background-color: #eafce8;
+        cursor: pointer;
+    }
+
+    #formularioEvento h1 {
+        font-weight: bold;
+        font-size: 2rem;
+        color: #2a5d34;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        #formularioEvento {
+            padding: 1.5rem;
+        }
+    }
+
+    /* Opcional: ajusta el padding en pantallas pequeñas para que no se vea muy estrecho */
+
+/* Fin estilo de formulario publico solicitud evento */

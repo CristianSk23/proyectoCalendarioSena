@@ -7,6 +7,7 @@ use App\Models\Ambiente\Ambiente;
 use App\Models\Evento\Evento;
 use App\Models\Categoria\Categoria;
 use App\Models\Ficha\Ficha;
+use App\Models\Banner;
 use App\Models\Horario\Horario;
 use App\Models\Participante\Participante;
 use Illuminate\Http\Request;
@@ -554,11 +555,21 @@ class EventoController extends Controller
                 'nomSolicitante' => $validatedData['nomSolicitante'], // Agregado desde la búsqueda del participante
             ]);
 
-            return redirect()->route('public.index')->with('success', '¡Evento creado exitosamente!');
+
+        // Filtrar eventos para mostrar en la vista pública
+        $eventos = Evento::whereIn('estadoEvento', [1, 3])->get();
+        $imagenesBanner = Banner::with('evento')->get();
+
+
+
+            // return redirect()->route('public.index')->with('success', '¡Evento creado exitosamente!');
+            return redirect()->route('public.index')->with(['success' => '¡Evento creado exitosamente!', 'eventos' => $eventos]);
         } catch (\Exception $e) {
             return redirect()->route('public.index')->with('error', 'Error al crear el evento: ' . $e->getMessage());
         }
     }
+
+   
 
 
     // Fin Método para manejar el formulario externo

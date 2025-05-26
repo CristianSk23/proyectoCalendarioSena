@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Evento\Evento; // Importa el modelo Evento
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
 use App\Models\fotografiasEvento\FotografiaEvento;
 
 
@@ -15,23 +16,16 @@ class PublicController extends Controller
     
     public function index()
     {
-       
+        // $hoy = Carbon::today();
+
         $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
-            ->where('estadoEvento',1)
+            ->whereIn('estadoEvento',[1,3])
+            // ->whereDate('fechaEvento', '>=', $hoy)
             ->get();
 
-        // Asumimos que quieres una imagen por evento como banner (sin nueva columna)
-        // $imagenesBanner = collect();
-         $eventosRealizados = Evento::where('estadoEvento',[1,3])->pluck('idEvento');
-        // foreach ($eventos as $evento) {
-        //     $foto = FotografiaEvento::where('idEvento', $evento->idEvento)->first();
-        //     if ($foto) {
-        //         $imagenesBanner->push($foto);
-        //     }
-        // }
-
-        //  $imagenesBanner = FotografiaEvento::whereIn('idEvento', $eventosRealizados)->get();
-         $imagenesBanner = FotografiaEvento::with('evento')
+            
+//   $eventosRealizados = Evento::whereIn('estadoEvento',[1,3])->pluck('idEvento');
+         $imagenesBanner = FotografiaEvento::with('evento:idEvento,nomEvento')
         ->whereIn('idEvento', Evento::where('estadoEvento', 3)->pluck('idEvento'))
         ->get();
 
