@@ -25,9 +25,10 @@ class PublicController extends Controller
 
             
 //   $eventosRealizados = Evento::whereIn('estadoEvento',[1,3])->pluck('idEvento');
-         $imagenesBanner = FotografiaEvento::with('evento:idEvento,nomEvento')
-        ->whereIn('idEvento', Evento::where('estadoEvento', 3)->pluck('idEvento'))
-        ->get();
+        //  $imagenesBanner = FotografiaEvento::with('evento:idEvento,nomEvento')
+        $imagenesBanner = $this->obtenerImagenesBannerPorMes();
+        // ->whereIn('idEvento', Evento::where('estadoEvento', 3)->pluck('idEvento'))
+        // ->get();
 
         $categorias = \App\Models\Categoria\Categoria::all();
 
@@ -47,6 +48,48 @@ class PublicController extends Controller
         return view('public.show', compact('evento'));
     }
 
+
+
+    public function obtenerImagenesBannerPorMes()
+{
+    $fechaActual = Carbon::now();
+    $mesActual = $fechaActual->month;
+    $anioActual = $fechaActual->year;
+
+    $eventosMesActual = Evento::where('estadoEvento', 3)
+                            ->whereYear('fechaEvento', $anioActual)
+                            ->whereMonth('fechaEvento', $mesActual)
+                            ->pluck('idEvento');
+
+    $imagenes = FotografiaEvento::with('evento:idEvento,nomEvento,fechaEvento')
+                ->whereIn('idEvento', $eventosMesActual)
+                ->get()
+                ->sortByDesc(function($foto){
+                    return $foto->evento->fechaEvento ?? null;
+                })
+                ->values();
+
+    if ($imagenes->isEmpty()) {
+        $fechaMesAnterior = $fechaActual->copy()->subMonth();
+        $mesAnterior = $fechaMesAnterior->month;
+        $anioMesAnterior = $fechaMesAnterior->year;
+
+        $eventosMesAnterior = Evento::where('estadoEvento', 3)
+                                ->whereYear('fechaEvento', $anioMesAnterior)
+                                ->whereMonth('fechaEvento', $mesAnterior)
+                                ->pluck('idEvento');
+
+        $imagenes = FotografiaEvento::with('evento:idEvento,nomEvento,fechaEvento')
+                    ->whereIn('idEvento', $eventosMesAnterior)
+                    ->get()
+                    ->sortByDesc(function($foto){
+                        return $foto->evento->fechaEvento ?? null;
+                    })
+                    ->values();
+    }
+
+    return $imagenes;
+}
 
 
 
