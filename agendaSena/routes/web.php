@@ -141,3 +141,10 @@ Route::post('/validar-credenciales-publicas', [LoginController::class, 'validarC
 //*Cambio de fondos pagina de login
 Route::post('/fondos/subir', [FondoController::class, 'subir'])->name('fondos.subir');
 Route::post('/fondos/seleccionar', [FondoController::class, 'seleccionar'])->name('fondos.seleccionar');
+
+
+// Route::get('/eventos/filtrar', [PublicController::class, 'filtrarEventos'])->name('eventos.filtrar');
+// Route::post('/filtrar-eventos', [PublicController::class, 'filtrarEventos']);
+Route::post('/filtrar-eventos', [PublicController::class, 'filtrarEventos'])->name('eventos.filtrar');
+
+
