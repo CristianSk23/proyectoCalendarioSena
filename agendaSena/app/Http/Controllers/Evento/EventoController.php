@@ -399,6 +399,73 @@ class EventoController extends Controller
         }
     }
 
+
+
+    public function eliminarEvento(Request $request)
+    {
+        $idEvento = $request->input('idEvento');
+
+        $evento = Evento::find($idEvento);
+
+        if ($evento) {
+            $evento->estadoEvento = 0; // Cambiar el estado a eliminado
+            $evento->save();
+
+            return response()->json(['success' => true, 'message' => 'Evento eliminado exitosamente.']);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Evento no encontrado.']);
+        }
+    }
+
+
+    public function validarDisponibilidad(Request $request)
+    {
+        $request->validate([
+            'pla_amb_id' => 'required|exists:sep_planeacion_ambiente,pla_amb_id',
+            'fecha' => 'required|date',
+            'hora_inicio' => 'required|date_format:H:i',
+            'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
+        ]);
+
+        $idEvento = $request->idEvento;
+        log::info('ID del evento: ' . $idEvento);
+        $ambienteId = $request->pla_amb_id;
+        $fechaEvento = $request->fecha;
+        $inicio = date('H:i', strtotime($request->hora_inicio)); // Normaliza el formato
+        $fin = date('H:i', strtotime($request->hora_fin));       // Normaliza el formato
+
+        $eventoExistente = Evento::where('fechaEvento', $fechaEvento)
+            ->where('pla_amb_id', $ambienteId)
+            ->when($idEvento, function ($query, $idEvento) {
+                return $query->where('idEvento', '!=', $idEvento); // <- solo si hay un ID
+            })
+            ->whereHas('horario', function ($query) use ($inicio, $fin) {
+                $query->where(function ($q) use ($inicio, $fin) {
+                    $q->whereBetween('inicio', [$inicio, $fin])
+                        ->orWhereBetween('fin', [$inicio, $fin])
+                        ->orWhere(function ($sub) use ($inicio, $fin) {
+                            $sub->where('inicio', '<=', $inicio)
+                                ->where('fin', '>=', $fin);
+                        });
+                });
+            })
+            ->exists();
+
+        Log::info(($eventoExistente));
+
+        if ($eventoExistente) {
+            log::info('El ambiente no está disponible para la fecha y hora solicitada.');
+            return response()->json([
+                'error' => true,
+                'message' => 'El ambiente con la fecha y hora solicitada no está disponible.'
+            ]);
+        }
+
+        return response()->json(['disponible' => true]);
+    }
+
+
+
     private function validateRequest(Request $request)
     {
         return $request->validate([
@@ -415,6 +482,11 @@ class EventoController extends Controller
             'estadoEvento' => 'required|integer',
         ]);
     }
+
+
+
+
+
 
 
     //*Fin Funciones Realizadas por CRISTIAN
@@ -556,9 +628,9 @@ class EventoController extends Controller
             ]);
 
 
-        // Filtrar eventos para mostrar en la vista pública
-        $eventos = Evento::whereIn('estadoEvento', [1, 3])->get();
-        $imagenesBanner = Banner::with('evento')->get();
+            // Filtrar eventos para mostrar en la vista pública
+            $eventos = Evento::whereIn('estadoEvento', [1, 3])->get();
+            $imagenesBanner = Banner::with('evento')->get();
 
 
 
@@ -569,7 +641,7 @@ class EventoController extends Controller
         }
     }
 
-   
+
 
 
     // Fin Método para manejar el formulario externo

@@ -136,27 +136,26 @@ body {
 
 
   #calendario {
-    width: 95%; /* Aumenta ligeramente el ancho */
-    max-width: 1400px; /* Mayor límite para pantallas grandes */
+    width: 95%; 
+    max-width: 1400px; 
     margin: 40px auto;
-    border-collapse: collapse;
-    background-size: cover;
-    background-position: center;
+    background-size: contain;
     background-repeat: no-repeat;
+    background-position: center;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
 #calendario th, #calendario td {
     border: 1px solid #ccc;
-    padding: 28px; /* Aumenta el espacio interno */
+    padding: 28px; 
     text-align: center;
-    font-size: 1.4rem; /* Letras más grandes */
+    font-size: 1.4rem; 
     background-color: rgba(255, 255, 255, 0.514);
 }
 
 #calendario th {
-    background-color: rgba(57, 169, 0, 0.9);
+    background-color: rgba(56, 169, 0, 0.534);
     color: white;
     font-weight: bold;
 }

@@ -41,6 +41,7 @@ Route::get("evento/buscarParticipantes", [EventoController::class, 'buscarPartic
 Route::get("evento/buscarAmbientes", [EventoController::class, 'buscarAmbientes'])->name('eventos.buscarAmbientes');
 Route::get("evento/eventosPorNombre", [EventoController::class, 'buscarEventosPorNombre'])->name('eventos.buscarEventoPorNombre');
 Route::post("evento/confirmarEvento", [EventoController::class, 'confirmarEvento'])->name('eventos.confirmarEvento');
+route::post('evento/validarDisponibilidad', [EventoController::class, 'validarDisponibilidad'])->name('eventos.validarDisponibilidad');
 // ruta para funcion d ela vista publica
 Route::post('evento/storeExterno', [EventoController::class, 'storeExterno'])->name('evento.storeExterno');
 
@@ -94,8 +95,6 @@ Route::post('/reportes/mensual', [ReporteController::class, 'generarReporteMensu
 Route::post('/reportes/anual', [ReporteController::class, 'generarReporteAnual'])->name('reportes.anual')->middleware('auth');
 Route::get('evento/reportes/filtrar', [ReporteController::class, 'filtrarReportes'])->name('reportes.filtrar')->middleware('auth');
 
-// ************* PDF ********************
-Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 
 //********+responsable**** */
 // Route::get('/api/responsables', [ResponsableController::class, 'index']);
