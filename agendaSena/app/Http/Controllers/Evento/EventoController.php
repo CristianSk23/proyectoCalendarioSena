@@ -10,6 +10,7 @@ use App\Models\Ficha\Ficha;
 use App\Models\Banner;
 use App\Models\Horario\Horario;
 use App\Models\Participante\Participante;
+use App\Models\fotografiasEvento\FotografiaEvento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Traits\CalendarTrait;
@@ -630,7 +631,8 @@ class EventoController extends Controller
 
             // Filtrar eventos para mostrar en la vista pública
             $eventos = Evento::whereIn('estadoEvento', [1, 3])->get();
-            $imagenesBanner = Banner::with('evento')->get();
+            // $imagenesBanner = Banner::with('evento')->get();
+            $imagenesBanner = FotografiaEvento::with('evento')->get();
 
 
 
