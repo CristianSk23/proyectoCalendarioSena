@@ -284,7 +284,6 @@
 
     let currentDate = new Date();
       let eventos = @json($eventos);
-    //   const eventos = @json(session('eventos', $eventos)); // Usar eventos de la sesión si están disponibles
     
 
     // funcionamiento  calendario y sus fechas
@@ -481,11 +480,15 @@ function showEventDetails(day) {
 
 
 
-///filtros 
+///filtros  ignorar tildes
+function quitarTildes(texto) {
+    return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 
 // FILTRAR POR NOMBRE
 function searchEvent() {
-    const searchInput = document.getElementById('search-input').value.toLowerCase();
+    const searchInput = quitarTildes(document.getElementById('search-input').value.toLowerCase());
     
     const eventDetailsContainer = document.getElementById('event-details');
     eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
@@ -493,8 +496,14 @@ function searchEvent() {
     // Filtrar los eventos que coincidan con cualquier palabra en los campos relevantes
     const filteredEvents = eventos.filter(event => {
         // Concatenar los campos relevantes para la búsqueda
-        const eventText = `${event.nomEvento} ${event.descripcion} ${event.categoria}`.toLowerCase();
-        return eventText.includes(searchInput); // Verificar si la entrada de búsqueda está en el texto concatenado
+        const eventText = `        
+        ${event.nomEvento} 
+        ${event.descripcion} 
+        ${event.categoria && event.categoria.nomCategoria ? event.categoria.nomCategoria : ''}
+         ${event.ambiente && event.ambiente.pla_amb_descripcion ? event.ambiente.pla_amb_descripcion : ''}
+        `.toLowerCase();
+        return quitarTildes(eventText).includes(searchInput);
+// Verificar si la entrada de búsqueda está en el texto concatenado
     });
 
     if (filteredEvents.length > 0) {
@@ -513,12 +522,11 @@ function searchEvent() {
 // Filtrar por categoria seleccionada
 function searchByCategory() {
     const categoryInput = document.getElementById('categoria_id').value;  // Obtener la categoría seleccionada
-    console.log("Categoría seleccionada:", categoryInput);  // Verificar la categoría seleccionada
 
     const eventDetailsContainer = document.getElementById('event-details');
     eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
 
-    console.log(categoryInput);
+    
     
     // Si no se seleccionó una categoría, no filtramos y mostramos todos los eventos
     if (!categoryInput) {
@@ -527,8 +535,12 @@ function searchByCategory() {
     }
 
     // Filtrar eventos por la categoría seleccionada
+    
     const filteredEvents = eventos.filter(event => {
-        return event.idCategoria == categoryInput;  // Comparar el ID de la categoría
+        // return event.idCategoria == categoryInput;  // Comparar el ID de la categoría
+        return event.categoria && event.categoria.idCategoria == categoryInput;
+        
+        
     });
 
     // Mostrar los eventos filtrados
@@ -579,13 +591,20 @@ function limpiarOtrosFiltros(excepto) {
     if (excepto !== 'categoria') document.getElementById('categoria_id').value = '';
 }
 
+
+
 // 🗂 Mostrar todos los eventos sin filtro
 function mostrarTodosEventos() {
+    // Limpiar filtros
     document.getElementById('search-input').value = '';
     document.getElementById('date-search').value = '';
     document.getElementById('categoria_id').value = '';
+
+    // Mostrar todos los eventos sin filtro
     displayEventsInGrid(eventos);
 }
+
+
 
 //  Mostrar eventos actual o siguiente
 function filtrarEventosDiaOMesSiguiente(eventos) {
@@ -615,20 +634,12 @@ function displayEventsInGrid(listaEventos) {
     const container = document.getElementById("event-details");
     container.innerHTML = "";
 
-    if (!listaEventos || listaEventos.length === 0) {
+    if (!listaEventos.length) {
         mostrarMensajeSinEventos("No se encontraron eventos.");
         return;
     }
 
-    // Aquí aplicamos el filtro antes de mostrar
-    const eventosFiltrados = filtrarEventosDiaOMesSiguiente(listaEventos);
-
-    if (eventosFiltrados.length === 0) {
-        mostrarMensajeSinEventos("No hay eventos para hoy ni para el mes siguiente.");
-        return;
-    }
-
-    eventosFiltrados.forEach(evento => {
+    listaEventos.forEach(evento => {
         container.innerHTML += createEventCard(evento);
     });
 }
@@ -648,17 +659,28 @@ function mostrarMensajeSinEventos(mensaje) {
 
 
 
+function mostrarEventosDesdeHoy() {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Ignora hora para que solo compare por fecha
+
+    const eventosFuturos = eventos.filter(evento => {
+        const fechaEvento = new Date(evento.fechaEvento);
+        fechaEvento.setHours(0, 0, 0, 0);
+        return fechaEvento >= hoy;
+    });
+
+    displayEventsInGrid(eventosFuturos);
+}
 
 
 
 
 
 </script>
-<!-- relacion de -->
+
 @stack('scripts')
 </body>
 
- <!-- yaque 12 am alerta "bonita" -->
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -687,7 +709,7 @@ function mostrarMensajeSinEventos(mensaje) {
 
 
 </script>
- <!-- fin yaque 12 am alerta "bonita" -->
+
 
 </html>
 
