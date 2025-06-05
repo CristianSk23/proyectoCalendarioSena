@@ -500,6 +500,11 @@ class EventoController extends Controller
         return view('Evento.inicioEvento', compact('eventos'));
     }
 
+
+
+
+    
+
     public function solicitudPublica(Request $reques)
     {
         // $categorias = Categoria::all();
@@ -565,6 +570,16 @@ class EventoController extends Controller
         // Redirigir con un mensaje de éxito a la vista pública de solicitud
         return redirect()->route('public.index')->with('success', 'Evento actualizado exitosamente.');
     }
+
+
+
+
+
+
+
+
+
+
 
 
 

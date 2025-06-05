@@ -315,7 +315,7 @@
                 return eventDate.getDate() === day &&
                     eventDate.getMonth() === currentDate.getMonth() &&
                     eventDate.getFullYear() === currentDate.getFullYear();
-                (event.estadoEvento === 1 || event.estadoEvento === 3); 
+               
             });
 
             if (eventForDay.length > 0) {
@@ -445,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function () {
 //FIN Manejo de datos de autenticador  para el ingreso al formulario solicitud de eventos
 
 
-let eventosOriginales = [...eventos];  
+// let eventosOriginales = [...eventos];  
 // visualizacion de eventos en el contenido
 function showEventDetails(day) {
     const eventosDelDia = eventos.filter(event => {

@@ -199,6 +199,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validación al enviar el formulario
     formulario.addEventListener('submit', function (e) {
+        document.getElementById('btnCrearEvento').disabled = true;
         if (!formulario.checkValidity()) {
             e.preventDefault(); //  Detiene el envío si no es válido
             e.stopPropagation();
@@ -213,10 +214,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log(`${key}: ${value}`);
             }
 
+
+
+             //  Desactiva el botón solo si el formulario es válido
+        document.getElementById('btnCrearEvento').disabled = true;
+
+     
+
             // El formulario se envia normalmente si todo está correcto
+
+            
         }
 
         formulario.classList.add('was-validated');
+        
     });
 });
 
