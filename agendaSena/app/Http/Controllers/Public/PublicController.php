@@ -16,11 +16,11 @@ class PublicController extends Controller
     
     public function index()
     {
-        $hoy = Carbon::today();
+        // $hoy = Carbon::today();
 
         $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
             ->whereIn('estadoEvento',[1,3])
-            ->whereDate('fechaEvento', '>=', $hoy)
+            // ->whereDate('fechaEvento', '>=', $hoy)
             ->get();
 
             

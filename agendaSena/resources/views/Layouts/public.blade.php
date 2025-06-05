@@ -319,6 +319,16 @@
             });
 
             if (eventForDay.length > 0) {
+
+                const eventoDelDia = eventForDay[0]; // Usamos el primero por simplicidad (puedes adaptar a múltiples si deseas)
+
+                if (eventoDelDia.estadoEvento === 1) {
+                    cell.classList.add('bg-primary', 'text-white'); // Azul
+                } else if (eventoDelDia.estadoEvento === 3) {
+                    cell.classList.add('bg-success', 'text-white'); // Verde
+                }
+
+
                 cell.classList.add('event-day');
             }
 
@@ -595,13 +605,33 @@ function limpiarOtrosFiltros(excepto) {
 
 // 🗂 Mostrar todos los eventos sin filtro
 function mostrarTodosEventos() {
-    // Limpiar filtros
-    document.getElementById('search-input').value = '';
-    document.getElementById('date-search').value = '';
-    document.getElementById('categoria_id').value = '';
+    const contenedor = document.getElementById('future-events');
+    contenedor.innerHTML = '';
 
-    // Mostrar todos los eventos sin filtro
-    displayEventsInGrid(eventos);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const eventosFuturos = todosLosEventos.filter(evento => {
+        const fechaEvento = new Date(evento.fechaEvento + 'T00:00:00');
+        return fechaEvento >= hoy;
+    });
+
+    if (eventosFuturos.length === 0) {
+        contenedor.innerHTML = '<p class="text-muted">No hay eventos futuros.</p>';
+        return;
+    }
+
+    const row = document.createElement('div');
+    row.className = 'row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4';
+
+    eventosFuturos.forEach(evento => {
+        const col = document.createElement('div');
+        col.className = 'col';
+        col.innerHTML = createEventCard(evento);
+        row.appendChild(col);
+    });
+
+    contenedor.appendChild(row);
 }
 
 

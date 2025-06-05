@@ -945,6 +945,19 @@ body.public-page::before {
     margin-bottom: 10px;
 }
 
+/* color de eventos */
+.evento-pasado {
+    background-color: #007bff; /* Azul */
+    color: white;
+}
+
+.evento-agendado {
+    background-color: #28a745; /* Verde */
+    color: white;
+}
+
+
+
 .public-page .calendar-nav .btn { /*FLEcha*/
     width: 45px;
     height: 45px;
