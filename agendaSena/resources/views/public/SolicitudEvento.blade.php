@@ -213,6 +213,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log(`${key}: ${value}`);
             }
 
+            //restringe boton evita doble envio una vez se haga el primer clic
+            document.getElementById('btnCrearEvento').disabled = true;
+
+
+
+
             // El formulario se envia normalmente si todo está correcto
         }
 

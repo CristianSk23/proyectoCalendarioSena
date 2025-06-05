@@ -53,6 +53,13 @@
             ? event.descripcion.substring(0, 100) + "..."
             : event.descripcion;
 
+
+
+
+
+
+            
+
         return `
             <div class="card h-100 shadow-sm">
                 <img src="${imagenURL}" class="card-img-top" alt="Imagen del evento">
