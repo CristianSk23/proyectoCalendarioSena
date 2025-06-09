@@ -55,10 +55,15 @@
                     
 
                 <!-- Filtro por Fecha -->
-                <div class="search-input-container">
-                    <label for="date-search">Buscar por fecha:</label>
-                    <input type="date" id="date-search" class="form-control" oninput="searchByDate()">
+               <div class="search-input-container">
+                    <label>Buscar por rango de fechas:</label>
+                    <div class="d-flex gap-2">
+                        <input type="date" id="start-date" class="form-control">
+                        <input type="date" id="end-date" class="form-control">
+                    </div>
                 </div>
+                <
+
               
 
                 <!-- Filtro por Nombre del Evento -->
@@ -458,6 +463,7 @@ document.addEventListener('DOMContentLoaded', function () {
 let eventosOriginales = [...eventos];  
 // visualizacion de eventos en el contenido
 function showEventDetails(day) {
+    document.getElementById('future-events').style.display = 'none'; // ocultar eventos iniciale
     const eventosDelDia = eventos.filter(event => {
         const [year, month, dayStr] = event.fechaEvento.split('-');
         const eventDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(dayStr));
@@ -498,6 +504,7 @@ function quitarTildes(texto) {
 
 // FILTRAR POR NOMBRE
 function searchEvent() {
+     document.getElementById('future-events').style.display = 'none'; // ocultar eventos iniciale
     const searchInput = quitarTildes(document.getElementById('search-input').value.toLowerCase());
     
     const eventDetailsContainer = document.getElementById('event-details');
@@ -531,6 +538,7 @@ function searchEvent() {
 
 // Filtrar por categoria seleccionada
 function searchByCategory() {
+     document.getElementById('future-events').style.display = 'none'; // ocultar eventos iniciale
     const categoryInput = document.getElementById('categoria_id').value;  // Obtener la categoría seleccionada
 
     const eventDetailsContainer = document.getElementById('event-details');
@@ -573,21 +581,37 @@ function searchByCategory() {
 
 //  Buscar por fecha
 function searchByDate() {
-    const date = document.getElementById('date-search').value;
-    limpiarOtrosFiltros('fecha');
+    
+    document.getElementById('future-events').style.display = 'none'; // Oculta eventos por defecto
+    limpiarOtrosFiltros('rango'); // Limpia los otros filtros
 
-    if (!date) {
-        mostrarTodosEventos();
+    const start = document.getElementById('start-date').value;
+    const end = document.getElementById('end-date').value;
+    const eventDetailsContainer = document.getElementById('event-details');
+    eventDetailsContainer.innerHTML = "";
+
+    if (!start || !end) {
+        mostrarMensajeSinEventos("Por favor selecciona una fecha inicial y final.");
         return;
     }
 
+    const fechaInicio = new Date(start);
+    const fechaFin = new Date(end);
+    fechaInicio.setHours(0, 0, 0, 0);
+    fechaFin.setHours(23, 59, 59, 999);
+
     const filtrados = eventos.filter(evento => {
-        const fechaEvento = new Date(evento.fechaEvento).toISOString().split('T')[0];
-        return fechaEvento === date;
+        const fechaEvento = new Date(evento.fechaEvento + 'T00:00:00');
+        return fechaEvento >= fechaInicio && fechaEvento <= fechaFin;
     });
 
-    displayEventsInGrid(filtrados);
+    if (filtrados.length > 0) {
+        displayEventsInGrid(filtrados);
+    } else {
+        mostrarMensajeSinEventos("No se encontraron eventos en el rango de fechas seleccionado.");
+    }
 }
+
 
 
 
@@ -595,43 +619,51 @@ function searchByDate() {
 
 
 // 🧹 Limpiar los filtros que no se están usando
-function limpiarOtrosFiltros(excepto) {
-    if (excepto !== 'nombre') document.getElementById('search-input').value = '';
-    if (excepto !== 'fecha') document.getElementById('date-search').value = '';
-    if (excepto !== 'categoria') document.getElementById('categoria_id').value = '';
-}
+function searchByDate() {
+    
+        limpiarOtrosFiltros('date');
+        const start = document.getElementById('start-date').value;
+        const end = document.getElementById('end-date').value;
+
+        if (!start || !end) {
+            mostrarMensajeSinEventos("Por favor, selecciona una fecha inicial y final para buscar.");
+            return;
+        }
+
+        const fechaInicio = new Date(start + 'T00:00:00'); // Ensure UTC for consistent comparison
+        const fechaFin = new Date(end + 'T23:59:59');     // Ensure UTC for consistent comparison
+
+        const filtrados = eventosOriginales.filter(evento => {
+            const fechaEvento = new Date(evento.fechaEvento + 'T00:00:00'); // Ensure UTC for consistent comparison
+            return fechaEvento >= fechaInicio && fechaEvento <= fechaFin;
+        });
+
+        displayEventsInGrid(filtrados);
+    }
+
+
+
+
 
 
 
 // 🗂 Mostrar todos los eventos sin filtro
 function mostrarTodosEventos() {
-    const contenedor = document.getElementById('future-events');
-    contenedor.innerHTML = '';
+    // CAMBIA ESTA LÍNEA: apuntar a 'event-details' en lugar de 'future-events'
+    const contenedor = document.getElementById('event-details');
+    // Ya no necesitas .style.display = 'block'; porque 'event-details' siempre está visible.
+    // Además, 'displayEventsInGrid' ya maneja la limpieza y el agregado.
 
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
 
-    const eventosFuturos = todosLosEventos.filter(evento => {
+    const eventosFuturos = eventosOriginales.filter(evento => { // Usa eventosOriginales
         const fechaEvento = new Date(evento.fechaEvento + 'T00:00:00');
         return fechaEvento >= hoy;
     });
 
-    if (eventosFuturos.length === 0) {
-        contenedor.innerHTML = '<p class="text-muted">No hay eventos futuros.</p>';
-        return;
-    }
-
-    const row = document.createElement('div');
-    row.className = 'row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4';
-
-    eventosFuturos.forEach(evento => {
-        const col = document.createElement('div');
-        col.className = 'col';
-        col.innerHTML = createEventCard(evento);
-        row.appendChild(col);
-    });
-
-    contenedor.appendChild(row);
+    // Ahora, en lugar de construir el HTML aquí, llama a la función que ya lo hace
+    displayEventsInGrid(eventosFuturos);
 }
 
 
@@ -656,6 +688,20 @@ function filtrarEventosDiaOMesSiguiente(eventos) {
         return enMesActualDesdeHoy || enMesSiguiente;
     });
 }
+
+
+
+
+
+// Filtro Eventos
+function limpiarOtrosFiltros(activeFilter) {
+        if (activeFilter !== 'category') document.getElementById('categoria_id').value = '';
+        if (activeFilter !== 'date') {
+            document.getElementById('start-date').value = '';
+            document.getElementById('end-date').value = '';
+        }
+        if (activeFilter !== 'name') document.getElementById('search-input').value = '';
+    }
 
 
 
@@ -701,6 +747,21 @@ function mostrarEventosDesdeHoy() {
 
     displayEventsInGrid(eventosFuturos);
 }
+
+// Detectar cambios y filtrar solo cuando ambas fechas estén seleccionadas
+document.addEventListener('DOMContentLoaded', function () {
+    const startInput = document.getElementById('start-date');
+    const endInput = document.getElementById('end-date');
+
+    function verificarYBuscar() {
+        if (startInput.value && endInput.value) {
+            searchByDate();
+        }
+    }
+
+    startInput.addEventListener('change', verificarYBuscar);
+    endInput.addEventListener('change', verificarYBuscar);
+});
 
 
 
