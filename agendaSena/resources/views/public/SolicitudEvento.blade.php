@@ -59,6 +59,16 @@
         </div>
 
 
+
+
+     <div class="mb-3">
+            <label for="fechaEvento" class="form-label">Fecha:</label>
+            <input type="date" name="fechaEvento" required class="form-control"
+                value="{{ isset($evento) ? $evento->fechaEvento : '' }}" min="{{ date('Y-m-d') }}" id="fechaEvento">
+            <div class="invalid-feedback">La fecha no puede ser anterior a hoy</div>
+        </div>
+
+
         <div class="mb-3">
             <label class="form-label">Horario del Evento:</label>
             <div class="row">
@@ -91,13 +101,7 @@
             <div class="invalid-feedback">La descripción debe tener entre 10 y 500 caracteres</div>
         </div>
 
-        <div class="mb-3">
-            <label for="fechaEvento" class="form-label">Fecha:</label>
-            <input type="date" name="fechaEvento" required class="form-control"
-                value="{{ isset($evento) ? $evento->fechaEvento : '' }}" min="{{ date('Y-m-d') }}" id="fechaEvento">
-            <div class="invalid-feedback">La fecha no puede ser anterior a hoy</div>
-        </div>
-
+       
         <div class="mb-3">
             <label for="aforoEvento" class="form-label">Aforo del Evento:</label>
             <input type="number" name="aforoEvento" required class="form-control" min="1" max="500"
@@ -196,18 +200,24 @@ document.addEventListener('DOMContentLoaded', function () {
     // Validación al enviar el formulario
     formulario.addEventListener('submit', function (e) {
         if (!formulario.checkValidity()) {
-            e.preventDefault(); // 🚫 Detiene el envío si no es válido
+            e.preventDefault(); //  Detiene el envío si no es válido
             e.stopPropagation();
 
-            // ✅ Mostrar todos los errores en los campos
+            //  Mostrar todos los errores en los campos
             const inputs = formulario.querySelectorAll('input, select, textarea');
             inputs.forEach(input => validadorInputs(input));
         } else {
-            // 🛠️ Opcional: Mostrar en consola los datos antes de enviar
+            //  Opcional: Mostrar en consola los datos antes de enviar
             const formData = new FormData(formulario);
             for (let [key, value] of formData.entries()) {
                 console.log(`${key}: ${value}`);
             }
+
+            //restringe boton evita doble envio una vez se haga el primer clic
+            document.getElementById('btnCrearEvento').disabled = true;
+
+
+
 
             // El formulario se envia normalmente si todo está correcto
         }
@@ -264,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    resultados.addEventListener('click', e => {
+    resultados.addEventListener('mousedown', e => {
         if (e.target && e.target.matches('li')) {
             input.value = e.target.dataset.nombre;
             inputHidden.value = e.target.dataset.id;
@@ -314,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     });
 
-    resultadosAmb.addEventListener('click', e => {
+    resultadosAmb.addEventListener('mousedown', e => {
         if (e.target && e.target.matches('li')) {
             inputAmb.value = e.target.dataset.nombre;
             inputAmbId.value = e.target.dataset.id;
@@ -326,6 +336,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(() => { resultadosAmb.innerHTML = ''; }, 100);
     });
 });
+
 
 
 

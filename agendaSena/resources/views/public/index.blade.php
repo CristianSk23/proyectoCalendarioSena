@@ -4,7 +4,6 @@
     <div class="container" id="future-events"></div>
         
         
-
    
     <!-- Modal de Detalle de Evento -->
 <!-- Modal de Detalle de Evento -->
@@ -41,7 +40,7 @@
 <script>
 
     
-    const todosLosEventos = @json($eventos);
+    // const todosLosEventos = @json($eventos);
 
     function createEventCard(event) {
         const imagenURL = event.publicidad ? `/storage/${event.publicidad}` : 'https://via.placeholder.com/300x200';
@@ -52,6 +51,13 @@
         const descripcionCorta = event.descripcion.length > 100
             ? event.descripcion.substring(0, 100) + "..."
             : event.descripcion;
+
+
+
+
+
+
+            
 
         return `
             <div class="card h-100 shadow-sm">
