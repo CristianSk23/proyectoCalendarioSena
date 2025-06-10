@@ -10,12 +10,12 @@ use App\Models\Ficha\Ficha;
 use App\Models\Banner;
 use App\Models\Horario\Horario;
 use App\Models\Participante\Participante;
+use App\Models\fotografiasEvento\FotografiaEvento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Traits\CalendarTrait;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Storage;
 
 class EventoController extends Controller
 {
@@ -357,10 +357,11 @@ class EventoController extends Controller
         $fechaActual = Carbon::now()->format('Y-m-d');
 
         // Obtener los eventos que cumplen con la condición
-        $eventos = Evento::where("fechaEvento", "<", $fechaActual)->get(); // Cambié a get()
+        $eventos = Evento::where("fechaEvento", "<", $fechaActual)
+            ->where('estadoEvento', '!=', 0)
+            ->get();
 
-        // Loguear la cantidad de eventos encontrados
-        log::info("Eventos encontrados que se realizaron: " . $eventos->count());
+
 
         if ($eventos->isNotEmpty()) { // Verificar si hay eventos
             foreach ($eventos as $evento) {
@@ -384,39 +385,34 @@ class EventoController extends Controller
     public function delete(Request $request)
     {
         $idEvento = $request->__get('idEvento');
-
-
         $eventoEncontrado = Evento::find($idEvento);
 
         if ($eventoEncontrado) {
-            // $eventoEncontrado->estadoEvento = false;
-            $eventoEncontrado->estadoEvento = 0;
-            $eventoEncontrado->save();
+            // Eliminar las imágenes físicas
+            $fotos = FotografiaEvento::where('idEvento', $idEvento)->get();
+            foreach ($fotos as $foto) {
+                if (Storage::disk('public')->exists($foto->ruta)) {
+                    Storage::disk('public')->delete($foto->ruta);
+                }
+            }
 
-            return redirect()->route('calendario.index')->with('success', 'Evento eliminado exitosamente.');
+            // Eliminar registros de fotografías
+            FotografiaEvento::where('idEvento', $idEvento)->delete();
+
+            // Guardar el ID de horario antes de eliminar el evento
+            $idHorario = $eventoEncontrado->idHorario;
+
+            Storage::disk('public')->delete($eventoEncontrado->publicidad); // Eliminar la imagen de publicidad si existe
+            $eventoEncontrado->delete();
+
+            // Ahora que el evento fue eliminado, puedes borrar el horario
+            Horario::where('idHora', $idHorario)->delete();
+
+            return redirect()->route('calendario.index')->with('success', 'Evento y horario eliminados exitosamente.');
         } else {
             return redirect()->route('calendario.index')->with('error', 'No se pudo eliminar el evento.');
         }
     }
-
-
-
-    public function eliminarEvento(Request $request)
-    {
-        $idEvento = $request->input('idEvento');
-
-        $evento = Evento::find($idEvento);
-
-        if ($evento) {
-            $evento->estadoEvento = 0; // Cambiar el estado a eliminado
-            $evento->save();
-
-            return response()->json(['success' => true, 'message' => 'Evento eliminado exitosamente.']);
-        } else {
-            return response()->json(['success' => false, 'message' => 'Evento no encontrado.']);
-        }
-    }
-
 
     public function validarDisponibilidad(Request $request)
     {

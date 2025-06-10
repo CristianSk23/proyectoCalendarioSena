@@ -94,7 +94,6 @@ class CalendarioController extends Controller
     }
 
 
-    //*Fin Funciones Realizadas por CRISTIAN
 
 
     public function buscarEventosPorMes(Request $request)
@@ -129,8 +128,14 @@ class CalendarioController extends Controller
                 ->where('estadoEvento', 2)
                 ->orderBy('fechaEvento', 'asc')
                 ->get();
+
             $eventosRealizados = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
                 ->where('estadoEvento', 3)
+                ->orderBy('fechaEvento', 'asc')
+                ->get();
+
+            $eventosCancelados = Evento::whereBetween('fechaEvento', [$primerDia_delMes, $ultimoDia_delMes])
+                ->where('estadoEvento', 4)
                 ->orderBy('fechaEvento', 'asc')
                 ->get();
 
@@ -156,12 +161,22 @@ class CalendarioController extends Controller
                     'fecha' => $evento->fechaEvento,
                 ];
             });
+          
+            $eventosEncontradosCancelados = $eventosCancelados->map(function ($evento) {
+                return [
+                    'id' => $evento->idEvento,
+                    'nombre' => $evento->nomEvento,
+                    'fecha' => $evento->fechaEvento,
+                ];
+            });
 
             return response()->json([
                 'success' => true,
                 'eventosConfirmados' => $eventosEncontradosConfirmados,
                 'eventosReservados' => $eventosEncontradosReservados,
                 'eventosRealizados' => $eventosEncontradosRealizados,
+                'eventosCancelados' => $eventosEncontradosCancelados,
+
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -173,6 +188,7 @@ class CalendarioController extends Controller
     }
 
 
+    //*Fin Funciones Realizadas por CRISTIAN
 
 
     // yaque se esta adicionando busquedas 
@@ -248,6 +264,8 @@ class CalendarioController extends Controller
                     'fecha' => $evento->fechaEvento,
                 ];
             });
+
+            
 
             // Devolver la respuesta JSON
             return response()->json([
@@ -383,3 +401,13 @@ class CalendarioController extends Controller
 
 
 }
+
+
+
+/*  
+
+  
+
+
+
+'eventosCancelados' => $eventosEncontradosCancelados, */

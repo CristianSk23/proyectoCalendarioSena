@@ -114,6 +114,9 @@
                 <option value="1" {{isset($evento) && $evento->estadoEvento == 1 ? 'selected' : ''}}>Agendado</option>
                 <option value="2" {{isset($evento) && $evento->estadoEvento == 2 ? 'selected' : ''}}>Separado</option>
                 <option value="3" {{isset($evento) && $evento->estadoEvento == 3 ? 'selected' : ''}}>Completado</option>
+                @if (isset($evento))
+                    <option value="4" {{ $evento->estadoEvento == 3 ? 'selected' : '' }}>Cancelado</option>
+                @endif
             </select>
             <div class="invalid-feedback">El evento debe tener un estado.</div>
         </div>

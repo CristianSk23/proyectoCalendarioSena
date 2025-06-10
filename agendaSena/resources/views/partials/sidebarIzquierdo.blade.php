@@ -260,6 +260,7 @@
             });
 
             const modal = new bootstrap.Modal(eventModal);
+            modal.hide(); // Cerrar el modal si ya estaba abierto
             modal.show();
         } else {
             notyf.error('No se encontraron eventos');
@@ -292,8 +293,7 @@
         fetch(`${baseRuta}?nombre=${nombre}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data.evento);
-
+              
                 const titulo = `Resultados de búsqueda: "${nombre}"`;
                 mostrarEventosEnModal(data.evento, titulo);
                 nombreInput.value = '';
@@ -334,6 +334,7 @@
 
     // Función para ver detalles de un evento
     function verDetalleEventos(evento) {
+        const eventModal = document.getElementById('eventModal');
         const tituloEventos = document.getElementById('tituloEventos');
         const eventosList = document.getElementById('eventosList');
 
@@ -343,8 +344,10 @@
         const card = crearCardEvento(evento, 'detalle');
         eventosList.appendChild(card);
 
-        const eventModal = new bootstrap.Modal(document.getElementById('eventModal'));
-        eventModal.show();
+
+        modal = new bootstrap.Modal(eventModal);
+        modal.hide(); // Cerrar el modal si ya estaba abierto
+        modal.show();
     }
 
     // Inicialización - Mostrar eventos del día actual

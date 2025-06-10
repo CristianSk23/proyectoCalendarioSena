@@ -29,22 +29,25 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Credenciales para la autenticación
-        $credentials = [
-            'par_identificacion' => $request->par_identificacion,
-            'password' => $request->password, // Laravel automáticamente verificará el hash de la contraseña
-        ];
+        // Buscar el usuario por par_identificacion
+        $user = User::where('par_identificacion', $request->par_identificacion)->first();
 
-        // Intentar iniciar sesión
-        if (Auth::attempt($credentials)) {
-            // Autenticación exitosa
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Usuario no encontrado.');
+        }
+
+        if ($user->estado != 1) {
+            return redirect()->route('login')->with('error', 'Tu cuenta está inactiva.');
+        }
+
+        // Verificar la contraseña
+        if (Hash::check($request->password, $user->password)) {
+            Auth::login($user);
             return redirect()->route('calendario.index')->with('success', 'Inicio de sesión exitoso');
         } else {
-            Log::error('Error de inicio de sesión: ' . $request->par_identificacion);
+          
             return redirect()->route('login')->with('error', 'Número de identificación o contraseña incorrectos.');
-        } // Si la autenticación falla
-
-
+        }
     }
 
     public function logout()
@@ -81,46 +84,44 @@ class LoginController extends Controller
 
 
 
-  
+
     // Valicadion  de credencialespara solicitar un evento desde vista publica
-   public function validarCredencialesPublicas(Request $request)
-{
-    try {
-        $request->validate([
-            'par_identificacion' => 'required',
-            'password' => 'required'
-        ]);
+    public function validarCredencialesPublicas(Request $request)
+    {
+        try {
+            $request->validate([
+                'par_identificacion' => 'required',
+                'password' => 'required'
+            ]);
 
-        // Buscar el usuario directamente por par_identificacion
-        $user = User::where('par_identificacion', $request->par_identificacion)->first();
+            // Buscar el usuario directamente por par_identificacion
+            $user = User::where('par_identificacion', $request->par_identificacion)->first();
 
-        if (!$user) {
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Credenciales incorrectas.'
+                ], 401);
+            }
+
+            // Verificar la contraseña
+            if (!Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Credenciales incorrectas.'
+                ], 401);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Autenticación exitosa.'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error en validarCredencialesPublicas: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Credenciales incorrectas.'
-            ], 401);
+                'message' => 'Error en el servidor.'
+            ], 500);
         }
-
-        // Verificar la contraseña
-        if (!Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Credenciales incorrectas.'
-            ], 401);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Autenticación exitosa.'
-        ]);
-
-    } catch (\Exception $e) {
-        Log::error('Error en validarCredencialesPublicas: ' . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Error en el servidor.'
-        ], 500);
     }
-}
-
 }
