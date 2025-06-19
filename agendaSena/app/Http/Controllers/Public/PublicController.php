@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use App\Models\fotografiasEvento\FotografiaEvento;
 
-
 class PublicController extends Controller
 {
    
@@ -35,7 +34,6 @@ class PublicController extends Controller
         return view('public.index', compact('eventos', 'imagenesBanner', 'categorias'));
     }
 
-
     public function show($id)
     {
         // Obtener un evento específico
@@ -47,7 +45,6 @@ class PublicController extends Controller
         // Pasar los datos a la vista
         return view('public.show', compact('evento'));
     }
-
 
 
     public function obtenerImagenesBannerPorMes()
@@ -92,5 +89,6 @@ class PublicController extends Controller
 }
 
 
-
 }
+
+

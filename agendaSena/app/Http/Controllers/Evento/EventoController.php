@@ -7,21 +7,18 @@ use App\Models\Ambiente\Ambiente;
 use App\Models\Evento\Evento;
 use App\Models\Categoria\Categoria;
 use App\Models\Ficha\Ficha;
-use App\Models\Banner;
 use App\Models\Horario\Horario;
 use App\Models\Participante\Participante;
-use App\Models\fotografiasEvento\FotografiaEvento;
+use App\Models\fotografiasEvento\fotografiaEvento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Traits\CalendarTrait;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Storage;
 
 class EventoController extends Controller
 {
     use CalendarTrait;
-
 
     public function create(Request $request)
     {
@@ -34,7 +31,6 @@ class EventoController extends Controller
 
         return view('Evento.crearEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes'));
     }
-
 
 
 
@@ -100,7 +96,6 @@ class EventoController extends Controller
             return redirect()->route('eventos.crearEvento')->with('error', 'Ocurrió un error: ' . $e->getMessage());
         }
     }
-
 
     public function edit(Request $request)
     {
@@ -190,7 +185,6 @@ class EventoController extends Controller
                 $idCategoria = $evento->idCategoria;
                 $idEncargado = $evento->par_identificacion;
 
-
                 $ambiente = Ambiente::find($idAmbiente); // Busca por clave primaria
                 $horario = Horario::find($idHorario);
                 $categoria = Categoria::find($idCategoria);
@@ -218,7 +212,6 @@ class EventoController extends Controller
         }
     }
 
-
     public function buscarEventosPorNombre(Request $request)
     {
         $nombre = $request->input('nombre');
@@ -231,14 +224,12 @@ class EventoController extends Controller
                     ->paginate(10);
 
 
-
                 $resultados = [];
                 foreach ($eventos as $evento) {
                     $idAmbiente = $evento->pla_amb_id;
                     $idHorario = $evento->idHorario;
                     $idCategoria = $evento->idCategoria;
                     $idEncargado = $evento->par_identificacion;
-
 
                     $ambiente = Ambiente::find($idAmbiente); // Busca por clave primaria
                     $horario = Horario::find($idHorario);
@@ -271,7 +262,6 @@ class EventoController extends Controller
             ], 500);
         }
     }
-
 
 
     public function buscarParticipantes(Request $request)
@@ -336,7 +326,6 @@ class EventoController extends Controller
         ]);
     }
 
-
     public function confirmarEvento(Request $request)
     {
         $idEvento = $request->input('idEvento');
@@ -358,10 +347,10 @@ class EventoController extends Controller
         $fechaActual = Carbon::now()->format('Y-m-d');
 
         // Obtener los eventos que cumplen con la condición
-        $eventos = Evento::where("fechaEvento", "<", $fechaActual)->get(); // Cambié a get()
+        $eventos = Evento::where("fechaEvento", "<", $fechaActual)
+            ->where('estadoEvento', '!=', 0)
+            ->get();
 
-        // Loguear la cantidad de eventos encontrados
-        log::info("Eventos encontrados que se realizaron: " . $eventos->count());
 
         if ($eventos->isNotEmpty()) { // Verificar si hay eventos
             foreach ($eventos as $evento) {
@@ -381,43 +370,37 @@ class EventoController extends Controller
 
 
 
-
     public function delete(Request $request)
     {
         $idEvento = $request->__get('idEvento');
-
-
         $eventoEncontrado = Evento::find($idEvento);
 
         if ($eventoEncontrado) {
-            // $eventoEncontrado->estadoEvento = false;
-            $eventoEncontrado->estadoEvento = 0;
-            $eventoEncontrado->save();
+            // Eliminar las imágenes físicas
+            $fotos = FotografiaEvento::where('idEvento', $idEvento)->get();
+            foreach ($fotos as $foto) {
+                if (Storage::disk('public')->exists($foto->ruta)) {
+                    Storage::disk('public')->delete($foto->ruta);
+                }
+            }
 
-            return redirect()->route('calendario.index')->with('success', 'Evento eliminado exitosamente.');
+            // Eliminar registros de fotografías
+            FotografiaEvento::where('idEvento', $idEvento)->delete();
+
+            // Guardar el ID de horario antes de eliminar el evento
+            $idHorario = $eventoEncontrado->idHorario;
+
+            Storage::disk('public')->delete($eventoEncontrado->publicidad); // Eliminar la imagen de publicidad si existe
+            $eventoEncontrado->delete();
+
+            // Ahora que el evento fue eliminado, puedes borrar el horario
+            Horario::where('idHora', $idHorario)->delete();
+
+            return redirect()->route('calendario.index')->with('success', 'Evento y horario eliminados exitosamente.');
         } else {
             return redirect()->route('calendario.index')->with('error', 'No se pudo eliminar el evento.');
         }
     }
-
-
-
-    public function eliminarEvento(Request $request)
-    {
-        $idEvento = $request->input('idEvento');
-
-        $evento = Evento::find($idEvento);
-
-        if ($evento) {
-            $evento->estadoEvento = 0; // Cambiar el estado a eliminado
-            $evento->save();
-
-            return response()->json(['success' => true, 'message' => 'Evento eliminado exitosamente.']);
-        } else {
-            return response()->json(['success' => false, 'message' => 'Evento no encontrado.']);
-        }
-    }
-
 
     public function validarDisponibilidad(Request $request)
     {
@@ -466,7 +449,6 @@ class EventoController extends Controller
     }
 
 
-
     private function validateRequest(Request $request)
     {
         return $request->validate([
@@ -483,7 +465,6 @@ class EventoController extends Controller
             'estadoEvento' => 'required|integer',
         ]);
     }
-
 
 
 
@@ -517,7 +498,6 @@ class EventoController extends Controller
         // Pasar la variable $eventos a la vista
         // return view('evento.solicitudEvento', compact('eventos'));
 
-
         return view('public.SolicitudEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes', 'eventos'));
         return redirect()->route('public.index')->with('success', 'Evento guardado exitosamente');
     }
@@ -528,7 +508,6 @@ class EventoController extends Controller
         // Redirige al usuario a la vista para crear un evento
         return redirect()->route('evento.solicitud');
     }
-
 
     // solicitud evento publico
     public function updatepublica(Request $request, Evento $evento)
@@ -568,13 +547,11 @@ class EventoController extends Controller
     }
 
 
-
     // Método para manejar el formulario externo  -oky
     public function storeExterno(Request $request)
     {
 
         try {
-
 
 
             $validatedData = $this->validateRequest($request);
@@ -628,12 +605,9 @@ class EventoController extends Controller
                 'nomSolicitante' => $validatedData['nomSolicitante'], // Agregado desde la búsqueda del participante
             ]);
 
-
             // Filtrar eventos para mostrar en la vista pública
             $eventos = Evento::whereIn('estadoEvento', [1, 3])->get();
-            // $imagenesBanner = Banner::with('evento')->get();
             $imagenesBanner = FotografiaEvento::with('evento')->get();
-
 
 
             // return redirect()->route('public.index')->with('success', '¡Evento creado exitosamente!');
@@ -645,9 +619,21 @@ class EventoController extends Controller
 
 
 
+    
+    public function buscarFichas(Request $request)
+    {
+        $term = $request->input('term');
+        
+        $fichas = Ficha::where('fic_numero', 'like', "%{$term}%")
+            ->limit(10)
+            ->get(['fic_numero']);
+
+        return response()->json($fichas);
+    }
+
 
     // Fin Método para manejar el formulario externo
 
 
-
 }
+

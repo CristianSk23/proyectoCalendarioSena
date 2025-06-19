@@ -44,6 +44,7 @@ Route::post("evento/confirmarEvento", [EventoController::class, 'confirmarEvento
 route::post('evento/validarDisponibilidad', [EventoController::class, 'validarDisponibilidad'])->name('eventos.validarDisponibilidad');
 // ruta para funcion d ela vista publica
 Route::post('evento/storeExterno', [EventoController::class, 'storeExterno'])->name('evento.storeExterno');
+Route::get('/eventos/buscarFichas', [EventoController::class, 'buscarFichas'])->name('eventos.buscarFichas');
 
 
 //Route::get("eventosPorFecha", [EventoController::class, 'buscarEventosPorFecha'])->name('eventos.buscarEventoPorFecha');

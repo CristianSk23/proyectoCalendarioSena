@@ -1549,6 +1549,13 @@ html, body {
 }
 
 
+.mes-actual {
+      font-weight: bold;
+      font-size: 1.5em;
+      color: #000;
+      display: flex;
+      justify-content: center;}
+
 
 
 
@@ -1648,6 +1655,6 @@ html, body {
         }
     }
 
-    /* Opcional: ajusta el padding en pantallas pequeñas para que no se vea muy estrecho */
+    
 
 /* Fin estilo de formulario publico solicitud evento */

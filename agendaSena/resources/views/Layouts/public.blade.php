@@ -55,10 +55,15 @@
                     
 
                 <!-- Filtro por Fecha -->
-                <div class="search-input-container">
-                    <label for="date-search">Buscar por fecha:</label>
-                    <input type="date" id="date-search" class="form-control" oninput="searchByDate()">
+               <div class="search-input-container">
+                    <label>Buscar por rango de fechas:</label>
+                    <div class="d-flex gap-2">
+                        <input type="date" id="start-date" class="form-control">
+                        <input type="date" id="end-date" class="form-control">
+                    </div>
                 </div>
+                
+
               
 
                 <!-- Filtro por Nombre del Evento -->
@@ -67,6 +72,13 @@
                     <!-- <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre..." oninput="searchEvent()"> -->
                     <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre" oninput="searchEvent()">
 
+                </div>
+
+
+                <div class="mt-3">
+                    <button class="btn btn-outline-secondary w-100" onclick="borrarFiltros()">
+                        <i class="bi bi-x-lg"></i> Borrar Filtros
+                    </button>
                 </div>
         
 
@@ -90,7 +102,6 @@
                         INICIO
                     </a>
                 </div>
-
 
     </div>
 
@@ -147,18 +158,20 @@
          @endif    
         <!-- FIN DE BANNER -->
 
+
+         <div id="mes" class="mes-actual"></div>
+
+
         <!--INICIO CONTENIDO DE EVENTOS -->
         @if(!isset($ocultarEventDetails) || !$ocultarEventDetails)
         <div id="event-details" class="mt-4 card-container"></div> 
         @endif
-
 
         <!-- aqui me llevara a otras seciones -->
   
             @yield('content') <!-- secciones de contenido -->
 
         <!--FIN CONTENIDO DE EVENTOS -->
-
 
 
       <!-- Modal de Autenticación -->
@@ -202,7 +215,6 @@
 <!-- fin modal autenticacion -->
 
 
-
          <!-- Pie de pagina -->
         <footer class="public-footer">
             <div class="public-footer-content">
@@ -224,7 +236,6 @@
    
 
    <script>
-
 
 
     // -- Manejo de formulario publico para agregar eventos 
@@ -281,10 +292,8 @@
 
 
 
-
     let currentDate = new Date();
       let eventos = @json($eventos);
-    //   const eventos = @json(session('eventos', $eventos)); // Usar eventos de la sesión si están disponibles
     
 
     // funcionamiento  calendario y sus fechas
@@ -320,6 +329,15 @@
             });
 
             if (eventForDay.length > 0) {
+
+                const eventoDelDia = eventForDay[0]; // Usamos el primero por simplicidad (puedes adaptar a múltiples si deseas)
+
+                if (eventoDelDia.estadoEvento === 1) {
+                    cell.classList.add('bg-primary', 'text-white'); // Azul
+                } else if (eventoDelDia.estadoEvento === 3) {
+                    cell.classList.add('bg-success', 'text-white'); // Verde
+                }
+
                 cell.classList.add('event-day');
             }
 
@@ -346,7 +364,6 @@
         document.getElementById('categoria_id').addEventListener('change', searchByCategory);
     });
 
-
     // Cambiar al mes anterior
     document.getElementById('prev-month').addEventListener('click', function () {
         currentDate.setMonth(currentDate.getMonth() - 1);
@@ -358,7 +375,6 @@
         currentDate.setMonth(currentDate.getMonth() + 1);
         loadCalendar();
 });
-
 
 
 
@@ -445,10 +461,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 //FIN Manejo de datos de autenticador  para el ingreso al formulario solicitud de eventos
 
-
 let eventosOriginales = [...eventos];  
 // visualizacion de eventos en el contenido
 function showEventDetails(day) {
+    document.getElementById('future-events').style.display = 'none'; // ocultar eventos iniciale
     const eventosDelDia = eventos.filter(event => {
         const [year, month, dayStr] = event.fechaEvento.split('-');
         const eventDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(dayStr));
@@ -480,112 +496,92 @@ function showEventDetails(day) {
 
 
 
-
-///filtros 
-
-// FILTRAR POR NOMBRE
-function searchEvent() {
-    const searchInput = document.getElementById('search-input').value.toLowerCase();
-    
-    const eventDetailsContainer = document.getElementById('event-details');
-    eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
-
-    // Filtrar los eventos que coincidan con cualquier palabra en los campos relevantes
-    const filteredEvents = eventos.filter(event => {
-        // Concatenar los campos relevantes para la búsqueda
-        const eventText = `${event.nomEvento} ${event.descripcion} ${event.categoria}`.toLowerCase();
-        return eventText.includes(searchInput); // Verificar si la entrada de búsqueda está en el texto concatenado
-    });
-
-    if (filteredEvents.length > 0) {
-        // Si se encuentran eventos, generamos las tarjetas usando createEventCard
-        filteredEvents.forEach(event => {
-            const cardHTML = createEventCard(event); // Generar la tarjeta para cada evento
-            eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
-        });
-    } else {
-        // Si no se encuentran eventos después del filtro, llamar a la función mostrarMensajeSinEventos
-        mostrarMensajeSinEventos("No se encontraron eventos que coincidan con tu búsqueda.");
-    }
-}
-
-
-// Filtrar por categoria seleccionada
-function searchByCategory() {
-    const categoryInput = document.getElementById('categoria_id').value;  // Obtener la categoría seleccionada
-    console.log("Categoría seleccionada:", categoryInput);  // Verificar la categoría seleccionada
-
-    const eventDetailsContainer = document.getElementById('event-details');
-    eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
-
-    console.log(categoryInput);
-    
-    // Si no se seleccionó una categoría, no filtramos y mostramos todos los eventos
-    if (!categoryInput) {
-        displayAllEvents(); // Función que muestra todos los eventos sin filtro
-        return;
-    }
-
-    // Filtrar eventos por la categoría seleccionada
-    const filteredEvents = eventos.filter(event => {
-        return event.idCategoria == categoryInput;  // Comparar el ID de la categoría
-    });
-
-    // Mostrar los eventos filtrados
-    if (filteredEvents.length > 0) {
-        displayEventsInGrid(filteredEvents);
-    } else {
-        // Si no se encuentran eventos después del filtro por categoría
-        eventDetailsContainer.innerHTML = `
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">No se encontraron eventos para la categoría seleccionada.</h5>
-                    <p class="card-text">No hay eventos programados para esta categoría.</p>
-                </div>
-            </div>
-        `;
-    }
+///filtros  ignorar tildes
+function quitarTildes(texto) {
+    return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 
 
-//  Buscar por fecha
-function searchByDate() {
-    const date = document.getElementById('date-search').value;
-    limpiarOtrosFiltros('fecha');
 
-    if (!date) {
-        mostrarTodosEventos();
-        return;
-    }
 
-    const filtrados = eventos.filter(evento => {
-        const fechaEvento = new Date(evento.fechaEvento).toISOString().split('T')[0];
-        return fechaEvento === date;
+//+++++++++++++++++++++filtrar eventos  +++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+function aplicarFiltrosCombinados() {
+    const searchText = quitarTildes(document.getElementById('search-input').value.trim().toLowerCase());
+    const categoriaSeleccionada = document.getElementById('categoria_id').value;
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+
+    const fechaInicio = startDate ? new Date(startDate + 'T00:00:00') : null;
+    const fechaFin = endDate ? new Date(endDate + 'T23:59:59') : null;
+
+    const filtrados = eventosOriginales.filter(evento => {
+        const textoEvento = quitarTildes(`
+            ${evento.nomEvento}
+            ${evento.descripcion}
+            ${evento.categoria?.nomCategoria || ''}
+            ${evento.ambiente?.pla_amb_descripcion || ''}
+        `.toLowerCase());
+
+        const coincideTexto = !searchText || textoEvento.includes(searchText);
+        const coincideCategoria = !categoriaSeleccionada || (evento.categoria?.idCategoria == categoriaSeleccionada);
+        
+        const fechaEvento = new Date(evento.fechaEvento + 'T00:00:00');
+        const coincideFecha = (!fechaInicio || fechaEvento >= fechaInicio) &&
+                              (!fechaFin || fechaEvento <= fechaFin);
+
+        return coincideTexto && coincideCategoria && coincideFecha;
     });
 
     displayEventsInGrid(filtrados);
 }
 
 
-
-
-
-
-// 🧹 Limpiar los filtros que no se están usando
-function limpiarOtrosFiltros(excepto) {
-    if (excepto !== 'nombre') document.getElementById('search-input').value = '';
-    if (excepto !== 'fecha') document.getElementById('date-search').value = '';
-    if (excepto !== 'categoria') document.getElementById('categoria_id').value = '';
+function borrarFiltros() {
+    document.getElementById('search-input').value = '';
+    document.getElementById('categoria_id').value = '';
+    document.getElementById('start-date').value = '';
+    document.getElementById('end-date').value = '';
+    
+    mostrarEventosDesdeHoy(); // O muestra todos si así lo deseas
 }
+
+
+
+
+//+++++++++++++++++++Fin filtrar eventos  +++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+
+
+
+
+
+
+
 
 // 🗂 Mostrar todos los eventos sin filtro
 function mostrarTodosEventos() {
-    document.getElementById('search-input').value = '';
-    document.getElementById('date-search').value = '';
-    document.getElementById('categoria_id').value = '';
-    displayEventsInGrid(eventos);
+    // CAMBIA ESTA LÍNEA: apuntar a 'event-details' en lugar de 'future-events'
+    const contenedor = document.getElementById('event-details');
+    // Ya no necesitas .style.display = 'block'; porque 'event-details' siempre está visible.
+    // Además, 'displayEventsInGrid' ya maneja la limpieza y el agregado.
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const eventosFuturos = eventosOriginales.filter(evento => { // Usa eventosOriginales
+        const fechaEvento = new Date(evento.fechaEvento + 'T00:00:00');
+        return fechaEvento >= hoy;
+    });
+
+    // Ahora, en lugar de construir el HTML aquí, llama a la función que ya lo hace
+    displayEventsInGrid(eventosFuturos);
 }
+
 
 //  Mostrar eventos actual o siguiente
 function filtrarEventosDiaOMesSiguiente(eventos) {
@@ -610,29 +606,21 @@ function filtrarEventosDiaOMesSiguiente(eventos) {
 
 
 
+
 // Muestra los eventos en el contenido
 function displayEventsInGrid(listaEventos) {
     const container = document.getElementById("event-details");
     container.innerHTML = "";
 
-    if (!listaEventos || listaEventos.length === 0) {
+    if (!listaEventos.length) {
         mostrarMensajeSinEventos("No se encontraron eventos.");
         return;
     }
 
-    // Aquí aplicamos el filtro antes de mostrar
-    const eventosFiltrados = filtrarEventosDiaOMesSiguiente(listaEventos);
-
-    if (eventosFiltrados.length === 0) {
-        mostrarMensajeSinEventos("No hay eventos para hoy ni para el mes siguiente.");
-        return;
-    }
-
-    eventosFiltrados.forEach(evento => {
+    listaEventos.forEach(evento => {
         container.innerHTML += createEventCard(evento);
     });
 }
-
 
 //  Mostrar mensaje si no hay eventos
 function mostrarMensajeSinEventos(mensaje) {
@@ -647,18 +635,52 @@ function mostrarMensajeSinEventos(mensaje) {
 }
 
 
+function mostrarEventosDesdeHoy() {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Ignora hora para que solo compare por fecha
 
+    const eventosFuturos = eventos.filter(evento => {
+        const fechaEvento = new Date(evento.fechaEvento);
+        fechaEvento.setHours(0, 0, 0, 0);
+        return fechaEvento >= hoy;
+    });
 
+    displayEventsInGrid(eventosFuturos);
+}
 
+// Detectar cambios y filtrar solo cuando ambas fechas estén seleccionadas
+document.addEventListener('DOMContentLoaded', function () {
+    const startInput = document.getElementById('start-date');
+    const endInput = document.getElementById('end-date');
+
+    function verificarYBuscar() {
+        if (startInput.value && endInput.value) {
+            searchByDate();
+        }
+    }
+
+    startInput.addEventListener('change', verificarYBuscar);
+    endInput.addEventListener('change', verificarYBuscar);
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Escuchar cambios en nombre
+    document.getElementById('search-input').addEventListener('input', aplicarFiltrosCombinados);
+
+    // Escuchar cambios en categoría
+    document.getElementById('categoria_id').addEventListener('change', aplicarFiltrosCombinados);
+
+    // Escuchar cambios en fechas
+    document.getElementById('start-date').addEventListener('change', aplicarFiltrosCombinados);
+    document.getElementById('end-date').addEventListener('change', aplicarFiltrosCombinados);
+});
 
 
 
 </script>
-<!-- relacion de -->
+
 @stack('scripts')
 </body>
-
- <!-- yaque 12 am alerta "bonita" -->
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -686,8 +708,17 @@ function mostrarMensajeSinEventos(mensaje) {
 
 
 
+    // mes actual texto 
+    const nombresMeses = [
+      "Enero", "Febrero", "Marzo", "Abril",
+      "Mayo", "Junio", "Julio", "Agosto",
+      "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+
+    const hoy = new Date();
+    const mesActual = hoy.getMonth(); // índice del mes (0 a 11)
+    document.getElementById("mes").textContent = nombresMeses[mesActual];
+
 </script>
- <!-- fin yaque 12 am alerta "bonita" -->
 
 </html>
-
