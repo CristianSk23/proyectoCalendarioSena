@@ -501,7 +501,9 @@ function quitarTildes(texto) {
     return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-
+function searchByCategory() {
+    // Función vacía para evitar errores si aún no se implementa
+}
 
 
 
