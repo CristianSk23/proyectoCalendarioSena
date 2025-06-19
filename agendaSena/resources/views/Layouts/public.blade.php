@@ -62,7 +62,7 @@
                         <input type="date" id="end-date" class="form-control">
                     </div>
                 </div>
-                <
+                
 
               
 
@@ -73,7 +73,14 @@
                     <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre" oninput="searchEvent()">
 
                 </div>
-        
+
+                <!-- Borrar filtros -->
+                <div class="mt-3">
+                    <button class="btn btn-outline-secondary w-100" onclick="borrarFiltros()">
+                        <i class="bi bi-x-lg"></i> Borrar Filtros
+                    </button>
+                </div>
+
 
                 <!-- boton mostar todos los eventos -->
                 <div class="mt-3">
@@ -502,38 +509,7 @@ function quitarTildes(texto) {
 }
 
 
-// FILTRAR POR NOMBRE
-function searchEvent() {
-     document.getElementById('future-events').style.display = 'none'; // ocultar eventos iniciale
-    const searchInput = quitarTildes(document.getElementById('search-input').value.toLowerCase());
-    
-    const eventDetailsContainer = document.getElementById('event-details');
-    eventDetailsContainer.innerHTML = ""; // Limpiar contenido previo
 
-    // Filtrar los eventos que coincidan con cualquier palabra en los campos relevantes
-    const filteredEvents = eventos.filter(event => {
-        // Concatenar los campos relevantes para la búsqueda
-        const eventText = `        
-        ${event.nomEvento} 
-        ${event.descripcion} 
-        ${event.categoria && event.categoria.nomCategoria ? event.categoria.nomCategoria : ''}
-         ${event.ambiente && event.ambiente.pla_amb_descripcion ? event.ambiente.pla_amb_descripcion : ''}
-        `.toLowerCase();
-        return quitarTildes(eventText).includes(searchInput);
-// Verificar si la entrada de búsqueda está en el texto concatenado
-    });
-
-    if (filteredEvents.length > 0) {
-        // Si se encuentran eventos, generamos las tarjetas usando createEventCard
-        filteredEvents.forEach(event => {
-            const cardHTML = createEventCard(event); // Generar la tarjeta para cada evento
-            eventDetailsContainer.innerHTML += cardHTML;  // Insertamos la tarjeta generada
-        });
-    } else {
-        // Si no se encuentran eventos después del filtro, llamar a la función mostrarMensajeSinEventos
-        mostrarMensajeSinEventos("No se encontraron eventos que coincidan con tu búsqueda.");
-    }
-}
 
 
 // Filtrar por categoria seleccionada
@@ -579,67 +555,11 @@ function searchByCategory() {
 
 
 
-//  Buscar por fecha
-function searchByDate() {
-    
-    document.getElementById('future-events').style.display = 'none'; // Oculta eventos por defecto
-    limpiarOtrosFiltros('rango'); // Limpia los otros filtros
-
-    const start = document.getElementById('start-date').value;
-    const end = document.getElementById('end-date').value;
-    const eventDetailsContainer = document.getElementById('event-details');
-    eventDetailsContainer.innerHTML = "";
-
-    if (!start || !end) {
-        mostrarMensajeSinEventos("Por favor selecciona una fecha inicial y final.");
-        return;
-    }
-
-    const fechaInicio = new Date(start);
-    const fechaFin = new Date(end);
-    fechaInicio.setHours(0, 0, 0, 0);
-    fechaFin.setHours(23, 59, 59, 999);
-
-    const filtrados = eventos.filter(evento => {
-        const fechaEvento = new Date(evento.fechaEvento + 'T00:00:00');
-        return fechaEvento >= fechaInicio && fechaEvento <= fechaFin;
-    });
-
-    if (filtrados.length > 0) {
-        displayEventsInGrid(filtrados);
-    } else {
-        mostrarMensajeSinEventos("No se encontraron eventos en el rango de fechas seleccionado.");
-    }
-}
 
 
 
 
 
-
-
-// 🧹 Limpiar los filtros que no se están usando
-function searchByDate() {
-    
-        limpiarOtrosFiltros('date');
-        const start = document.getElementById('start-date').value;
-        const end = document.getElementById('end-date').value;
-
-        if (!start || !end) {
-            mostrarMensajeSinEventos("Por favor, selecciona una fecha inicial y final para buscar.");
-            return;
-        }
-
-        const fechaInicio = new Date(start + 'T00:00:00'); // Ensure UTC for consistent comparison
-        const fechaFin = new Date(end + 'T23:59:59');     // Ensure UTC for consistent comparison
-
-        const filtrados = eventosOriginales.filter(evento => {
-            const fechaEvento = new Date(evento.fechaEvento + 'T00:00:00'); // Ensure UTC for consistent comparison
-            return fechaEvento >= fechaInicio && fechaEvento <= fechaFin;
-        });
-
-        displayEventsInGrid(filtrados);
-    }
 
 
 
@@ -693,15 +613,64 @@ function filtrarEventosDiaOMesSiguiente(eventos) {
 
 
 
-// Filtro Eventos
-function limpiarOtrosFiltros(activeFilter) {
-        if (activeFilter !== 'category') document.getElementById('categoria_id').value = '';
-        if (activeFilter !== 'date') {
-            document.getElementById('start-date').value = '';
-            document.getElementById('end-date').value = '';
-        }
-        if (activeFilter !== 'name') document.getElementById('search-input').value = '';
-    }
+// MANEJO DE  Filtro Eventos
+
+// FILTROS COMBINADOS
+function aplicarFiltrosCombinados() {
+    const searchText = quitarTildes(document.getElementById('search-input').value.trim().toLowerCase());
+    const categoriaSeleccionada = document.getElementById('categoria_id').value;
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+
+    const fechaInicio = startDate ? new Date(startDate + 'T00:00:00') : null;
+    const fechaFin = endDate ? new Date(endDate + 'T23:59:59') : null;
+
+    const filtrados = eventosOriginales.filter(evento => {
+        const textoEvento = quitarTildes(`
+            ${evento.nomEvento}
+            ${evento.descripcion}
+            ${evento.categoria?.nomCategoria || ''}
+            ${evento.ambiente?.pla_amb_descripcion || ''}
+        `.toLowerCase());
+
+        const coincideTexto = !searchText || textoEvento.includes(searchText);
+        const coincideCategoria = !categoriaSeleccionada || (evento.categoria?.idCategoria == categoriaSeleccionada);
+        
+        const fechaEvento = new Date(evento.fechaEvento + 'T00:00:00');
+        const coincideFecha = (!fechaInicio || fechaEvento >= fechaInicio) &&
+                              (!fechaFin || fechaEvento <= fechaFin);
+
+        return coincideTexto && coincideCategoria && coincideFecha;
+    });
+
+    displayEventsInGrid(filtrados);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Escuchar cambios en nombre
+    document.getElementById('search-input').addEventListener('input', aplicarFiltrosCombinados);
+
+    // Escuchar cambios en categoría
+    document.getElementById('categoria_id').addEventListener('change', aplicarFiltrosCombinados);
+
+    // Escuchar cambios en fechas
+    document.getElementById('start-date').addEventListener('change', aplicarFiltrosCombinados);
+    document.getElementById('end-date').addEventListener('change', aplicarFiltrosCombinados);
+});
+
+
+
+function borrarFiltros() {
+    document.getElementById('search-input').value = '';
+    document.getElementById('categoria_id').value = '';
+    document.getElementById('start-date').value = '';
+    document.getElementById('end-date').value = '';
+    
+    mostrarEventosDesdeHoy(); // O muestra todos si así lo deseas
+}
+
+
+
 
 
 

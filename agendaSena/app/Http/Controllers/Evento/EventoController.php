@@ -638,6 +638,19 @@ class EventoController extends Controller
 
 
 
+    public function buscarFichas(Request $request)
+    {
+        $term = $request->input('term');
+        
+        $fichas = Ficha::where('fic_numero', 'like', "%{$term}%")
+            ->limit(10)
+            ->get(['fic_numero']);
+
+        return response()->json($fichas);
+    }
+
+
+
 
     // Fin Método para manejar el formulario externo
 

@@ -88,18 +88,17 @@
         <div class="invalid-feedback">El aforo debe ser entre 1 y 500 personas</div>
     </div>
 
-    <div class="mb-3">
-        <label for="idFicha" class="form-label">Ficha:</label>
-        <select name="fic_numero" id="idFicha" class="form-select" required>
-            <option value="">Seleccionar Ficha</option>
-            @foreach ($fichas as $ficha)
-                <option value="{{ $ficha->fic_numero }}" {{ isset($evento) && $evento->fic_numero == $ficha->fic_numero ? 'selected' : '' }}>
-                    {{ $ficha->fic_numero }}
-                </option>
-            @endforeach
-        </select>
+        <!-- ficha -->
+    <div class="mb-3 position-relative">
+        <label for="fic_numero" class="form-label">Ficha:</label>
+        <input type="text" id="fic_numero_input" class="form-control" placeholder="Buscar ficha..." autocomplete="off"
+            value="{{ isset($evento) ? $evento->fic_numero : '' }}" required>
+        <input type="hidden" name="fic_numero" id="fic_numero">
+        <ul id="resultadosFichas" class="list-group position-absolute w-100" style="z-index: 1000;"></ul>
         <div class="invalid-feedback">Por favor selecciona una ficha válida</div>
     </div>
+
+        <!-- fin ficha -->
 
     <div class="mb-3">
         <label for="idCategoria" class="form-label">Categoría:</label>
@@ -377,5 +376,50 @@ document.addEventListener('DOMContentLoaded', function () {
     // Verificación inicial al cargar la página (por si hay datos precargados)
     verificarFormulario(); 
 });
+
+
+
+// ficha manejo de busqueda 
+// Autocompletado para Fichas
+const inputFicha = document.getElementById('fic_numero_input');
+const inputFichaHidden = document.getElementById('fic_numero');
+const resultadosFichas = document.getElementById('resultadosFichas');
+
+inputFicha.addEventListener('input', () => {
+    const termino = inputFicha.value.trim();
+    if (termino.length < 2) {
+        resultadosFichas.innerHTML = '';
+        inputFichaHidden.value = '';
+        verificarFormulario();
+        return;
+    }
+    const ruta = `{{ route('eventos.buscarFichas') }}?term=${encodeURIComponent(termino)}`;
+    fetch(ruta)
+        .then(res => res.json())
+        .then(data => {
+            resultadosFichas.innerHTML = '';
+            data.forEach(f => {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item', 'list-group-item-action');
+                li.textContent = f.fic_numero;
+                li.dataset.numero = f.fic_numero;
+                resultadosFichas.appendChild(li);
+            });
+        });
+});
+
+resultadosFichas.addEventListener('click', e => {
+    if (e.target.matches('li')) {
+        inputFicha.value = e.target.dataset.numero;
+        inputFichaHidden.value = e.target.dataset.numero;
+        resultadosFichas.innerHTML = '';
+        validadorInputs(inputFicha);
+        verificarFormulario();
+    }
+});
+
+
+
+
 </script>
 @endpush
