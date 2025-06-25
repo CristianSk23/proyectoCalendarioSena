@@ -26,13 +26,14 @@ class PublicController extends Controller
 //   $eventosRealizados = Evento::whereIn('estadoEvento',[1,3])->pluck('idEvento');
         //  $imagenesBanner = FotografiaEvento::with('evento:idEvento,nomEvento')
         $imagenesBanner = $this->obtenerImagenesBannerPorMes();
-         $imagenesEventosMes = $this->obtenerImagenesEventosPendientes();
+        //  $imagenesEventosMes = $this->obtenerImagenesEventosPendientes();
         // ->whereIn('idEvento', Evento::where('estadoEvento', 3)->pluck('idEvento'))
         // ->get();
 
         $categorias = \App\Models\Categoria\Categoria::all();
 
-        return view('public.index', compact('eventos', 'imagenesBanner','imagenesEventosMes', 'categorias'));
+        // return view('public.index', compact('eventos', 'imagenesBanner','imagenesEventosMes', 'categorias'));
+        return view('public.index', compact('eventos', 'imagenesBanner', 'categorias'));
     }
 
 
@@ -96,33 +97,33 @@ class PublicController extends Controller
 
 
 
-    public function obtenerImagenesEventosPendientes()
-    {
-        $fechaActual = Carbon::now();
-        $mesActual = $fechaActual->month;
-        $anioActual = $fechaActual->year;
+    // public function obtenerImagenesEventosPendientes()
+    // {
+    //     $fechaActual = Carbon::now();
+    //     $mesActual = $fechaActual->month;
+    //     $anioActual = $fechaActual->year;
 
-        // Obtener eventos pendientes por pasar en este mes
-        $eventosPendientes = Evento::where('estadoEvento', 1)
-            ->whereYear('fechaEvento', $anioActual)
-            ->whereMonth('fechaEvento', $mesActual)
-            ->whereDate('fechaEvento', '>=', $fechaActual->toDateString())
-            ->whereNotNull('publicidad')
-            ->orderBy('fechaEvento', 'asc')
-            ->get();
+    //     // Obtener eventos pendientes por pasar en este mes
+    //     $eventosPendientes = Evento::where('estadoEvento', 1)
+    //         ->whereYear('fechaEvento', $anioActual)
+    //         ->whereMonth('fechaEvento', $mesActual)
+    //         ->whereDate('fechaEvento', '>=', $fechaActual->toDateString())
+    //         ->whereNotNull('publicidad')
+    //         ->orderBy('fechaEvento', 'asc')
+    //         ->get();
 
-        // Si no hay eventos pendientes, mostrar eventos realizados
-        if ($eventosPendientes->isEmpty()) {
-            $eventosPendientes = Evento::where('estadoEvento', 3)
-                ->whereYear('fechaEvento', $anioActual)
-                ->whereMonth('fechaEvento', $mesActual)
-                ->whereNotNull('publicidad')
-                ->orderBy('fechaEvento', 'desc')
-                ->get();
-        }
+    //     // Si no hay eventos pendientes, mostrar eventos realizados
+    //     if ($eventosPendientes->isEmpty()) {
+    //         $eventosPendientes = Evento::where('estadoEvento', 3)
+    //             ->whereYear('fechaEvento', $anioActual)
+    //             ->whereMonth('fechaEvento', $mesActual)
+    //             ->whereNotNull('publicidad')
+    //             ->orderBy('fechaEvento', 'desc')
+    //             ->get();
+    //     }
 
-        return $eventosPendientes;
-    }
+    //     return $eventosPendientes;
+    // }
 
 
 }

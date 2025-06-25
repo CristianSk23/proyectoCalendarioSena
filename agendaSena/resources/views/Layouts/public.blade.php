@@ -11,49 +11,6 @@
 
 
 
-        <!-- BANNNER FULL PATALLA -->    
-<div id="publicidadCarrusel" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-dark z-2">
-    <div class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="5000" data-bs-wrap="true">
-
-        @php
-            $imagenes = $imagenesEventosMes->isNotEmpty() ? $imagenesEventosMes : $imagenesBanner;
-        @endphp
-
-        <div class="carousel-inner"> {{-- THIS IS CRUCIAL FOR TRANSITIONS --}}
-            @foreach($imagenes as $index => $img)
-                <div class="carousel-item {{ $loop->first ? 'active' : '' }} h-100">
-                    @php
-                        $ruta = $img->ruta ?? ($img->publicidad ?? null);
-                        $rutaImagen = public_path('storage/' . $ruta);
-                    @endphp
-
-                    @if(file_exists($rutaImagen))
-                        <img src="{{ asset('storage/' . $ruta) }}" class="d-block w-100 h-100" style="object-fit: cover;" alt="Publicidad">
-                    @else
-                        <div class="d-flex justify-content-center align-items-center h-100 text-white bg-secondary">
-                            <p>Imagen no disponible</p>
-                        </div>
-                    @endif
-                </div>
-            @endforeach
-        </div> {{-- END OF carousel-inner --}}
-
-    </div>
-
-    <button class="carousel-control-prev" type="button" data-bs-target="#publicidadCarrusel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#publicidadCarrusel" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-    </button>
-
-    <button class="btn btn-danger position-absolute top-0 end-0 m-3" onclick="togglePublicidad()">
-        <i class="bi bi-x-lg"></i>
-    </button>
-</div>
-    <!-- FIN BANNNER FULL PATALLA -->
-
-
 
 
 
@@ -358,27 +315,27 @@
 
 
 // BANNER VISUALIZACION DE EVENTOS  FULL PANTALLA SI NO HAY EVENTOS FOTOS D EEVENTOS REALIZADOS EN EL MES.
-        const btnPublicidad = document.getElementById('togglePublicidadBtn');
-        const carruselPublicidad = document.getElementById('publicidadCarrusel');
+        // const btnPublicidad = document.getElementById('togglePublicidadBtn');
+        // const carruselPublicidad = document.getElementById('publicidadCarrusel');
 
-        btnPublicidad?.addEventListener('click', togglePublicidad);
+        // btnPublicidad?.addEventListener('click', togglePublicidad);
 
-        function togglePublicidad() {
-            carruselPublicidad.classList.toggle('d-none');
-            // Reiniciar carrusel al mostrar
-            if (!carruselPublicidad.classList.contains('d-none')) {
-                const carouselElement = carruselPublicidad.querySelector('.carousel');
-                const carousel = bootstrap.Carousel.getInstance(carouselElement) || new bootstrap.Carousel(carouselElement);
-                carousel.to(0); // vuelve al primer slide
-            }
-        }
+        // function togglePublicidad() {
+        //     carruselPublicidad.classList.toggle('d-none');
+        //     // Reiniciar carrusel al mostrar
+        //     if (!carruselPublicidad.classList.contains('d-none')) {
+        //         const carouselElement = carruselPublicidad.querySelector('.carousel');
+        //         const carousel = bootstrap.Carousel.getInstance(carouselElement) || new bootstrap.Carousel(carouselElement);
+        //         carousel.to(0); // vuelve al primer slide
+        //     }
+        // }
 
         // Cerrar con ESC
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape' && !carruselPublicidad.classList.contains('d-none')) {
-                togglePublicidad();
-            }
-        });
+        // document.addEventListener('keydown', function (e) {
+        //     if (e.key === 'Escape' && !carruselPublicidad.classList.contains('d-none')) {
+        //         togglePublicidad();
+        //     }
+        // });
 
   //FIN ---  BANNER VISUALIZACION DE EVENTOS  FULL PANTALLA 
 
