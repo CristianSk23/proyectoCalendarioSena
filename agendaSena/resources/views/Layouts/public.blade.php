@@ -8,6 +8,64 @@
 
 <body class="public-page">
 
+
+
+
+        <!-- BANNNER FULL PATALLA -->    
+<div id="publicidadCarrusel" class="d-none position-fixed top-0 start-0 w-100 h-100 bg-dark z-2">
+    <div class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="5000" data-bs-wrap="true">
+
+        @php
+            $imagenes = $imagenesEventosMes->isNotEmpty() ? $imagenesEventosMes : $imagenesBanner;
+        @endphp
+
+        <div class="carousel-inner"> {{-- THIS IS CRUCIAL FOR TRANSITIONS --}}
+            @foreach($imagenes as $index => $img)
+                <div class="carousel-item {{ $loop->first ? 'active' : '' }} h-100">
+                    @php
+                        $ruta = $img->ruta ?? ($img->publicidad ?? null);
+                        $rutaImagen = public_path('storage/' . $ruta);
+                    @endphp
+
+                    @if(file_exists($rutaImagen))
+                        <img src="{{ asset('storage/' . $ruta) }}" class="d-block w-100 h-100" style="object-fit: cover;" alt="Publicidad">
+                    @else
+                        <div class="d-flex justify-content-center align-items-center h-100 text-white bg-secondary">
+                            <p>Imagen no disponible</p>
+                        </div>
+                    @endif
+                </div>
+            @endforeach
+        </div> {{-- END OF carousel-inner --}}
+
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#publicidadCarrusel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#publicidadCarrusel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+
+    <button class="btn btn-danger position-absolute top-0 end-0 m-3" onclick="togglePublicidad()">
+        <i class="bi bi-x-lg"></i>
+    </button>
+</div>
+    <!-- FIN BANNNER FULL PATALLA -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- Sidebar con Calendario -->
     <div class="sidebar">
         <h4 class="text-center mb-4">Calendario</h4>
@@ -81,7 +139,6 @@
                     </button>
                 </div>
 
-
                 <!-- boton mostar todos los eventos -->
                 <div class="mt-3">
                     <button class="btn btn-outline-primary w-100" onclick="mostrarTodosEventos()">
@@ -103,13 +160,16 @@
                     </a>
                 </div>
 
-
     </div>
 
     
 
     <!-- Contenido Principal -->
     <div class="public-content-area">
+
+
+
+
 
     <!-- Bloque BANNER -->
 
@@ -121,11 +181,13 @@
                     @foreach($imagenesBanner as $index => $banner)
                         <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
                             @php
-                                $rutaImagen = public_path('storage/' . $banner->ruta);
+                                $ruta = $banner->ruta ?? $banner->publicidad ?? null;
+                                $rutaImagen = $ruta ? public_path('storage/' . $ruta) : null;
+                        
                             @endphp
 
-                            @if(file_exists($rutaImagen))
-                                <img src="{{ asset('storage/' . $banner->ruta) }}" class="d-block w-100" alt="Foto de evento">
+                            @if($ruta && file_exists($rutaImagen))
+                                <img src="{{ asset('storage/' . $ruta) }}" class="d-block w-100" alt="Foto de evento">
                             @else
                                 <div class="d-flex align-items-center justify-content-center text-white w-100 h-100 bg-secondary" style="height: 400px;">
                                     <p class="m-0">Imagen no disponible</p>
@@ -164,13 +226,11 @@
         <div id="event-details" class="mt-4 card-container"></div> 
         @endif
 
-
         <!-- aqui me llevara a otras seciones -->
   
             @yield('content') <!-- secciones de contenido -->
 
         <!--FIN CONTENIDO DE EVENTOS -->
-
 
 
       <!-- Modal de Autenticación -->
@@ -214,6 +274,14 @@
 <!-- fin modal autenticacion -->
 
 
+<!-- Botón flotante de Publicidad -->
+<button id="togglePublicidadBtn" class="btn btn-warning position-fixed top-50 end-0 translate-middle-y me-3 z-3 rounded-circle shadow" style="width: 60px; height: 60px;">
+    <i class="bi bi-megaphone-fill fs-3"></i>
+</button>
+
+
+
+
 
          <!-- Pie de pagina -->
         <footer class="public-footer">
@@ -236,7 +304,6 @@
    
 
    <script>
-
 
 
     // -- Manejo de formulario publico para agregar eventos 
@@ -290,6 +357,32 @@
 
 
 
+// BANNER VISUALIZACION DE EVENTOS  FULL PANTALLA SI NO HAY EVENTOS FOTOS D EEVENTOS REALIZADOS EN EL MES.
+        const btnPublicidad = document.getElementById('togglePublicidadBtn');
+        const carruselPublicidad = document.getElementById('publicidadCarrusel');
+
+        btnPublicidad?.addEventListener('click', togglePublicidad);
+
+        function togglePublicidad() {
+            carruselPublicidad.classList.toggle('d-none');
+            // Reiniciar carrusel al mostrar
+            if (!carruselPublicidad.classList.contains('d-none')) {
+                const carouselElement = carruselPublicidad.querySelector('.carousel');
+                const carousel = bootstrap.Carousel.getInstance(carouselElement) || new bootstrap.Carousel(carouselElement);
+                carousel.to(0); // vuelve al primer slide
+            }
+        }
+
+        // Cerrar con ESC
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !carruselPublicidad.classList.contains('d-none')) {
+                togglePublicidad();
+            }
+        });
+
+  //FIN ---  BANNER VISUALIZACION DE EVENTOS  FULL PANTALLA 
+
+
 
 
 
@@ -340,7 +433,6 @@
                     cell.classList.add('bg-success', 'text-white'); // Verde
                 }
 
-
                 cell.classList.add('event-day');
             }
 
@@ -367,7 +459,6 @@
         document.getElementById('categoria_id').addEventListener('change', searchByCategory);
     });
 
-
     // Cambiar al mes anterior
     document.getElementById('prev-month').addEventListener('click', function () {
         currentDate.setMonth(currentDate.getMonth() - 1);
@@ -379,7 +470,6 @@
         currentDate.setMonth(currentDate.getMonth() + 1);
         loadCalendar();
 });
-
 
 
 
@@ -466,7 +556,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 //FIN Manejo de datos de autenticador  para el ingreso al formulario solicitud de eventos
 
-
 let eventosOriginales = [...eventos];  
 // visualizacion de eventos en el contenido
 function showEventDetails(day) {
@@ -502,12 +591,10 @@ function showEventDetails(day) {
 
 
 
-
 ///filtros  ignorar tildes
 function quitarTildes(texto) {
     return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
-
 
 
 
@@ -566,26 +653,22 @@ function searchByCategory() {
 
 
 
-
 // 🗂 Mostrar todos los eventos sin filtro
 function mostrarTodosEventos() {
-    // CAMBIA ESTA LÍNEA: apuntar a 'event-details' en lugar de 'future-events'
+    
     const contenedor = document.getElementById('event-details');
-    // Ya no necesitas .style.display = 'block'; porque 'event-details' siempre está visible.
-    // Además, 'displayEventsInGrid' ya maneja la limpieza y el agregado.
 
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
 
-    const eventosFuturos = eventosOriginales.filter(evento => { // Usa eventosOriginales
+    const eventosFuturos = eventosOriginales.filter(evento => { 
         const fechaEvento = new Date(evento.fechaEvento + 'T00:00:00');
         return fechaEvento >= hoy;
     });
 
-    // Ahora, en lugar de construir el HTML aquí, llama a la función que ya lo hace
+    
     displayEventsInGrid(eventosFuturos);
 }
-
 
 
 //  Mostrar eventos actual o siguiente
@@ -608,7 +691,6 @@ function filtrarEventosDiaOMesSiguiente(eventos) {
         return enMesActualDesdeHoy || enMesSiguiente;
     });
 }
-
 
 
 
@@ -659,7 +741,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-
 function borrarFiltros() {
     document.getElementById('search-input').value = '';
     document.getElementById('categoria_id').value = '';
@@ -668,7 +749,6 @@ function borrarFiltros() {
     
     mostrarEventosDesdeHoy(); // O muestra todos si así lo deseas
 }
-
 
 
 
@@ -689,7 +769,6 @@ function displayEventsInGrid(listaEventos) {
     });
 }
 
-
 //  Mostrar mensaje si no hay eventos
 function mostrarMensajeSinEventos(mensaje) {
     const container = document.getElementById("event-details");
@@ -701,7 +780,6 @@ function mostrarMensajeSinEventos(mensaje) {
         </div>
     `;
 }
-
 
 
 function mostrarEventosDesdeHoy() {
@@ -735,12 +813,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
 </script>
 
 @stack('scripts')
 </body>
-
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -767,9 +843,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-
 </script>
 
-
 </html>
-

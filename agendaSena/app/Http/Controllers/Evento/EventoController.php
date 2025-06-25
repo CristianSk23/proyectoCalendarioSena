@@ -20,7 +20,6 @@ class EventoController extends Controller
 {
     use CalendarTrait;
 
-
     public function create(Request $request)
     {
         // Cargar categorías y fichas para el formulario
@@ -32,7 +31,6 @@ class EventoController extends Controller
 
         return view('Evento.crearEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes'));
     }
-
 
 
 
@@ -98,7 +96,6 @@ class EventoController extends Controller
             return redirect()->route('eventos.crearEvento')->with('error', 'Ocurrió un error: ' . $e->getMessage());
         }
     }
-
 
     public function edit(Request $request)
     {
@@ -188,7 +185,6 @@ class EventoController extends Controller
                 $idCategoria = $evento->idCategoria;
                 $idEncargado = $evento->par_identificacion;
 
-
                 $ambiente = Ambiente::find($idAmbiente); // Busca por clave primaria
                 $horario = Horario::find($idHorario);
                 $categoria = Categoria::find($idCategoria);
@@ -216,7 +212,6 @@ class EventoController extends Controller
         }
     }
 
-
     public function buscarEventosPorNombre(Request $request)
     {
         $nombre = $request->input('nombre');
@@ -229,14 +224,12 @@ class EventoController extends Controller
                     ->paginate(10);
 
 
-
                 $resultados = [];
                 foreach ($eventos as $evento) {
                     $idAmbiente = $evento->pla_amb_id;
                     $idHorario = $evento->idHorario;
                     $idCategoria = $evento->idCategoria;
                     $idEncargado = $evento->par_identificacion;
-
 
                     $ambiente = Ambiente::find($idAmbiente); // Busca por clave primaria
                     $horario = Horario::find($idHorario);
@@ -269,7 +262,6 @@ class EventoController extends Controller
             ], 500);
         }
     }
-
 
 
     public function buscarParticipantes(Request $request)
@@ -334,7 +326,6 @@ class EventoController extends Controller
         ]);
     }
 
-
     public function confirmarEvento(Request $request)
     {
         $idEvento = $request->input('idEvento');
@@ -361,7 +352,6 @@ class EventoController extends Controller
             ->get();
 
 
-
         if ($eventos->isNotEmpty()) { // Verificar si hay eventos
             foreach ($eventos as $evento) {
                 $evento->estadoEvento = 3; // Cambiar el estado a confirmado
@@ -373,7 +363,6 @@ class EventoController extends Controller
             return response()->json(['success' => false, 'message' => 'Evento no encontrado.']);
         }
     }
-
 
 
 
@@ -460,7 +449,6 @@ class EventoController extends Controller
     }
 
 
-
     private function validateRequest(Request $request)
     {
         return $request->validate([
@@ -477,7 +465,6 @@ class EventoController extends Controller
             'estadoEvento' => 'required|integer',
         ]);
     }
-
 
 
 
@@ -511,7 +498,6 @@ class EventoController extends Controller
         // Pasar la variable $eventos a la vista
         // return view('evento.solicitudEvento', compact('eventos'));
 
-
         return view('public.SolicitudEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes', 'eventos'));
         return redirect()->route('public.index')->with('success', 'Evento guardado exitosamente');
     }
@@ -522,7 +508,6 @@ class EventoController extends Controller
         // Redirige al usuario a la vista para crear un evento
         return redirect()->route('evento.solicitud');
     }
-
 
     // solicitud evento publico
     public function updatepublica(Request $request, Evento $evento)
@@ -562,13 +547,11 @@ class EventoController extends Controller
     }
 
 
-
     // Método para manejar el formulario externo  -oky
     public function storeExterno(Request $request)
     {
 
         try {
-
 
 
             $validatedData = $this->validateRequest($request);
@@ -622,11 +605,9 @@ class EventoController extends Controller
                 'nomSolicitante' => $validatedData['nomSolicitante'], // Agregado desde la búsqueda del participante
             ]);
 
-
             // Filtrar eventos para mostrar en la vista pública
             $eventos = Evento::whereIn('estadoEvento', [1, 3])->get();
             $imagenesBanner = FotografiaEvento::with('evento')->get();
-
 
 
             // return redirect()->route('public.index')->with('success', '¡Evento creado exitosamente!');
@@ -635,7 +616,6 @@ class EventoController extends Controller
             return redirect()->route('public.index')->with('error', 'Error al crear el evento: ' . $e->getMessage());
         }
     }
-
 
 
     public function buscarFichas(Request $request)
@@ -651,9 +631,9 @@ class EventoController extends Controller
 
 
 
-
     // Fin Método para manejar el formulario externo
 
 
-
 }
+
+
