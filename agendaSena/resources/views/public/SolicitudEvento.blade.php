@@ -84,7 +84,7 @@
 
     <div class="mb-3">
         <label for="aforoEvento" class="form-label">Aforo del Evento:</label>
-        <input type="number" name="aforoEvento"  class="form-control" max="500"
+        <input type="number" name="aforoEvento"  class="form-control" min="1" max="500"
                value="{{ isset($evento) ? $evento->aforoEvento : '' }}">
         <div class="invalid-feedback">El aforo debe ser entre 1 y 500 personas</div>
     </div>
