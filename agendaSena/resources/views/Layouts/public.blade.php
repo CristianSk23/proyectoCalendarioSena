@@ -10,19 +10,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     <!-- Sidebar con Calendario -->
     <div class="sidebar">
         <h4 class="text-center mb-4">Calendario</h4>
@@ -128,6 +115,116 @@
 
 
 
+    {{-- ====================================================================== --}}    
+    {{-- BANNER FULL PANTALLA PUBLICIDAD EVENTOS             --}}
+    {{-- ====================================================================== --}}
+
+   
+
+        @if(!isset($ocultarPublicidad) || !$ocultarPublicidad)
+            <!-- Botón flotante de Publicidad -->
+            <button id="togglePublicidadBtn" class="btn btn-warning position-fixed top-50 end-0 translate-middle-y me-3 z-3 rounded-circle shadow" style="width: 60px; height: 60px;">
+                <i class="bi bi-megaphone-fill fs-3"></i>
+            </button>
+        @endif
+
+
+
+    <div class="modal fade" id="fullscreenBannerModal" tabindex="-1" aria-labelledby="fullscreenBannerModalLabel" aria-hidden="true">
+        {{-- La clase clave es "modal-fullscreen" para que ocupe toda la pantalla --}}
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content" style="background-color: #000;">
+                
+                <div class="modal-header border-0 position-absolute top-0 start-0" style="z-index: 10;">
+                    <h5 class="modal-title text-white shadow-lg" id="fullscreenBannerModalLabel">
+                        {{-- Título dinámico según el contenido --}}
+                        @if($imagenesPublicidad->isNotEmpty())
+                            Próximos Eventos
+                        @else
+                            Eventos Recientes
+                        @endif
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-0">
+                    {{-- Lógica Principal: Muestra publicidad de eventos futuros --}}
+                    @if($imagenesPublicidad->isNotEmpty())
+                        
+                        <div id="publicidadCarousel" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="3000" data-bs-wrap="true">
+                            <div class="carousel-inner h-100">
+                                @foreach($imagenesPublicidad as $publicidad)
+                                    <div class="carousel-item h-100 {{ $loop->first ? 'active' : '' }}">
+                                        @php
+                                            $rutaPublicidad = $publicidad->publicidad;
+                                            $rutaCompleta = $rutaPublicidad ? public_path('storage/' . $rutaPublicidad) : null;
+                                        @endphp
+                                        @if($rutaCompleta && file_exists($rutaCompleta))
+                                            <img src="{{ asset('storage/' . $rutaPublicidad) }}" class="d-block w-100 h-100" style="object-fit: cover;" alt="Publicidad: {{ $publicidad->nomEvento }}">
+                                        @else
+                                            <div class="d-flex align-items-center justify-content-center h-100 text-white bg-dark">
+                                                <p>Imagen no disponible</p>
+                                            </div>
+                                        @endif
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <h3 class="banner-caption-text" style="background-color: rgba(0,0,0,0.5); padding: 0.5rem; border-radius: 5px;">{{ $publicidad->nomEvento }}</h3>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#publicidadCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Anterior</span></button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#publicidadCarousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Siguiente</span></button>
+                        </div>
+
+                    {{-- Lógica de Respaldo: Si no hay publicidad, muestra fotos de eventos realizados --}}
+                    @elseif($imagenesBanner->isNotEmpty())
+
+                        <div id="fotosEventosCarousel" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="3000" data-bs-wrap="true">
+                            <div class="carousel-inner h-100">
+                                @foreach($imagenesBanner as $banner)
+                                    <div class="carousel-item h-100 {{ $loop->first ? 'active' : '' }}">
+                                        @php
+                                            $ruta = $banner->ruta ?? null;
+                                            $rutaImagen = $ruta ? public_path('storage/' . $ruta) : null;
+                                        @endphp
+                                        @if($ruta && file_exists($rutaImagen))
+                                            <img src="{{ asset('storage/' . $ruta) }}" class="d-block w-100 h-100" style="object-fit: cover;" alt="Foto evento: {{ $banner->evento->nomEvento ?? '' }}">
+                                        @else
+                                            <div class="d-flex align-items-center justify-content-center h-100 text-white bg-dark">
+                                                <p>Imagen no disponible</p>
+                                            </div>
+                                        @endif
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <h3 class="banner-caption-text" style="background-color: rgba(0,0,0,0.5); padding: 0.5rem; border-radius: 5px;">{{ $banner->evento->nomEvento ?? 'Evento sin nombre' }}</h3>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#fotosEventosCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Anterior</span></button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#fotosEventosCarousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Siguiente</span></button>
+                        </div>
+
+                    {{-- Mensaje final si no hay ninguna imagen --}}
+                    @else
+                        <div class="d-flex vh-100 align-items-center justify-content-center text-center text-white">
+                            <div>
+                                <i class="bi bi-camera-reels fs-1"></i>
+                                <h3 class="mt-3">No hay imágenes para mostrar</h3>
+                                <p class="text-white-50">Vuelve a visitarnos pronto.</p>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{--
+======================================================================
+NUEVO BANNER FOTOS DE LOS EVENTOS REALIZADOS
+======================================================================
+--}}
+
     <!-- Bloque BANNER -->
 
      @if(!isset($ocultarBanner) || !$ocultarBanner)
@@ -231,12 +328,6 @@
 <!-- fin modal autenticacion -->
 
 
-<!-- Botón flotante de Publicidad -->
-<button id="togglePublicidadBtn" class="btn btn-warning position-fixed top-50 end-0 translate-middle-y me-3 z-3 rounded-circle shadow" style="width: 60px; height: 60px;">
-    <i class="bi bi-megaphone-fill fs-3"></i>
-</button>
-
-
 
 
 
@@ -258,12 +349,18 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> 
    
 
    <script>
 
 
-    // -- Manejo de formulario publico para agregar eventos 
+// *:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*
+            // =============================
+            // MANEJO formulario publico para agregar eventos 
+            // =============================
+// *:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*
+    
     
     document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById("authFormAgregar");
@@ -314,39 +411,19 @@
 
 
 
-// BANNER VISUALIZACION DE EVENTOS  FULL PANTALLA SI NO HAY EVENTOS FOTOS D EEVENTOS REALIZADOS EN EL MES.
-        // const btnPublicidad = document.getElementById('togglePublicidadBtn');
-        // const carruselPublicidad = document.getElementById('publicidadCarrusel');
-
-        // btnPublicidad?.addEventListener('click', togglePublicidad);
-
-        // function togglePublicidad() {
-        //     carruselPublicidad.classList.toggle('d-none');
-        //     // Reiniciar carrusel al mostrar
-        //     if (!carruselPublicidad.classList.contains('d-none')) {
-        //         const carouselElement = carruselPublicidad.querySelector('.carousel');
-        //         const carousel = bootstrap.Carousel.getInstance(carouselElement) || new bootstrap.Carousel(carouselElement);
-        //         carousel.to(0); // vuelve al primer slide
-        //     }
-        // }
-
-        // Cerrar con ESC
-        // document.addEventListener('keydown', function (e) {
-        //     if (e.key === 'Escape' && !carruselPublicidad.classList.contains('d-none')) {
-        //         togglePublicidad();
-        //     }
-        // });
-
-  //FIN ---  BANNER VISUALIZACION DE EVENTOS  FULL PANTALLA 
+// *:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*
+            // =============================
+            // MANEJO y VISUALIZACION EVENTOS
+            // =============================
+// *:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*
 
 
-
-
-
-
+  
     let currentDate = new Date();
-      let eventos = @json($eventos);
-    
+// *** LA MODIFICACIÓN CLAVE ESTÁ AQUÍ ***
+let eventos = @json($eventos ?? []); // Esto asegura que si $eventos es null, se use un array vacío.
+
+// Ahora, eventosOriginales puede ser inicializado de forma segura
 
     // funcionamiento  calendario y sus fechas
     function loadCalendar() {
@@ -601,15 +678,6 @@ function searchByCategory() {
 
 
 
-
-
-
-
-
-
-
-
-
 // 🗂 Mostrar todos los eventos sin filtro
 function mostrarTodosEventos() {
     
@@ -651,10 +719,14 @@ function filtrarEventosDiaOMesSiguiente(eventos) {
 
 
 
+// *:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*
+            // =============================
+            // MANEJO DE  Filtro Eventos
+            // FILTROS COMBINADOS
+            // =============================
+// *:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*
 
-// MANEJO DE  Filtro Eventos
 
-// FILTROS COMBINADOS
 function aplicarFiltrosCombinados() {
     const searchText = quitarTildes(document.getElementById('search-input').value.trim().toLowerCase());
     const categoriaSeleccionada = document.getElementById('categoria_id').value;
@@ -686,13 +758,13 @@ function aplicarFiltrosCombinados() {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Escuchar cambios en nombre
+    // cambios en nombre
     document.getElementById('search-input').addEventListener('input', aplicarFiltrosCombinados);
 
-    // Escuchar cambios en categoría
+    // cambios en categoría
     document.getElementById('categoria_id').addEventListener('change', aplicarFiltrosCombinados);
 
-    // Escuchar cambios en fechas
+    // cambios en fechas
     document.getElementById('start-date').addEventListener('change', aplicarFiltrosCombinados);
     document.getElementById('end-date').addEventListener('change', aplicarFiltrosCombinados);
 });
@@ -765,6 +837,76 @@ document.addEventListener('DOMContentLoaded', function () {
 
     startInput.addEventListener('change', verificarYBuscar);
     endInput.addEventListener('change', verificarYBuscar);
+});
+
+
+// *:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:*:
+// ---------------------------------------------
+// BANNER DE FULL PANTALLA PUBLICIDAD EVENTOS 
+// ---------------------------------------------
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // 1. OBTENER LOS ELEMENTOS NECESARIOS
+    const toggleBtn = document.getElementById('togglePublicidadBtn');
+    const modalElement = document.getElementById('fullscreenBannerModal');
+
+    if (!toggleBtn || !modalElement) {
+        return;
+    }
+    
+    // 2. INICIALIZAR EL MODAL DE BOOTSTRAP
+    const bootstrapModal = new bootstrap.Modal(modalElement);
+
+    // 3. AGREGAR EL EVENTO DE CLIC AL BOTÓN
+    toggleBtn.addEventListener('click', () => {
+        bootstrapModal.show();
+        
+        if (modalElement.requestFullscreen) {
+            modalElement.requestFullscreen();
+        } else if (modalElement.webkitRequestFullscreen) { /* Safari */
+            modalElement.webkitRequestFullscreen();
+        } else if (modalElement.msRequestFullscreen) { /* IE11 */
+            modalElement.msRequestFullscreen();
+        }
+    });
+    
+
+    // NUEVA LÓGICA PARA CONTROLAR EL CARRUSEL (LA SOLUCIÓN AL BUCLE)
+    // ================================================================
+
+    // 4. CUANDO EL MODAL SE HAYA MOSTRADO COMPLETAMENTE...
+    modalElement.addEventListener('shown.bs.modal', () => {
+        // Busca de forma inteligente cuál carrusel está visible dentro del modal
+        const activeCarouselEl = modalElement.querySelector('.carousel.slide');
+
+        if (activeCarouselEl) {
+            // Obtiene la instancia del carrusel de Bootstrap y le da la orden de iniciar el ciclo.
+            const carouselInstance = bootstrap.Carousel.getOrCreateInstance(activeCarouselEl);
+            carouselInstance.cycle(); // ¡COMANDO CLAVE PARA EL BUCLE INFINITO!
+        }
+    });
+
+    // 5. (BUENA PRÁCTICA) CUANDO EL MODAL SE OCULTE...
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        // Busca de forma inteligente cuál carrusel estaba activo
+        const activeCarouselEl = modalElement.querySelector('.carousel.slide');
+
+        if (activeCarouselEl) {
+            // Obtiene la instancia y le ordena pausarse para no gastar recursos.
+            const carouselInstance = bootstrap.Carousel.getOrCreateInstance(activeCarouselEl);
+            carouselInstance.pause();
+        }
+    });
+
+    // 6. MANEJAR LA SALIDA DE PANTALLA COMPLETA (Presionar ESC)
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            bootstrapModal.hide(); // Esto disparará el evento 'hidden.bs.modal' de arriba
+        }
+    });
+
 });
 
 

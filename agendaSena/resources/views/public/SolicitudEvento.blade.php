@@ -1,6 +1,7 @@
 @php
     $ocultarBanner = true;
     $ocultarEventDetails = true;
+     $ocultarPublicidad = true; 
 @endphp
 
 @extends('layouts.public')
@@ -83,7 +84,7 @@
 
     <div class="mb-3">
         <label for="aforoEvento" class="form-label">Aforo del Evento:</label>
-        <input type="number" name="aforoEvento" required class="form-control" min="1" max="500"
+        <input type="number" name="aforoEvento"  class="form-control" max="500"
                value="{{ isset($evento) ? $evento->aforoEvento : '' }}">
         <div class="invalid-feedback">El aforo debe ser entre 1 y 500 personas</div>
     </div>
@@ -92,7 +93,7 @@
     <div class="mb-3 position-relative">
         <label for="fic_numero" class="form-label">Ficha:</label>
         <input type="text" id="fic_numero_input" class="form-control" placeholder="Buscar ficha..." autocomplete="off"
-            value="{{ isset($evento) ? $evento->fic_numero : '' }}" required>
+            value="{{ isset($evento) ? $evento->fic_numero : '' }}">
         <input type="hidden" name="fic_numero" id="fic_numero">
         <ul id="resultadosFichas" class="list-group position-absolute w-100" style="z-index: 1000;"></ul>
         <div class="invalid-feedback">Por favor selecciona una ficha válida</div>
@@ -102,7 +103,7 @@
 
     <div class="mb-3">
         <label for="idCategoria" class="form-label">Categoría:</label>
-        <select name="idCategoria" class="form-select" required>
+        <select name="idCategoria" class="form-select" >
             <option value="">Seleccionar Categoría</option>
             @foreach ($categorias as $categoria)
                 <option value="{{ $categoria->idCategoria }}" {{ isset($evento) && $evento->idCategoria == $categoria->idCategoria ? 'selected' : '' }}>
@@ -387,7 +388,7 @@ const resultadosFichas = document.getElementById('resultadosFichas');
 
 inputFicha.addEventListener('input', () => {
     const termino = inputFicha.value.trim();
-    if (termino.length < 2) {
+    if (termino.length < 0) {
         resultadosFichas.innerHTML = '';
         inputFichaHidden.value = '';
         verificarFormulario();
@@ -413,7 +414,6 @@ resultadosFichas.addEventListener('click', e => {
         inputFicha.value = e.target.dataset.numero;
         inputFichaHidden.value = e.target.dataset.numero;
         resultadosFichas.innerHTML = '';
-        validadorInputs(inputFicha);
         verificarFormulario();
     }
 });

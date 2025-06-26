@@ -62,7 +62,8 @@ class LoginController extends Controller
         request()->session()->regenerateToken();
 
         // Redirigir al usuario a la página de inicio de sesión u otra página
-        return redirect('/')->with('success', 'Sesión cerrada exitosamente.');
+        return redirect()->route('public.index')->with('success', 'Sesión cerrada exitosamente.');
+
     }
 
     public function username()

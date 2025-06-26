@@ -15,25 +15,22 @@ class PublicController extends Controller
     
     public function index()
     {
-        // $hoy = Carbon::today();
+        
 
         $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
             ->whereIn('estadoEvento',[1,3])
-            // ->whereDate('fechaEvento', '>=', $hoy)
             ->get();
 
             
-//   $eventosRealizados = Evento::whereIn('estadoEvento',[1,3])->pluck('idEvento');
-        //  $imagenesBanner = FotografiaEvento::with('evento:idEvento,nomEvento')
+
+        $imagenesPublicidad = $this->obtenerImagenesPublicidad();
         $imagenesBanner = $this->obtenerImagenesBannerPorMes();
-        //  $imagenesEventosMes = $this->obtenerImagenesEventosPendientes();
-        // ->whereIn('idEvento', Evento::where('estadoEvento', 3)->pluck('idEvento'))
-        // ->get();
+       
 
         $categorias = \App\Models\Categoria\Categoria::all();
 
-        // return view('public.index', compact('eventos', 'imagenesBanner','imagenesEventosMes', 'categorias'));
-        return view('public.index', compact('eventos', 'imagenesBanner', 'categorias'));
+      
+        return view('public.index', compact('eventos', 'imagenesBanner', 'imagenesPublicidad', 'categorias'));
     }
 
 
@@ -46,8 +43,10 @@ class PublicController extends Controller
             ->where('estadoEvento', 1)
             ->firstOrFail();
 
+         $imagenesPublicidad = $this->obtenerImagenesPublicidad(); 
+         $imagenesBanner = $this->obtenerImagenesBannerPorMes();      
         // Pasar los datos a la vista
-        return view('public.show', compact('evento'));
+        return view('public.show', compact('evento', 'imagenesPublicidad','imagenesBanner'));
     }
 
 
@@ -93,37 +92,18 @@ class PublicController extends Controller
     }
 
 
+    public function obtenerImagenesPublicidad()
+    {
+        $hoy = Carbon::today();
 
+        return Evento::where('estadoEvento', 1) // Suponiendo que '1' es 'Programado'
+            ->whereNotNull('publicidad')
+            ->where('publicidad', '!=', '')
+            ->whereDate('fechaEvento', '>=', $hoy)
+            ->orderBy('fechaEvento', 'asc') // Ordena por fecha de evento
+            ->get(['publicidad', 'nomEvento', 'idEvento']); // Selecciona solo los campos necesarios
+    }
 
-
-
-    // public function obtenerImagenesEventosPendientes()
-    // {
-    //     $fechaActual = Carbon::now();
-    //     $mesActual = $fechaActual->month;
-    //     $anioActual = $fechaActual->year;
-
-    //     // Obtener eventos pendientes por pasar en este mes
-    //     $eventosPendientes = Evento::where('estadoEvento', 1)
-    //         ->whereYear('fechaEvento', $anioActual)
-    //         ->whereMonth('fechaEvento', $mesActual)
-    //         ->whereDate('fechaEvento', '>=', $fechaActual->toDateString())
-    //         ->whereNotNull('publicidad')
-    //         ->orderBy('fechaEvento', 'asc')
-    //         ->get();
-
-    //     // Si no hay eventos pendientes, mostrar eventos realizados
-    //     if ($eventosPendientes->isEmpty()) {
-    //         $eventosPendientes = Evento::where('estadoEvento', 3)
-    //             ->whereYear('fechaEvento', $anioActual)
-    //             ->whereMonth('fechaEvento', $mesActual)
-    //             ->whereNotNull('publicidad')
-    //             ->orderBy('fechaEvento', 'desc')
-    //             ->get();
-    //     }
-
-    //     return $eventosPendientes;
-    // }
 
 
 }

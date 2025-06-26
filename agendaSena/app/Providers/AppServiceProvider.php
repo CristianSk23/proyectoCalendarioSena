@@ -28,6 +28,27 @@ class AppServiceProvider extends ServiceProvider
 
          View::composer('*', function ($view) {
         $view->with('categorias', Categoria::all());
+
+
+
+        View::composer('*', function ($view) {
+            $data = $view->getData();
+
+            if (!array_key_exists('imagenesPublicidad', $data)) {
+                $view->with('imagenesPublicidad', collect());
+            }
+
+            if (!array_key_exists('imagenesBanner', $data)) {
+                $view->with('imagenesBanner', collect());
+            }
+        });
+
     });
+
+    
     }
+    
+
+    
+
 }
