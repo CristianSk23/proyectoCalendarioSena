@@ -119,19 +119,19 @@
 
                 // Limpiar tabla
                 calendarioTabla.innerHTML = `
-                                                                                                                                                                                                                                                                            <thead>
-                                                                                                                                                                                                                                                                                <tr class="table-light table-bordered">
-                                                                                                                                                                                                                                                                                    <th class="text-center">Dom</th>
-                                                                                                                                                                                                                                                                                    <th class="text-center">Lun</th>
-                                                                                                                                                                                                                                                                                    <th class="text-center">Mar</th>
-                                                                                                                                                                                                                                                                                    <th class="text-center">Mié</th>
-                                                                                                                                                                                                                                                                                    <th class="text-center">Jue</th>
-                                                                                                                                                                                                                                                                                    <th class="text-center">Vie</th>
-                                                                                                                                                                                                                                                                                    <th class="text-center">Sáb</th>
-                                                                                                                                                                                                                                                                                </tr>
-                                                                                                                                                                                                                                                                            </thead>
-                                                                                                                                                                                                                                                                            <tbody></tbody>
-                                                                                                                                                                                                                                                                        `;
+                                                                                                                                                                                                                                                                                        <thead>
+                                                                                                                                                                                                                                                                                            <tr class="table-light table-bordered">
+                                                                                                                                                                                                                                                                                                <th class="text-center">Dom</th>
+                                                                                                                                                                                                                                                                                                <th class="text-center">Lun</th>
+                                                                                                                                                                                                                                                                                                <th class="text-center">Mar</th>
+                                                                                                                                                                                                                                                                                                <th class="text-center">Mié</th>
+                                                                                                                                                                                                                                                                                                <th class="text-center">Jue</th>
+                                                                                                                                                                                                                                                                                                <th class="text-center">Vie</th>
+                                                                                                                                                                                                                                                                                                <th class="text-center">Sáb</th>
+                                                                                                                                                                                                                                                                                            </tr>
+                                                                                                                                                                                                                                                                                        </thead>
+                                                                                                                                                                                                                                                                                        <tbody></tbody>
+                                                                                                                                                                                                                                                                                    `;
                 const tbody = calendarioTabla.querySelector('tbody');
                 let fila = document.createElement('tr');
 
@@ -269,6 +269,19 @@
                     });
             }
 
+
+
+
+
+            function linkify(text) {
+                return text.replace(
+                    /(https?:\/\/[^\s]+)/g,
+                    '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+                );
+            }
+
+
+
             function agregarEvento(dia, mes, anio) {
                 const baseRuta = "{{ route('eventos.buscar') }}";
                 const ruta = `${baseRuta}?dia=${dia}&mes=${mes}&anio=${anio}`;
@@ -291,9 +304,9 @@
                         nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toUpperCase();
 
                         const contenedorEventos = `
-                                                                                                                                                                                                                                        <h2 class="font-weight-bold text-center" id="tituloEventos"></h2>
-                                                                                                                                                                                                                                        <div id="eventosList"></div>
-                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                    <h2 class="font-weight-bold text-center" id="tituloEventos"></h2>
+                                                                                                                                                                                                                                                    <div id="eventosList"></div>
+                                                                                                                                                                                                                                                `;
 
                         modalBody.innerHTML = contenedorEventos;
 
@@ -302,42 +315,45 @@
 
                         if (data.data.length > 0) {
                             const eventosHTML = data.data.map(item => {
+                                console.log(item);
                                 const evento = item.evento;
                                 const categoria = item.categoria;
                                 const horario = item.horario;
                                 const ambiente = item.ambiente;
-                                const encargado = item.encargado;
+                                const encargados = item.encargados; // Ahora es un array
                                 const imagenPublicidad = evento.publicidad;
                                 const imagenURL = `/storage/${imagenPublicidad}`;
-                                //*console.log(rutaAgregarFotos);
-
 
                                 const botonAccion = evento.estadoEvento == 3
                                     ? `<a href="{{ route('eventos.agregarFotos', '') }}/${evento.idEvento}" class="btn btn-info">Agregar Fotos</a>`
                                     : `<a href="{{ route('eventos.editarEvento', '') }}/${evento.idEvento}" class="btn btn-warning">Actualizar</a>`;
 
-
+                                // Crear listado de encargados
+                                const encargadosHTML = encargados.length > 0
+                                    ? encargados.map(encargado => encargado.par_nombres).join(', ')
+                                    : 'Sin encargados asignados';
 
                                 return `
-                                                                                                                                                                                                            <div class="col-6 mb-4"> 
-                                                                                                                                                                                                                <div class="card col-6" style="width: 100%;">
-                                                                                                                                                                                                                    <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento" style="max-width: 100%; height: auto;">
-                                                                                                                                                                                                                    <div class="card-body">
-                                                                                                                                                                                                                        <h5 class="card-title text-success">${evento.nomEvento}</h5>
-                                                                                                                                                                                                                        <p class="card-text"><b>Descripción:</b> ${evento.descripcion}</p>
-                                                                                                                                                                                                                        <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
-                                                                                                                                                                                                                        <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
-                                                                                                                                                                                                                        <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
-                                                                                                                                                                                                                        <p class="card-text"><b>Encargado:</b> ${encargado.par_nombres}</p>
-                                                                                                                                                                                                                        <div class="d-flex justify-content-between">
-                                                                                                                                                                                                                            ${botonAccion}
-                                                                                                                                                                                                                            <button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>
-                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                        `;
+                <div class="col-6 mb-4"> 
+                    <div class="card col-6" style="width: 100%;">
+                        <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento" style="max-width: 100%; height: auto;">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">${evento.nomEvento}</h5>
+                            <p class="card-text"><b>Descripción:</b> ${linkify(evento.descripcion)}</p>
+                            <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
+                            <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
+                            <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
+                            <p class="card-text"><b>Encargado(s):</b> ${encargadosHTML}</p>
+                            <div class="d-flex justify-content-between">
+                                ${botonAccion}
+                                <button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
                             }).join('');
+
                             tituloEventos.className = "text-center";
                             tituloEventos.innerHTML = `Eventos para: <b>${dia}-${nombreMes}-${anio}</b>`;
                             eventosList.innerHTML = eventosHTML;
@@ -349,7 +365,7 @@
                                     const nombreEvento = this.getAttribute('data-nombre-evento');
                                     const idEvento = this.getAttribute('data-id-evento');
                                     const modalMessage = document.getElementById('modalMessage');
-                                    modalMessage.innerHTML = 'Está seguro que desea eliminar el evento de: <strong>' + "<br>" + nombreEvento + '</strong>?';
+                                    modalMessage.innerHTML = 'Está seguro que desea eliminar el evento de: <strong><br>' + nombreEvento + '</strong>?';
 
                                     // Mostrar el modal de confirmación
                                     const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
@@ -366,6 +382,7 @@
                                 });
                             });
                         }
+
                     })
                     .catch(error => {
                         console.error('Error al cargar los eventos:', error);
@@ -444,7 +461,7 @@
             @if(session('error'))
                 notyf.error('{{ session('error') }}');
             @endif
-                                                                                                                                                                                                        });
+                                                                                                                                                                                                                    });
     </script>
 
 @endsection

@@ -54,17 +54,17 @@ class Evento extends Model
         return $this->belongsTo(Ambiente::class, 'pla_amb_id', 'pla_amb_id'); // Clave foránea vinculada
     }
 
-    public function participante()
+    /* public function participante()
     {
         return $this->belongsTo(Participante::class, 'par_identificacion', 'par_identificacion'); // Clave foránea vinculada
-    }
+    } */
 
     public function ficha()
     {
         return $this->belongsTo(Ficha::class, 'fic_numero', 'fic_numero'); // Clave foránea vinculada
     }
-   /*  public function fotografiasEvento()
+    public function encargados()
     {
-        return $this->belongsTo(FotografiaEvento::class, 'idEvento', 'idEvento'); // Clave foránea vinculada
-    } */
+        return $this->belongsToMany(Participante::class, 'evento_participante', 'evento_id', 'par_identificacion');
+    }
 }

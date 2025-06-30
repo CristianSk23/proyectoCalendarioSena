@@ -2,6 +2,7 @@
 
 namespace App\Models\Participante;
 
+use App\Models\Evento\Evento;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -50,5 +51,8 @@ class Participante extends Authenticatable
         return 'par_correo'; // Especifica que 'par_correo' es el campo utilizado para la autenticación
     }
 
-    
+    public function eventos()
+    {
+        return $this->belongsToMany(Evento::class, 'evento_participante', 'par_identificacion', 'evento_id');
+    }
 }

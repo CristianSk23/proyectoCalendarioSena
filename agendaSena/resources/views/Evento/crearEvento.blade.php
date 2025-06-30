@@ -8,15 +8,37 @@
         @csrf
 
         <div class="mb-3 position-relative" style="z-index: 9999;">
-            <label for="par_nombre" class="form-label">Encargado del Evento:</label>
+            <label for="par_nombre" class="form-label">Encargado(s) del Evento:</label>
+
+            <!-- Mostrar encargados seleccionados -->
+            <div id="encargadosSeleccionados" class="mb-2 d-flex flex-wrap gap-2">
+                @isset($evento->encargados)
+                    @foreach ($evento->encargados as $encargado)
+                        <span class="badge bg-primary d-flex align-items-center mb-1">
+                            {{ $encargado->par_nombres }} {{ $encargado->par_apellidos }}
+                            <button type="button" class="btn-close btn-close-white btn-sm ms-2" aria-label="Eliminar"
+                                onclick="eliminarEncargado('{{ $encargado->par_identificacion }}')"></button>
+                        </span>
+                    @endforeach
+                @endisset
+            </div>
+
+            <!-- Input de búsqueda -->
             <input type="text" id="par_nombre" class="form-control" placeholder="Buscar participante..." autocomplete="off"
-                value="{{ isset($evento) ? $nombreParticipante : '' }}" required>
+                required>
+
+            <!-- Campo para IDs de encargados -->
+            <input type="hidden" name="idEvento" value="{{ isset($evento) ? $evento->idEvento : '' }}">
             <input type="hidden" name="par_identificacion" id="par_identificacion"
-                value="{{ isset($evento) ? $evento['par_identificacion'] : '' }}">
+                value="{{ isset($encargados) ? implode(',', $encargados->pluck('par_identificacion')->toArray()) : '' }}">
+
+            <!-- Lista de resultados -->
             <ul id="resultados" class="list-group position-absolute w-100" style="max-height: 200px; overflow-y: auto;">
             </ul>
-            <div class="invalid-feedback">Por favor selecciona un encargado</div>
+
+            <div class="invalid-feedback">Por favor selecciona al menos un encargado</div>
         </div>
+
 
 
         <div class="mb-3 position-relative">
@@ -210,7 +232,11 @@
         const input = document.getElementById('par_nombre');
         const inputHidden = document.getElementById('par_identificacion');
         const resultados = document.getElementById('resultados');
+        const contenedorEncargados = document.getElementById('encargadosSeleccionados');
 
+        let encargados = []; // Aquí guardamos los encargados seleccionados
+
+        // Escuchar cuando el usuario escribe en el input
         input.addEventListener('input', () => {
             const termino = input.value.trim();
             if (termino.length < 2) {
@@ -234,19 +260,50 @@
                 });
         });
 
+        // Escuchar cuando se selecciona un encargado de la lista
         resultados.addEventListener('click', e => {
             if (e.target.matches('li')) {
-                input.value = e.target.dataset.nombre;
-                inputHidden.value = e.target.dataset.id;
+                const id = e.target.dataset.id;
+                const nombre = e.target.dataset.nombre;
+
+                // Si no está seleccionado aún, lo agregamos
+                if (!encargados.some(enc => enc.id === id)) {
+                    encargados.push({ id, nombre });
+                    actualizarEncargados();
+                }
+
+                // Limpiar input y resultados
+                input.value = '';
                 resultados.innerHTML = '';
             }
         });
 
+        // Cerrar la lista si se hace click fuera
         document.addEventListener('click', e => {
             if (!e.target.closest('.mb-3')) {
                 resultados.innerHTML = '';
             }
         });
+
+        // Actualizar visualmente los encargados seleccionados y el input oculto
+        function actualizarEncargados() {
+            contenedorEncargados.innerHTML = encargados.map(enc => `
+                                    <span class="badge bg-primary d-flex align-items-center mb-1">
+                                        ${enc.nombre}
+                                        <button type="button" class="btn-close btn-close-white btn-sm ms-2" aria-label="Eliminar" onclick="eliminarEncargado('${enc.id}')"></button>
+                                    </span>
+                                `).join('');
+
+            // Guardar los IDs separados por coma
+            inputHidden.value = encargados.map(enc => enc.id).join(',');
+        }
+
+        // Eliminar encargado de la selección
+        function eliminarEncargado(id) {
+            encargados = encargados.filter(enc => enc.id !== id);
+            actualizarEncargados();
+        }
+
 
         // Autocompletado Ambientes
         const inputAmbiente = document.getElementById('pla_amb_nombre');
@@ -330,9 +387,6 @@
                 };
             }
 
-
-
-            console.log(`Validando disponibilidad para ambiente ${ambienteId} en la fecha ${fechaEvento} de ${horarioInicio} a ${horarioFin}`);
             if (!ambienteId || !fechaEvento || !horarioInicio || !horarioFin) return;
             if (validando) return;
             validando = true;
@@ -388,6 +442,49 @@
 
             btnGuardar.disabled = !(todosLlenos && ambienteDisponible);
         }
+
+
+
+        /* let encargados = []; // Guardamos los encargados seleccionados
+
+        // Escuchar clicks sobre los resultados
+        document.getElementById('resultados').addEventListener('click', function (e) {
+            if (e.target && e.target.matches('li.list-group-item')) {
+                const id = e.target.getAttribute('data-id');
+                const nombre = e.target.textContent;
+
+                // Evitar duplicados
+                if (!encargados.some(enc => enc.id === id)) {
+                    encargados.push({ id, nombre });
+                    actualizarEncargados();
+                }
+
+                // Limpiar input y resultados
+                document.getElementById('par_nombre').value = '';
+                this.innerHTML = '';
+            }
+        });
+
+        // Actualizar la vista de encargados seleccionados
+        function actualizarEncargados() {
+            const contenedor = document.getElementById('encargadosSeleccionados');
+            contenedor.innerHTML = encargados.map(enc => `
+                <span class="badge bg-primary d-flex align-items-center">
+                    ${enc.nombre} 
+                    <button type="button" class="btn-close btn-close-white btn-sm ms-2" aria-label="Eliminar" onclick="eliminarEncargado('${enc.id}')"></button>
+                </span>
+            `).join('');
+
+            // Actualizamos el campo oculto como IDs separados por coma
+            document.getElementById('par_identificacion').value = encargados.map(enc => enc.id).join(',');
+        }
+
+        // Eliminar encargado
+        function eliminarEncargado(id) {
+            encargados = encargados.filter(enc => enc.id !== id);
+            actualizarEncargados();
+        } */
+
 
 
         // Notificaciones Laravel
