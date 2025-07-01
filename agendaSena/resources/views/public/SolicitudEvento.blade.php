@@ -162,7 +162,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Función para mostrar feedback visual en los inputs
+  
     function validadorInputs(input) {
+        if (input.name === 'aforoEvento' || input.name === 'fic_numero_input') {
+            // Aforo y ficha: solo validarlos si tienen contenido
+            if (!input.value.trim()) {
+                input.classList.remove('is-valid', 'is-invalid');
+                return;
+            }
+        }
+
         if (input.checkValidity()) {
             input.classList.remove('is-invalid');
             input.classList.add('is-valid');
@@ -171,6 +180,7 @@ document.addEventListener('DOMContentLoaded', function () {
             input.classList.add('is-invalid');
         }
     }
+
 
     // Validación en tiempo real de cada campo
     formulario.addEventListener('input', function (e) {
@@ -271,7 +281,13 @@ document.addEventListener('DOMContentLoaded', function () {
             resultadosAmbientes.innerHTML = '';
             validadorInputs(inputAmbiente);
             // Dispara la validación de disponibilidad después de seleccionar
-            validarDisponibilidad();
+           if (e.target.dataset.nombre.toLowerCase() === 'virtual') {
+                ambienteDisponible = true;
+                verificarFormulario();
+            } else {
+                // Dispara la validación de disponibilidad después de seleccionar
+                validarDisponibilidad();
+            }
         }
     });
 
