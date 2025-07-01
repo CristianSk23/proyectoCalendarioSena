@@ -17,7 +17,7 @@ class PublicController extends Controller
     {
         
 
-        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
+        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'encargados', 'ficha'])
             ->whereIn('estadoEvento',[1,3])
             ->get();
 
