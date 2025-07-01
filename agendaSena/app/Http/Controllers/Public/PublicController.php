@@ -38,7 +38,7 @@ class PublicController extends Controller
     public function show($id)
     {
         // Obtener un evento específico
-        $evento = Evento::with(['categoria', 'horario', 'ambiente', 'participante', 'ficha'])
+        $evento = Evento::with(['categoria', 'horario', 'ambiente', 'encargados', 'ficha'])
             ->where('idEvento', $id)
             ->where('estadoEvento', 1)
             ->firstOrFail();
@@ -102,6 +102,7 @@ class PublicController extends Controller
             ->whereDate('fechaEvento', '>=', $hoy)
             ->orderBy('fechaEvento', 'asc') // Ordena por fecha de evento
             ->get(['publicidad', 'nomEvento', 'idEvento']); // Selecciona solo los campos necesarios
+
     }
 
 
