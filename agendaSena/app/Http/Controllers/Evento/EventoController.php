@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Traits\CalendarTrait;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class EventoController extends Controller
@@ -54,6 +55,15 @@ class EventoController extends Controller
             }
 
             $primerEncargado = Participante::where('par_identificacion', $encargadosIds[0])->first();
+
+            if (!$participante || !password_verify($request->auth_password, $participante->par_password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Credenciales incorrectas.'
+                ]);
+            }
+
+
 
             if (!$primerEncargado) {
                 return redirect()->back()->with('error', 'Participante no encontrado.');
@@ -593,7 +603,7 @@ class EventoController extends Controller
             'nomEvento' => 'required|string|max:255',
             'descripcion' => 'required|string|max:255',
             'fechaEvento' => 'required|date',
-            'aforoEvento' => 'required|integer',
+            'aforoEvento' => 'nullable|integer',
             'fic_numero' => 'nullable|string|max:20',
             'idCategoria' => 'nullable|integer',
             'publicidad' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -646,16 +656,23 @@ class EventoController extends Controller
 
     // solicitud evento publico
     public function updatepublica(Request $request, Evento $evento)
-    {
+    
+   {
         $validatedData = $this->validateRequest($request);
-        $idEvento = $request->__get('idEvento');
-        $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
-        $validatedData['nomSolicitante'] = $participante->par_nombres;
+        $idEvento = $request->input('idEvento');
+
         $evento = Evento::findOrFail($idEvento);
+
+        $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
+        if (!$participante) {
+            return redirect()->back()->with('error', 'Participante no encontrado.');
+        }
+
+        $validatedData['nomSolicitante'] = $participante->par_nombres;
 
         if ($request->hasFile('publicidad')) {
             $rutaImagen = $request->file('publicidad')->store('imagenes', 'public');
-            $validatedData['publicidad'] = $rutaImagen; // Agregar la ruta de la imagen a los datos validados
+            $validatedData['publicidad'] = $rutaImagen;
         }
 
         $horario = Horario::find($evento->idHorario);
@@ -663,23 +680,22 @@ class EventoController extends Controller
             return redirect()->back()->with('error', 'Error al crear el horario.');
         }
 
-        $horario->updatepublica([
+        $horario->update([
             'inicio' => $request->input('horarioEventoInicio'),
             'fin' => $request->input('horarioEventoFin'),
         ]);
 
-        // Actualizar el evento
-        $evento->updatepublica($validatedData);
+        $evento->update($validatedData);
 
-        if (!$participante) {
-            return redirect()->back()->with('error', 'Participante no encontrado.');
-        }
+        // Actualizar relación evento-participante (insertar si no existe)
+        DB::table('evento_participante')->updateOrInsert(
+            ['evento_id' => $evento->idEvento],
+            ['par_identificacion' => $participante->par_identificacion]
+        );
 
-        $evento->updatepublica($validatedData);
-
-        // Redirigir con un mensaje de éxito a la vista pública de solicitud
         return redirect()->route('public.index')->with('success', 'Evento actualizado exitosamente.');
     }
+
 
 
     // Método para manejar el formulario externo  -oky
@@ -687,29 +703,21 @@ class EventoController extends Controller
     {
 
         try {
-
-
             $validatedData = $this->validateRequest($request);
             log::info('Datos validados: ', $request->all());
-            //* Guardar la imagen en el sistema de archivos si se proporciona
+
             if ($request->hasFile('publicidad')) {
                 $rutaImagen = $request->file('publicidad')->store('imagenes', 'public');
-                log::info('ruta imagen: ' . $rutaImagen);
-
-                $validatedData['publicidad'] = $rutaImagen; // Agregar la ruta de la imagen a los datos validados
+                $validatedData['publicidad'] = $rutaImagen;
             }
 
-            // Buscar al participante
             $participante = Participante::where('par_identificacion', $request->par_identificacion)->first();
-
             if (!$participante) {
                 return redirect()->back()->with('error', 'Participante no encontrado.');
             }
 
-            // Agregar el nombre del participante a los datos validados
             $validatedData['nomSolicitante'] = $participante->par_nombres;
 
-            // Crear el horario
             $horario = Horario::create([
                 'pla_amb_id' => $request->pla_amb_id,
                 'inicio' => $request->horarioEventoInicio,
@@ -720,13 +728,10 @@ class EventoController extends Controller
                 return redirect()->back()->with('error', 'Error al crear el horario.');
             }
 
-            // Agregar el ID del horario a los datos validados
             $validatedData['idHorario'] = $horario->idHora;
-            Log::info('numero de la ficha ' . $validatedData['fic_numero']);
 
-            // Crear el evento utilizando los datos validados
-            Evento::create([
-                'par_identificacion' => $validatedData['par_identificacion'],
+            $evento = Evento::create([
+                // 'par_identificacion' se elimina
                 'pla_amb_id' => $validatedData['pla_amb_id'],
                 'idHorario' => $validatedData['idHorario'],
                 'nomEvento' => $validatedData['nomEvento'],
@@ -735,18 +740,18 @@ class EventoController extends Controller
                 'aforoEvento' => $validatedData['aforoEvento'],
                 'fic_numero' => $validatedData['fic_numero'],
                 'idCategoria' => $validatedData['idCategoria'],
-                'publicidad' => $validatedData['publicidad'] ?? null, // Usar null si no se proporciona una imagen
+                'publicidad' => $validatedData['publicidad'] ?? null,
                 'estadoEvento' => $validatedData['estadoEvento'],
-                'nomSolicitante' => $validatedData['nomSolicitante'], // Agregado desde la búsqueda del participante
+                'nomSolicitante' => $validatedData['nomSolicitante'],
             ]);
 
-            // Filtrar eventos para mostrar en la vista pública
-            $eventos = Evento::whereIn('estadoEvento', [1, 3])->get();
-            $imagenesBanner = FotografiaEvento::with('evento')->get();
+            // Relación en tabla pivote
+            DB::table('evento_participante')->insert([
+                'evento_id' => $evento->idEvento,
+                'par_identificacion' => $participante->par_identificacion,
+            ]);
 
-
-            // return redirect()->route('public.index')->with('success', '¡Evento creado exitosamente!');
-            return redirect()->route('public.index')->with(['success' => '¡Evento creado exitosamente!', 'eventos' => $eventos]);
+            return redirect()->route('public.index')->with('success', '¡Evento creado exitosamente!');
         } catch (\Exception $e) {
             return redirect()->route('public.index')->with('error', 'Error al crear el evento: ' . $e->getMessage());
         }

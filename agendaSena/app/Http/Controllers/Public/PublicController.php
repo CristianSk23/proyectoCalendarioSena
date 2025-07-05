@@ -102,6 +102,7 @@ class PublicController extends Controller
             ->whereDate('fechaEvento', '>=', $hoy)
             ->orderBy('fechaEvento', 'asc') // Ordena por fecha de evento
             ->get(['publicidad', 'nomEvento', 'idEvento']); // Selecciona solo los campos necesarios
+
     }
 
 
