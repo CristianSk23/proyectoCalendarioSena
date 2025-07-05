@@ -30,9 +30,11 @@ class Evento extends Model
         'nomEvento',
         'descripcion',
         'fic_numero',
+        'nombreFicha',
         'nomSolicitante',
         'idCategoria', // Llave foránea para la relación con Categoria
         'publicidad',
+        'visualizaciones',
         'estadoEvento',
     ];
 

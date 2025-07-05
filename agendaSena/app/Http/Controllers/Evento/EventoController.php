@@ -37,34 +37,31 @@ class EventoController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validar los datos enviados al controlador usando la función privada
+            // Validar los datos
             $validatedData = $this->validateRequest($request);
 
-            // Guardar la imagen en el sistema de archivos si se proporciona
+            // Guardar la imagen si existe
             if ($request->hasFile('publicidad')) {
                 $rutaImagen = $request->file('publicidad')->store('imagenes', 'public');
-                log::info('ruta imagen: ' . $rutaImagen);
-                $validatedData['publicidad'] = $rutaImagen; // Agregar la ruta de la imagen a los datos validados
+                $validatedData['publicidad'] = $rutaImagen;
             }
 
-            // Obtener los IDs de los encargados (puede ser uno o varios)
+            // Procesar encargados
             $encargadosIds = array_filter(array_map('trim', explode(',', $request->par_identificacion)));
 
             if (empty($encargadosIds)) {
                 return redirect()->back()->with('error', 'Debe seleccionar al menos un encargado.');
             }
 
-            // Buscar el primer participante para usar su nombre como solicitante
             $primerEncargado = Participante::where('par_identificacion', $encargadosIds[0])->first();
 
             if (!$primerEncargado) {
                 return redirect()->back()->with('error', 'Participante no encontrado.');
             }
 
-            // Agregar el nombre del participante a los datos validados
             $validatedData['nomSolicitante'] = $primerEncargado->par_nombres;
 
-            // Crear el horario
+            // Crear horario
             $horario = Horario::create([
                 'pla_amb_id' => $request->pla_amb_id,
                 'inicio' => $request->horarioEventoInicio,
@@ -75,10 +72,33 @@ class EventoController extends Controller
                 return redirect()->back()->with('error', 'Error al crear el horario.');
             }
 
-            // Agregar el ID del horario a los datos validados
             $validatedData['idHorario'] = $horario->idHora;
 
-            // Crear el evento (ya no usamos par_identificacion aquí)
+
+            $fichasRaw = $request->input('fichas');
+            $numerosFicha = [];
+            $nombresFicha = [];
+
+            if ($fichasRaw) {
+                $fichasArray = explode('|', $fichasRaw);
+
+                foreach ($fichasArray as $fichaString) {
+                    $fichaPartes = explode(':', $fichaString);
+                    if (count($fichaPartes) == 2) {
+                        $numerosFicha[] = trim($fichaPartes[0]);
+                        $nombresFicha[] = trim($fichaPartes[1]);
+                    }
+                }
+
+                foreach ($numerosFicha as $numero) {
+                    log::info('Número de ficha procesado: ' . $numero);
+                }
+                foreach ($nombresFicha as $nombre) {
+                    log::info('Nombre de ficha procesado: ' . $nombre);
+                }
+            }
+
+            // Guardar los datos concatenados en el evento
             $evento = Evento::create([
                 'pla_amb_id' => $validatedData['pla_amb_id'],
                 'idHorario' => $validatedData['idHorario'],
@@ -86,23 +106,24 @@ class EventoController extends Controller
                 'descripcion' => $validatedData['descripcion'],
                 'fechaEvento' => $validatedData['fechaEvento'],
                 'aforoEvento' => $validatedData['aforoEvento'],
-                'fic_numero' => $validatedData['fic_numero'],
+                'fic_numero' => implode('|', $numerosFicha),
+                'nombreFicha' => implode('|', $nombresFicha),
                 'idCategoria' => $validatedData['idCategoria'],
-                'publicidad' => $validatedData['publicidad'] ?? null, // Usar null si no se proporciona una imagen
+                'publicidad' => $validatedData['publicidad'] ?? null,
                 'estadoEvento' => $validatedData['estadoEvento'],
-                'nomSolicitante' => $validatedData['nomSolicitante'], // Nombre del primer encargado
+                'nomSolicitante' => $validatedData['nomSolicitante'],
             ]);
 
-            // Relacionar los encargados con el evento
+            // Relacionar encargados
             $evento->encargados()->attach($encargadosIds);
 
-            // Redirigir con un mensaje de éxito
             return redirect()->route('calendario.index')->with('success', 'Evento creado exitosamente.');
         } catch (\Exception $e) {
-            log::error('Error al crear el evento: ' . $e->getMessage());
-            return redirect()->route('eventos.crearEvento')->with('error', 'Ocurrió un error: ' . $e->getMessage());
+
+            return redirect()->route('eventos.crearEvento')->with('error', 'Ocurrió un error al crear el Evento: ' . $e->getMessage());
         }
     }
+
 
 
     public function edit(Request $request)
@@ -129,17 +150,14 @@ class EventoController extends Controller
 
         // Datos relacionados
         $categorias = Categoria::all();
-        $fichas = Ficha::all();
 
-        // Cargar encargados relacionados (pueden ser varios)
+        // Cargar encargados
         $encargados = $evento->encargados;
 
-        // Obtener solo los nombres para previsualización (puedes mostrar como texto en el input)
         $nombresEncargados = $encargados->map(function ($encargado) {
             return $encargado->par_nombres . ' ' . $encargado->par_apellidos;
         })->implode(', ');
 
-        // Obtener los IDs de los encargados para precargar el campo hidden
         $idsEncargados = $encargados->pluck('par_identificacion')->implode(',');
 
         // Cargar horario y ambiente
@@ -150,12 +168,25 @@ class EventoController extends Controller
         $inicioEvento = $horario ? $horario->inicio : '';
         $finalEvento = $horario ? $horario->fin : '';
 
+        // 👉 Procesar las fichas para edición
+        $fichas = [];
+        if ($evento->fic_numero && $evento->nombreFicha) {
+            $numerosFicha = explode('|', $evento->fic_numero);
+            $nombresFicha = explode('|', $evento->nombreFicha);
+
+            foreach ($numerosFicha as $index => $numero) {
+                $fichas[] = [
+                    'numero' => trim($numero),
+                    'nombre' => isset($nombresFicha[$index]) ? trim($nombresFicha[$index]) : ''
+                ];
+            }
+        }
+
         return view('Evento.crearEvento', compact(
             'evento',
             'categorias',
-            'fichas',
-            'nombresEncargados', // Para precargar el input de nombres
-            'idsEncargados',     // Para precargar el input hidden
+            'nombresEncargados',
+            'idsEncargados',
             'dia',
             'mes',
             'anio',
@@ -163,9 +194,11 @@ class EventoController extends Controller
             'calendario',
             'inicioEvento',
             'finalEvento',
-            'nombreAmbiente'
+            'nombreAmbiente',
+            'fichas'
         ));
     }
+
 
 
     public function update(Request $request, Evento $evento)
@@ -179,7 +212,7 @@ class EventoController extends Controller
             $idEvento = $request->input('idEvento');
             $evento = Evento::findOrFail($idEvento);
 
-            // Obtener los IDs de los encargados (puede ser uno o varios)
+            // Obtener los IDs de los encargados
             $encargadosIds = array_filter(array_map('trim', explode(',', $request->par_identificacion)));
 
             if (empty($encargadosIds)) {
@@ -212,12 +245,36 @@ class EventoController extends Controller
                 'fin' => $request->input('horarioEventoFin'),
             ]);
 
+            // 🔹 Procesar las fichas (número y nombre)
+            $fichasRaw = $request->input('fichas'); // Formato: numero:nombre|numero:nombre
+            log::info('Fichas recibidas en update: ' . $fichasRaw);
+
+            $numerosFicha = [];
+            $nombresFicha = [];
+
+            if ($fichasRaw) {
+                $fichasArray = explode('|', $fichasRaw);
+
+                foreach ($fichasArray as $fichaString) {
+                    $fichaPartes = explode(':', $fichaString);
+                    if (count($fichaPartes) == 2) {
+                        $numerosFicha[] = trim($fichaPartes[0]);
+                        $nombresFicha[] = trim($fichaPartes[1]);
+                    }
+                }
+            }
+
+            // Guardar las fichas en formato string
+            $validatedData['fic_numero'] = implode('|', $numerosFicha); // Ejemplo: 1234|5678
+            $validatedData['nombreFicha'] = implode('|', $nombresFicha); // Ejemplo: Ficha A|Ficha B
+
+            // Eliminar campo que no pertenece a la tabla evento
             unset($validatedData['par_identificacion']);
 
             // Actualizar el evento con los datos restantes
             $evento->update($validatedData);
 
-            // Actualizar los encargados relacionados (los sincroniza)
+            // Actualizar los encargados relacionados (sincroniza)
             $evento->encargados()->sync($encargadosIds);
 
             return redirect()->route('calendario.index')->with('success', 'Evento actualizado exitosamente.');
@@ -226,6 +283,7 @@ class EventoController extends Controller
             return redirect()->route('calendario.index')->with('error', 'Ocurrió un error: ' . $e->getMessage());
         }
     }
+
 
 
 
@@ -509,6 +567,21 @@ class EventoController extends Controller
 
         return response()->json(['disponible' => true]);
     }
+
+
+    public function aumentarVisualizacion($idEvento)
+    {
+        try {
+            $evento = Evento::findOrFail($idEvento);
+            $evento->increment('visualizaciones');
+
+            return response()->json(['success' => true, 'visualizaciones' => $evento->visualizaciones]);
+        } catch (\Exception $e) {
+            Log::error('Error al registrar visualización: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error al registrar visualización'], 500);
+        }
+    }
+
 
 
     private function validateRequest(Request $request)
