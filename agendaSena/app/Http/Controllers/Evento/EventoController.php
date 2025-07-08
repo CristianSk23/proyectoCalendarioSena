@@ -538,6 +538,7 @@ class EventoController extends Controller
         ]);
     }
 
+    
 
 
 
@@ -627,7 +628,7 @@ class EventoController extends Controller
 
     // Método para manejar el formulario externo  -oky
     public function storeExterno(Request $request)
-    {
+    { 
 
         try {
             $validatedData = $this->validateRequest($request);
@@ -664,14 +665,26 @@ class EventoController extends Controller
                 'nomEvento' => $validatedData['nomEvento'],
                 'descripcion' => $validatedData['descripcion'],
                 'fechaEvento' => $validatedData['fechaEvento'],
-                'aforoEvento' => $validatedData['aforoEvento'],
-                'fic_numero' => $validatedData['fic_numero'],
+                'aforoEvento' => $validatedData['aforoEvento'] ?? null,
+                'fic_numero' => $validatedData['fic_numero'] ?? null,
                 'idCategoria' => $validatedData['idCategoria'],
                 'publicidad' => $validatedData['publicidad'] ?? null,
                 'estadoEvento' => $validatedData['estadoEvento'],
                 'nomSolicitante' => $validatedData['nomSolicitante'],
             ]);
 
+
+
+
+
+
+
+
+
+
+
+
+            
             // Relación en tabla pivote
             DB::table('evento_participante')->insert([
                 'evento_id' => $evento->idEvento,
