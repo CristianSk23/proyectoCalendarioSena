@@ -235,19 +235,21 @@
 
                             let html = '<div class="row">';
                             eventos.forEach(evento => {
+
                                 html += `
-                                        <div class="col-md-4 mb-3">
-                                            <div class="card h-100 shadow-sm border-left-primary">
-                                                <div class="card-body">
-                                                    <h6 class="card-title text-success">${evento.nomEvento}</h6>
-                                                    <p class="mb-1"><strong>Fecha:</strong> ${evento.fechaEventoFormatted}</p>
-                                                    <p class="mb-1"><strong>Solicitante:</strong> ${evento.nomSolicitante}</p>
-                                                    <p class="mb-0"><strong>Ambiente:</strong> ${evento.ambiente ?? 'Sin Ambiente'}</p>
-                                                    <p class="mb-0"><strong>Categoría:</strong> ${evento.categoria ?? 'Sin categoría'}</p>
-                                                </div>
-                                            </div>
+                                   <div class="col-md-4 mb-3">
+                                    <div class="card h-100 shadow-sm border-left-primary">
+                                        <div class="card-body">
+                                            <h6 class="card-title text-success">${evento.nomEvento}</h6>
+                                            <p class="mb-1"><i class='bx bx-calendar'></i> <strong>Fecha:</strong> ${evento.fechaEventoFormatted}</p>
+                                            <p class="mb-1"><i class='bx bx-user-circle'></i> <strong>Solicitante:</strong> ${evento.nomSolicitante}</p>
+                                            <p class="mb-0"><strong>📍Ambiente:</strong> ${evento.ambiente ?? 'Sin Ambiente'}</p>
+                                            <p class="mb-0"><strong>🧾Categoría:</strong> ${evento.categoria ?? 'Sin categoría'}</p>
+                                            <p class="mb-0"><strong>👁️Visualizaciones:</strong> ${evento.visualizaciones ?? 'Sin Visualizaciones'}</p>
                                         </div>
-                                    `;
+                                    </div>
+                                </div>
+                                                                    `;
                             });
                             html += '</div>';
 

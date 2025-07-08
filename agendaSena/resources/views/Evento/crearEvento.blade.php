@@ -23,21 +23,23 @@
                 @endisset
             </div>
 
-            <!-- Input de búsqueda -->
-            <input type="text" id="par_nombre" class="form-control" placeholder="Buscar participante..." autocomplete="off"
-                required>
+            <input type="text" id="par_nombre" class="form-control" placeholder="Buscar participante..." autocomplete="off">
 
             <!-- Campo para IDs de encargados -->
             <input type="hidden" name="idEvento" value="{{ isset($evento) ? $evento->idEvento : '' }}">
             <input type="hidden" name="par_identificacion" id="par_identificacion"
-                value="{{ isset($encargados) ? implode(',', $encargados->pluck('par_identificacion')->toArray()) : '' }}">
+                value="{{ isset($encargados) ? implode(',', $encargados->pluck('par_identificacion')->toArray()) : '' }}"
+                required>
 
             <!-- Lista de resultados -->
             <ul id="resultados" class="list-group position-absolute w-100" style="max-height: 200px; overflow-y: auto;">
             </ul>
 
-            <div class="invalid-feedback">Por favor selecciona al menos un encargado</div>
+            <!-- Este id es clave para que la validación funcione -->
+            <div id="errorEncargados" class="invalid-feedback" style="display: none;">Por favor selecciona al menos un
+                encargado</div>
         </div>
+
 
 
 
@@ -98,18 +100,42 @@
             <div class="invalid-feedback">El aforo debe ser entre 1 y 500 personas</div>
         </div>
 
-        <div class="mb-3">
-            <label for="fic_numero" class="form-label">Ficha:</label>
-            <select name="fic_numero" id="fic_numero" class="form-select" required>
-                <option value="">Seleccionar Ficha</option>
-                @foreach ($fichas as $ficha)
-                    < <option value="{{ $ficha->fic_numero }}" {{ isset($evento) && $evento->fic_numero == $ficha->fic_numero ? 'selected' : '' }}>
-                        {{ $ficha->fic_numero }}
-                        </option>
-                @endforeach
-            </select>
-            <div class="invalid-feedback">Por favor selecciona una ficha válida</div>
+        <div class="mb-3 position-relative" style="z-index: 9999;">
+            <label for="ficha_numero" class="form-label">Fichas del Evento:</label>
+
+            <!-- Mostrar fichas seleccionadas -->
+            <div id="fichasSeleccionadas" class="mb-2 d-flex flex-wrap gap-2">
+                @isset($evento->fichas)
+                    @foreach ($evento->fichas as $ficha)
+                        <span class="badge bg-secondary d-flex align-items-center mb-1">
+                            {{ $ficha->fic_numero }} - {{ $ficha->nombreFicha }}
+                            <button type="button" class="btn-close btn-close-white btn-sm ms-2" aria-label="Eliminar"
+                                onclick="eliminarFicha('{{ $ficha->fic_numero }}')"></button>
+                        </span>
+                    @endforeach
+                @endisset
+            </div>
+
+            <!-- Inputs manuales -->
+            <div class="row g-2">
+                <div class="col-md-5">
+                    <input type="number" id="ficha_numero" class="form-control" placeholder="Número de Ficha">
+                </div>
+                <div class="col-md-5">
+                    <input type="text" id="ficha_nombre" class="form-control" placeholder="Nombre de Ficha">
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-success w-100" onclick="agregarFicha()">Agregar</button>
+                </div>
+            </div>
+
+            <!-- Campo oculto para enviar IDs de fichas -->
+            <input type="hidden" name="fichas" id="fichas"
+                value="{{ isset($evento->fichas) ? implode('|', $evento->fichas->map(fn($f) => $f->fic_numero . ':' . $f->nombreFicha)->toArray()) : '' }}">
+
+            <div class="invalid-feedback">Por favor selecciona al menos una ficha</div>
         </div>
+
 
         <div class="mb-3">
             <label for="idCategoria" class="form-label">Categoría:</label>
@@ -125,7 +151,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="publicidad" class="form-label">Publicidad:</label>
+            <label for="publicidad">Publicidad:</label>
             <input type="file" name="publicidad" accept="image/*" class="form-control">
         </div>
 
@@ -136,9 +162,8 @@
                 <option value="1" {{isset($evento) && $evento->estadoEvento == 1 ? 'selected' : ''}}>Agendado</option>
                 <option value="2" {{isset($evento) && $evento->estadoEvento == 2 ? 'selected' : ''}}>Separado</option>
                 <option value="3" {{isset($evento) && $evento->estadoEvento == 3 ? 'selected' : ''}}>Completado</option>
-                @if (isset($evento))
-                    <option value="4" {{ $evento->estadoEvento == 3 ? 'selected' : '' }}>Cancelado</option>
-                @endif
+                <option value="4" {{isset($evento) && $evento->estadoEvento == 4 ? 'selected' : ''}}>Cancelado</option>
+
             </select>
             <div class="invalid-feedback">El evento debe tener un estado.</div>
         </div>
@@ -196,10 +221,8 @@
                 });
             });
 
-            // Validación personalizada de horarios
-            const fechaEvento = formulario.querySelector('[name="fechaEvento"]');
-            console.log(fechaEvento);
 
+            const fechaEvento = formulario.querySelector('[name="fechaEvento"]');
             const horaInicio = formulario.querySelector('[name="horarioEventoInicio"]');
             const horaFin = formulario.querySelector('[name="horarioEventoFin"]');
 
@@ -234,7 +257,21 @@
         const resultados = document.getElementById('resultados');
         const contenedorEncargados = document.getElementById('encargadosSeleccionados');
 
-        let encargados = []; // Aquí guardamos los encargados seleccionados
+        // Precargar encargados desde el backend
+        let encargados = [];
+
+        @if(isset($evento))
+            // Pasamos el array de PHP a JS usando JSON
+            encargados = @json($evento->encargados->map(function ($encargado) {
+                return [
+                    'id' => $encargado->par_identificacion,
+                    'nombre' => $encargado->par_nombres . ' ' . $encargado->par_apellidos
+                ];
+            }));
+        @endif
+        actualizarEncargados();
+
+
 
         // Escuchar cuando el usuario escribe en el input
         input.addEventListener('input', () => {
@@ -285,24 +322,32 @@
             }
         });
 
+
         // Actualizar visualmente los encargados seleccionados y el input oculto
         function actualizarEncargados() {
+
+
             contenedorEncargados.innerHTML = encargados.map(enc => `
-                                    <span class="badge bg-primary d-flex align-items-center mb-1">
-                                        ${enc.nombre}
-                                        <button type="button" class="btn-close btn-close-white btn-sm ms-2" aria-label="Eliminar" onclick="eliminarEncargado('${enc.id}')"></button>
-                                    </span>
-                                `).join('');
+                                                                                                                                                        <span class="badge bg-primary d-flex align-items-center mb-1">
+                                                                                                                                                            ${enc.nombre}
+                                                                                                                                                            <button type="button" class="btn-close btn-close-white btn-sm ms-2" aria-label="Eliminar" onclick="eliminarEncargado('${enc.id}')"></button>
+                                                                                                                                                        </span>
+                                                                                                                                                    `).join('');
 
             // Guardar los IDs separados por coma
             inputHidden.value = encargados.map(enc => enc.id).join(',');
+            console.log(`IDs de encargados: ${inputHidden.value}`);
+
         }
 
         // Eliminar encargado de la selección
         function eliminarEncargado(id) {
-            encargados = encargados.filter(enc => enc.id !== id);
+            encargados = encargados.filter(enc => String(enc.id) !== String(id));
+            console.log(`Eliminando encargado con ID: ${id}`);
+            console.log(encargados);
             actualizarEncargados();
         }
+
 
 
         // Autocompletado Ambientes
@@ -336,6 +381,76 @@
             }
         });
 
+        let fichas = [];
+
+        // Si estás editando, cargar fichas desde Blade
+        /*      @if(isset($evento->fichas))
+            fichas = @json($evento->fichas->map(fn($f) => [
+                'numero' => $f->fic_numero,
+                'nombre' => $f->nombreFicha
+            ]));
+            actualizarFichas();
+        @endif */
+
+        @if (isset($fichas))
+            fichas = @json($fichas);
+            actualizarFichas();
+        @endif
+
+
+            // Función para actualizar visualmente las fichas
+            function actualizarFichas() {
+                const contenedorFichas = document.getElementById('fichasSeleccionadas');
+                const inputHiddenFichas = document.getElementById('fichas');
+
+                contenedorFichas.innerHTML = fichas.map(f => `
+                    <span class="badge bg-secondary d-flex align-items-center mb-1">
+                        ${f.numero} - ${f.nombre}
+                        <button type="button" class="btn-close btn-close-white btn-sm ms-2" aria-label="Eliminar"
+                            onclick="eliminarFicha('${f.numero}')"></button>
+                    </span>
+                `).join('');
+
+                // Guardar las fichas en formato "numero:nombre|numero:nombre"
+                inputHiddenFichas.value = fichas.map(f => `${f.numero}:${f.nombre}`).join('|');
+
+                console.log('Fichas actuales:', fichas);
+            }
+
+        // Agregar ficha
+        function agregarFicha() {
+            const numeroInput = document.getElementById('ficha_numero');
+            const nombreInput = document.getElementById('ficha_nombre');
+
+            const numero = numeroInput.value.trim();
+            const nombre = nombreInput.value.trim();
+
+            if (numero && nombre) {
+                // Verificar que no esté duplicada
+                if (fichas.some(f => f.numero === numero)) {
+                    alert('Esta ficha ya ha sido agregada.');
+                    return;
+                }
+
+                fichas.push({ numero, nombre });
+                actualizarFichas();
+
+                // Limpiar inputs
+                numeroInput.value = '';
+                nombreInput.value = '';
+            } else {
+                alert('Debe ingresar el número y el nombre de la ficha.');
+            }
+        }
+
+        // Eliminar ficha
+        function eliminarFicha(numero) {
+            fichas = fichas.filter(f => f.numero !== numero);
+            actualizarFichas();
+        }
+
+
+
         resultadosAmbientes.addEventListener('click', function (e) {
             if (e.target.matches('li')) {
                 inputAmbiente.value = e.target.dataset.nombre;
@@ -354,8 +469,6 @@
         let ambienteDisponible = true;
 
         function validarDisponibilidad() {
-            console.log("Validando disponibilidad...");
-
             const ambienteId = document.getElementById('pla_amb_id').value;
             const fechaEvento = document.querySelector('[name="fechaEvento"]').value;
             const horarioInicio = document.querySelector('[name="horarioEventoInicio"]').value;
@@ -364,7 +477,6 @@
 
             @if(isset($evento))
                 idEvento = @json($evento->idEvento);
-                console.log("Existe el evento, idEvento:", idEvento);
             @endif
 
 
@@ -372,7 +484,7 @@
 
             if (idEvento) {
                 bodyData = {
-                    idEvento: idEvento, // o 'evento_id', lo que uses en el backend
+                    idEvento: idEvento,
                     pla_amb_id: ambienteId,
                     fecha: fechaEvento,
                     hora_inicio: horarioInicio,
@@ -403,8 +515,6 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    console.log(`Respuesta de disponibilidad: ${JSON.stringify(data)}`);
-
                     if (!data.disponible) {
                         notyf.error(data.message || "El ambiente no está disponible.");
                         ambienteDisponible = false;
@@ -433,6 +543,7 @@
             const camposRequeridos = formulario.querySelectorAll('input[required], select[required], textarea[required]');
 
             let todosLlenos = true;
+
             camposRequeridos.forEach(campo => {
                 const valor = campo.value;
                 if (!valor || valor.trim() === '') {
@@ -440,51 +551,28 @@
                 }
             });
 
+            // Obtener campo oculto de encargados
+            const inputEncargados = document.getElementById('par_identificacion');
+            const errorEncargados = document.getElementById('errorEncargados');
+
+            // Validar que al menos un encargado esté seleccionado
+            const encargadosSeleccionados = inputEncargados.value.trim();
+
+            if (encargadosSeleccionados === '') {
+                todosLlenos = false;
+
+                // Mostrar el mensaje de error
+                inputEncargados.classList.add('is-invalid');
+                errorEncargados.style.display = 'block';
+            } else {
+                // Ocultar el mensaje de error si ya hay encargados
+                inputEncargados.classList.remove('is-invalid');
+                errorEncargados.style.display = 'none';
+            }
+
+            // Validar también si el ambiente está disponible
             btnGuardar.disabled = !(todosLlenos && ambienteDisponible);
         }
-
-
-
-        /* let encargados = []; // Guardamos los encargados seleccionados
-
-        // Escuchar clicks sobre los resultados
-        document.getElementById('resultados').addEventListener('click', function (e) {
-            if (e.target && e.target.matches('li.list-group-item')) {
-                const id = e.target.getAttribute('data-id');
-                const nombre = e.target.textContent;
-
-                // Evitar duplicados
-                if (!encargados.some(enc => enc.id === id)) {
-                    encargados.push({ id, nombre });
-                    actualizarEncargados();
-                }
-
-                // Limpiar input y resultados
-                document.getElementById('par_nombre').value = '';
-                this.innerHTML = '';
-            }
-        });
-
-        // Actualizar la vista de encargados seleccionados
-        function actualizarEncargados() {
-            const contenedor = document.getElementById('encargadosSeleccionados');
-            contenedor.innerHTML = encargados.map(enc => `
-                <span class="badge bg-primary d-flex align-items-center">
-                    ${enc.nombre} 
-                    <button type="button" class="btn-close btn-close-white btn-sm ms-2" aria-label="Eliminar" onclick="eliminarEncargado('${enc.id}')"></button>
-                </span>
-            `).join('');
-
-            // Actualizamos el campo oculto como IDs separados por coma
-            document.getElementById('par_identificacion').value = encargados.map(enc => enc.id).join(',');
-        }
-
-        // Eliminar encargado
-        function eliminarEncargado(id) {
-            encargados = encargados.filter(enc => enc.id !== id);
-            actualizarEncargados();
-        } */
-
 
 
         // Notificaciones Laravel

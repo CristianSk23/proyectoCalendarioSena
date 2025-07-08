@@ -41,7 +41,7 @@ class ReporteController extends Controller
             // Tarjeta: Total eventos del mes actual
             'eventosDelMesActual' => Evento::whereMonth('fechaEvento', date('m'))
                 ->whereYear('fechaEvento', date('Y'))
-                ->select('nomEvento', 'fechaEvento', 'nomSolicitante', 'idCategoria')
+                ->select('nomEvento', 'fechaEvento', 'nomSolicitante', 'idCategoria', 'visualizaciones')
                 ->count(),
 
             // Gráfico: Total eventos por mes del año actual
@@ -65,7 +65,7 @@ class ReporteController extends Controller
         ];
 
 
-
+        log::info('Estadísticas de eventos:', $estadisticas);
 
         return view('reportes.index_reportes', compact('estadisticas'));
     }
@@ -87,13 +87,14 @@ class ReporteController extends Controller
                 break;
 
             case 'encargado':
-                $eventos = DB::table('evento')
-                    ->join('sep_participante', 'evento.par_identificacion', '=', 'sep_participante.par_identificacion')
+                $eventos = DB::table('evento_participante') // Tabla intermedia
+                    ->join('evento', 'evento_participante.evento_id', '=', 'evento.idEvento')
+                    ->join('sep_participante', 'evento_participante.par_identificacion', '=', 'sep_participante.par_identificacion')
                     ->selectRaw("CONCAT(sep_participante.par_nombres, ' ', sep_participante.par_apellidos) as nombre, COUNT(*) as total")
                     ->groupBy('sep_participante.par_nombres', 'sep_participante.par_apellidos')
                     ->get();
-
                 break;
+
 
             case 'ambiente':
                 log::info('Ambiente');
@@ -177,6 +178,7 @@ class ReporteController extends Controller
                     'nomSolicitante' => $evento->nomSolicitante,
                     'ambiente' => $evento->ambiente->pla_amb_descripcion ?? null,
                     'categoria' => $evento->categoria->nomCategoria ?? null,
+                    'visualizaciones' => $evento->visualizaciones ?? null,
                 ];
             });
 
@@ -196,6 +198,7 @@ class ReporteController extends Controller
                     'nomSolicitante' => $evento->nomSolicitante,
                     'ambiente' => $evento->ambiente->pla_amb_descripcion ?? null,
                     'categoria' => $evento->categoria->nomCategoria ?? null,
+                    'visualizaciones' => $evento->visualizaciones ?? null,
                 ];
             });
 

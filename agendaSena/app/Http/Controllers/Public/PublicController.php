@@ -17,7 +17,7 @@ class PublicController extends Controller
     {
         
 
-        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'encargados', 'ficha'])
+        $eventos = Evento::with(['categoria', 'horario', 'ambiente', 'ficha'])
             ->whereIn('estadoEvento',[1,3])
             ->get();
 
@@ -38,7 +38,7 @@ class PublicController extends Controller
     public function show($id)
     {
         // Obtener un evento específico
-        $evento = Evento::with(['categoria', 'horario', 'ambiente', 'encargados', 'ficha'])
+        $evento = Evento::with(['categoria', 'horario', 'ambiente', 'ficha'])
             ->where('idEvento', $id)
             ->where('estadoEvento', 1)
             ->firstOrFail();
