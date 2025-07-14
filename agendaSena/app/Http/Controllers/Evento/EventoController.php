@@ -747,14 +747,14 @@ class EventoController extends Controller
             ]);
 
 
-
-
-
-
-
-
-
-
+            if ($request->filled('fic_numero')) {
+    foreach ($request->fic_numero as $fichaNumero) {
+        EventoFicha::create([
+            'evento_id' => $evento->idEvento,
+            'fic_numero' => $fichaNumero
+        ]);
+    }
+}
 
 
             
@@ -782,6 +782,13 @@ class EventoController extends Controller
         return response()->json($fichas);
     }
 
+
+
+
+    public function fichas()
+{
+    return $this->hasMany('App\Models\EventoFicha', 'evento_id');
+}
 
 
     // Fin Método para manejar el formulario externo

@@ -80,6 +80,8 @@
         <textarea name="descripcion" required class="form-control" minlength="5"
                   maxlength="500">{{ isset($evento) ? $evento->descripcion : '' }}</textarea>
         <div class="invalid-feedback">La descripción debe tener entre 10 y 500 caracteres</div>
+        <div id="previewDescripcion" class="mt-2 alert alert-secondary" style="white-space: pre-wrap;"></div>
+
     </div>
 
     <div class="mb-3">
@@ -434,6 +436,27 @@ resultadosFichas.addEventListener('click', e => {
     }
 });
 
+
+// descripcion URL
+document.addEventListener('DOMContentLoaded', function () {
+    const inputDescripcion = document.querySelector('[name="descripcion"]');
+    const previewDescripcion = document.getElementById('previewDescripcion');
+    function identificarURLs(texto) {
+        const urlRegex = /https?:\/\/[^\s]+/g; // Expresión regular para detectar URLs
+        return texto.replace(urlRegex, (url) => `<a href="${url}" target="_blank">${url}</a>`);
+    }
+    inputDescripcion.addEventListener('input', function () {
+        const texto = inputDescripcion.value;
+        const textoConURLs = identificarURLs(texto);
+        
+        // Verificar si el elemento existe antes de establecer innerHTML
+        if (previewDescripcion) {
+            previewDescripcion.innerHTML = textoConURLs;
+        } else {
+            console.error('El elemento previewDescripcion no se encontró en el DOM.');
+        }
+    });
+});
 
 
 
