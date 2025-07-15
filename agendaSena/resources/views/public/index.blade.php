@@ -64,7 +64,8 @@
                         <img src="${imagenURL}" class="card-img-top" alt="Imagen del evento">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">${event.nomEvento}</h5>
-                            <p class="card-text">${descripcionCorta}</p>
+                            
+                            <p class="fs-5">${convertirURLsEnEnlaces(event.descripcion)}</p>
                             <p><strong>📅Fecha:</strong> ${fechaEvento}</p>
                             ${horario.inicio && horario.fin ? `<p><strong>⏰ Hora:</strong> ${horario.inicio} - ${horario.fin}</p>` : ''}
                             ${ambiente.pla_amb_descripcion ? `<p><strong>📍Ambiente:</strong> ${ambiente.pla_amb_descripcion}</p>` : ''}
@@ -74,6 +75,17 @@
                     </div>
                 `;
         }
+
+
+
+
+        function convertirURLsEnEnlaces(texto) {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return texto.replace(urlRegex, function(url) {
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    });
+}
+
 
         function openModal(event) {
             const imagenURL = event.publicidad ? `/storage/${event.publicidad}` : 'https://via.placeholder.com/600x400';
