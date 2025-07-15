@@ -910,7 +910,7 @@ body.public-page::before {
 }
 
 
-/* === SIDEBAR === */
+/* === SIDEBAR PUBLIC=== */
 .public-page .sidebar {
     position: fixed;
     top: 0;
@@ -925,16 +925,70 @@ body.public-page::before {
     border-right: 3px solid #edf3ec;
 }
 
-/* sidebar public de adapte mejor a paginas pequeñas */
+/* Estilo general del sidebar en pantallas grandes */
+
+
+
+
+/* Sidebar por defecto (pantalla grande) */
+.sidebar {
+    width: 300px;
+    background: #f8f9fa;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    border-right: 1px solid #ccc;
+    z-index: 1000;
+}
+
+/* Contenido principal con espacio a la izquierda */
+.main-content {
+    margin-left: 300px;
+    padding: 20px;
+}
+
+/* Botón hamburguesa solo visible en móviles */
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1100;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+/* Responsivo para móviles */
 @media (max-width: 768px) {
-    .public-page .sidebar {
-        width: 100%; /* Ancho completo en pantallas pequeñas */
-        height: auto; /* Permitir que el alto se ajuste al contenido */
-        position: relative; /* Cambiar a posición relativa */
-        box-shadow: none; /* Eliminar la sombra para un diseño más limpio */
-        border-right: none; /* Eliminar el borde derecho */
+    .sidebar {
+        position: fixed;
+        left: -100%;
+        width: 100%;
+        height: 100vh;
+        background: #ffffff;
+        transition: left 0.3s ease;
+        z-index: 1000;
+    }
+
+    .sidebar-open .sidebar {
+        left: 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .menu-toggle {
+        display: block;
     }
 }
+
+
 
 
 /* === CALENDARIO === */
@@ -1668,7 +1722,6 @@ html, body {
 
 
 
-/*  +++++  BANNER FULL SCREEN +++++, */
 /* +++++ BANNER FULLSCREEN +++++ */
 #publicidadCarrusel {
     position: fixed;
@@ -1709,3 +1762,56 @@ html, body {
     transition: transform 0.6s ease, opacity 0.6s ease;
 }
 /* +++++ FIN BANNER FULLSCREEN +++++ */
+
+
+
+/* zoom sobre imagen  modal public modal evento*/
+    .zoom-img-container {
+        overflow: hidden;
+        position: relative;
+    }
+
+    .zoom-img-container img {
+        transition: transform 0.4s ease;
+    }
+
+    .zoom-img-container:hover img {
+        transform: scale(1.1); /* Ajusta la escala si quieres más o menos zoom */
+    }
+
+    /* zoom cuando pasa mouse */
+.zoom-img-container {
+    cursor: zoom-in;
+}
+
+
+/* public  girar celular para mejro visualizacion */
+/* Mensaje de alerta, fijo en pantalla, centrado y visible solo en portrait */
+.orientation-alert {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffc107; /* amarillo alerta */
+  color: #000;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  z-index: 9999;
+  display: none; /* por defecto oculto */
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* Mostrar solo en portrait */
+@media (orientation: portrait) and (max-width: 768px) {
+  .orientation-alert {
+    display: block;
+  }
+}
+
+/* Ocultar en landscape */
+@media (orientation: landscape) and (max-width: 768px) {
+  .orientation-alert {
+    display: none;
+  }
+}

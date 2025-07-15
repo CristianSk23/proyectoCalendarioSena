@@ -32,6 +32,8 @@
 
 @endsection
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js"></script>
+
 
 
 
@@ -91,8 +93,15 @@
                 <div class="container-fluid">
                     <div class="row g-4 align-items-center">
                         <div class="col-md-6">
-                            <img src="${imagenURL}" alt="Imagen del evento" class="img-fluid w-100 rounded shadow">
-                        </div>
+                            <div class="zoom-img-container">
+                                
+                                <img src="${imagenURL}" alt="Imagen del evento" class="img-fluid w-100 rounded shadow zoom-modal-img">
+                                <button onclick="abrirFullscreen()" class="btn btn-dark mt-2">Pantalla completa</button>
+
+
+                                </div>
+
+                            </div>
                         <div class="col-md-6">
                             <h4 class="display-6 mb-3">${event.nomEvento}</h4>
                             <p class="fs-5">${convertirURLsEnEnlaces(event.descripcion)}</p>
@@ -129,6 +138,28 @@
             // Mostrar el modal
             new bootstrap.Modal(document.getElementById('showPublicModal')).show();
         }
+
+
+
+        
+        // Inicializar zoom sobre la imagen recién insertada
+        mediumZoom('.zoom-modal-img', {
+            background: '#000', // Fondo oscuro al hacer zoom
+            margin: 24           // Espaciado con los bordes
+        });
+
+
+
+        function abrirFullscreen() {
+    const img = document.querySelector('.zoom-modal-img');
+    if (img.requestFullscreen) {
+        img.requestFullscreen();
+    } else if (img.webkitRequestFullscreen) {
+        img.webkitRequestFullscreen(); // Safari
+    } else if (img.msRequestFullscreen) {
+        img.msRequestFullscreen(); // IE11
+    }
+}
 
 
         document.addEventListener('DOMContentLoaded', mostrarTodosEventos);
