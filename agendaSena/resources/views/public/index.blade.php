@@ -4,8 +4,6 @@
     <div class="container" id="future-events"></div>
 
 
-
-    <!-- Modal de Detalle de Evento -->
     <!-- Modal de Detalle de Evento -->
     <div class="modal fade" id="showPublicModal" tabindex="-1" aria-labelledby="publicModalTitle" aria-hidden="true">
         <div class="modal-dialog">
@@ -53,18 +51,12 @@
                 : event.descripcion;
 
 
-
-
-
-
-
-
             return `
                     <div class="card h-100 shadow-sm">
                         <img src="${imagenURL}" class="card-img-top" alt="Imagen del evento">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">${event.nomEvento}</h5>
-                            <p class="card-text">${descripcionCorta}</p>
+                            <p class="fs-5">${convertirURLsEnEnlaces(event.descripcion)}</p>
                             <p><strong>📅Fecha:</strong> ${fechaEvento}</p>
                             ${horario.inicio && horario.fin ? `<p><strong>⏰ Hora:</strong> ${horario.inicio} - ${horario.fin}</p>` : ''}
                             ${ambiente.pla_amb_descripcion ? `<p><strong>📍Ambiente:</strong> ${ambiente.pla_amb_descripcion}</p>` : ''}
@@ -74,6 +66,17 @@
                     </div>
                 `;
         }
+
+
+
+    // Identifica Enlaces URL y redirige
+    function convertirURLsEnEnlaces(texto) {
+        const urlRegex = /(https?:\/\/[^\s]+)/g;
+        return texto.replace(urlRegex, function(url) {
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+        });
+    }
+
 
         function openModal(event) {
             const imagenURL = event.publicidad ? `/storage/${event.publicidad}` : 'https://via.placeholder.com/600x400';
@@ -92,7 +95,8 @@
                         </div>
                         <div class="col-md-6">
                             <h4 class="display-6 mb-3">${event.nomEvento}</h4>
-                            <p class="fs-5">${event.descripcion}</p>
+                            <p class="fs-5">${convertirURLsEnEnlaces(event.descripcion)}</p>
+
                             <ul class="list-unstyled fs-6">
                                 <li><strong>📅 Fecha:</strong> ${fecha}</li>
                                 ${horario.inicio && horario.fin ? `<li><strong>⏰ Hora:</strong> ${horario.inicio} - ${horario.fin}</li>` : ''}
