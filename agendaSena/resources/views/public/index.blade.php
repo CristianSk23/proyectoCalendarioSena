@@ -95,7 +95,10 @@
                         <div class="col-md-6">
                             <div class="zoom-img-container">
                                 
-                                <img src="${imagenURL}" alt="Imagen del evento" class="img-fluid w-100 rounded shadow zoom-modal-img">
+                                
+                                
+                                <img src="${imagenURL}" alt="Imagen del evento" class="img-fluid rounded shadow zoom-modal-img" style="object-fit: contain; max-width: 100%; max-height: 70vh; display: block; margin: 0 auto;">
+
                                 <button onclick="abrirFullscreen()" class="btn btn-dark mt-2">Pantalla completa</button>
 
 
