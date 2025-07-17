@@ -42,7 +42,7 @@ class FotografiaEventoController extends Controller
         ]);
 
         $idEvento = $request->route('idEvento'); // Obtener el idEvento desde la URL
-        $imagenes = $request->file('imagenes'); // Obtener las imágenes del request
+        $imagenes = $request->file('imagenes') ?? []; // Obtener las imágenes del request
 
         foreach ($imagenes as $imagen) {
             // Guardar la imagen en la carpeta local
