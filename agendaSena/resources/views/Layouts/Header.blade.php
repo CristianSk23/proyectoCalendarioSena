@@ -32,7 +32,7 @@
             </div>
             <div class="ms-2">
                 <a href="{{ route('calendario.index') }}" class="nav-link text-white">
-                    <h1 class="h4">AgenSena</h1>
+                    <h1 class="h4">Agenda cultural CDTI</h1>
                 </a>
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"

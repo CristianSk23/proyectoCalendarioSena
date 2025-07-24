@@ -8,110 +8,27 @@
 
 <body class="public-page">
 
-
+<!-- estilo para celular, solicita gire pantalla  para una mejor visualizacion -->
 <div class="orientation-alert">
   Para mejor visualización, gira tu celular 📱➡️
 </div>
 
 
-    <!-- Sidebar con Calendario -->
-    <div class="sidebar">
-        
-        <h4 class="text-center mb-4">Calendario</h4>
+    {{-- ====================================================================== --}}    
+    {{--                       SIDEBAR Public  Barra lateral Derecha      --}}
+    {{-- ====================================================================== --}}
 
-            <!-- Contenedor del calendario -->
-            <div class="calendar-nav">
-                <button id="prev-month" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i></button>
-                <span id="month-name" class="h5"></span>
-                <button id="next-month" class="btn btn-outline-primary"><i class="bi bi-arrow-right"></i></button>
-            </div>
 
-            <div class="calendar-container">
-            <!-- <did class="text-calendar"> <h1> Calendario</h1> -->
-                <table class="table calendar-table">
-                    <thead>
-                        <tr>
-                            <th>Dom</th>
-                            <th>Lun</th>
-                            <th>Mar</th>
-                            <th>Mié</th>
-                            <th>Jue</th>
-                            <th>Vie</th>
-                            <th>Sáb</th>
-                        </tr>
-                    </thead>
-                    <tbody id="calendar-body">
-                        <!-- Aquí se llenarán los días del calendario -->
-                    </tbody>
-                </table>
-            </div>
-                   
-        <div>
+      <!-- Barra lateral derecha -->
 
-                   <!-- Filtro por categoria -->    
-                <div class="search-input-container">
-                    <label for="categoria_id">Filtrar por categoría:</label>
-                    <select class="form-select" name="categoria_id" id="categoria_id">
-                        <option value="">-- Selecciona una categoría --</option>
-                        @foreach($categorias as $categoria)
-                            <option value="{{ $categoria->idCategoria }}">{{ $categoria->nomCategoria }}</option>
-                        @endforeach
-                    </select>
-                </div>
+            @include ('public/sidebarPublic')
 
-                    
+        <!-- fin  Barra lateral derecha -->
 
-                <!-- Filtro por Fecha -->
-               <div class="search-input-container">
-                    <label>Buscar por rango de fechas:</label>
-                    <div class="d-flex gap-2">
-                        <input type="date" id="start-date" class="form-control">
-                        <input type="date" id="end-date" class="form-control">
-                    </div>
-                </div>
-                
 
-              
-
-                <!-- Filtro por Nombre del Evento -->
-                <div class="search-input-container">
-                    <label for="search-input">Buscar por nombre:</label>
-                    <!-- <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre..." oninput="searchEvent()"> -->
-                    <input type="text" id="search-input" class="form-control" placeholder="Buscar evento por nombre" oninput="searchEvent()">
-
-                </div>
-
-                <!-- Borrar filtros -->
-                <div class="mt-3">
-                    <button class="btn btn-outline-secondary w-100" onclick="borrarFiltros()">
-                        <i class="bi bi-x-lg"></i> Borrar Filtros
-                    </button>
-                </div>
-
-                <!-- boton mostar todos los eventos -->
-                <div class="mt-3">
-                    <button class="btn btn-outline-primary w-100" onclick="mostrarTodosEventos()">
-                        Mostrar todos los eventos
-                    </button>
-                </div>
-
-                <!-- boton Solicitud de eventos desde vista publica -->
-                <div class="mt-3">                                   
-                        <button id="abrirModalAgregar" class="btn btn-outline-primary w-100">
-                            Agregar Evento
-                        </button>
-                    </div>
-                 </div>  
-                 
-                <div class="mt-3">
-                    <a href="{{ route('public.index') }}" class="btn btn-outline-secondary w-100">
-                        INICIO
-                    </a>
-                </div>
-
-    </div>
-
-    
+    {{-- ====================================================================== --}}    
+    {{--                     INICIO DE CONTENIDO PRINCIPAL         --}}
+    {{-- ====================================================================== --}}
 
     <!-- Contenido Principal -->
     <div class="public-content-area">
@@ -120,218 +37,45 @@
 
 
 
-    {{-- ====================================================================== --}}    
-    {{-- BANNER FULL PANTALLA PUBLICIDAD EVENTOS             --}}
-    {{-- ====================================================================== --}}
+                    {{-- ====================================================================== --}}    
+                    {{-- BANNER FULL PANTALLA PUBLICIDAD EVENTOS             --}}
+                    {{-- ====================================================================== --}}
 
-   
-
-        @if(!isset($ocultarPublicidad) || !$ocultarPublicidad)
-            <!-- Botón flotante de Publicidad -->
-            <button id="togglePublicidadBtn" class="btn btn-warning position-fixed top-50 end-0 translate-middle-y me-3 z-3 rounded-circle shadow" style="width: 60px; height: 60px;">
-                <i class="bi bi-megaphone-fill fs-3"></i>
-            </button>
-        @endif
-
-
-
-    <div class="modal fade" id="fullscreenBannerModal" tabindex="-1" aria-labelledby="fullscreenBannerModalLabel" aria-hidden="true">
-        {{-- La clase clave es "modal-fullscreen" para que ocupe toda la pantalla --}}
-        <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content" style="background-color: #000;">
                 
-                <div class="modal-header border-0 position-absolute top-0 start-0" style="z-index: 10;">
-                    <h5 class="modal-title text-white shadow-lg" id="fullscreenBannerModalLabel">
-                        {{-- Título dinámico según el contenido --}}
-                        @if($imagenesPublicidad->isNotEmpty())
-                            Próximos Eventos
-                        @else
-                            Eventos Recientes
-                        @endif
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
 
-                <div class="modal-body p-0">
-                    {{-- Lógica Principal: Muestra publicidad de eventos futuros --}}
-                    @if($imagenesPublicidad->isNotEmpty())
-                        
-                        <div id="publicidadCarousel" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="3000" data-bs-wrap="true">
-                            <div class="carousel-inner h-100">
-                                @foreach($imagenesPublicidad as $publicidad)
-                                    <div class="carousel-item h-100 {{ $loop->first ? 'active' : '' }}">
-                                        @php
-                                            $rutaPublicidad = $publicidad->publicidad;
-                                            $rutaCompleta = $rutaPublicidad ? public_path('storage/' . $rutaPublicidad) : null;
-                                        @endphp
-                                        @if($rutaCompleta && file_exists($rutaCompleta))
-                                            
-                                            <img src="{{ asset('storage/' . $rutaPublicidad) }}" class="d-block mx-auto" style="object-fit: contain; width: 100%; height: 100%; background-color: #000;" alt="Publicidad: {{ $publicidad->nomEvento }}">
-
-                                            @else
-                                            <div class="d-flex align-items-center justify-content-center h-100 text-white bg-dark">
-                                                <p>Imagen no disponible</p>
-                                            </div>
-                                        @endif
-                                        <div class="carousel-caption d-none d-md-block">
-                                            <h3 class="banner-caption-text" style="background-color: rgba(0,0,0,0.5); padding: 0.5rem; border-radius: 5px;">{{ $publicidad->nomEvento }}</h3>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#publicidadCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Anterior</span></button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#publicidadCarousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Siguiente</span></button>
-                        </div>
-
-                    {{-- Lógica de Respaldo: Si no hay publicidad, muestra fotos de eventos realizados --}}
-                    @elseif($imagenesBanner->isNotEmpty())
-
-                        <div id="fotosEventosCarousel" class="carousel slide h-100" data-bs-ride="carousel" data-bs-interval="3000" data-bs-wrap="true">
-                            <div class="carousel-inner h-100">
-                                @foreach($imagenesBanner as $banner)
-                                    <div class="carousel-item h-100 {{ $loop->first ? 'active' : '' }}">
-                                        @php
-                                            $ruta = $banner->ruta ?? null;
-                                            $rutaImagen = $ruta ? public_path('storage/' . $ruta) : null;
-                                        @endphp
-                                        @if($ruta && file_exists($rutaImagen))
-                                            <img src="{{ asset('storage/' . $ruta) }}" class="d-block bannerPublicidad-img-cover" alt="Foto evento: {{ $banner->evento->nomEvento ?? '' }}">
-                                        @else
-                                            <div class="d-flex align-items-center justify-content-center h-100 text-white bg-dark">
-                                                <p>Imagen no disponible</p>
-                                            </div>
-                                        @endif
-                                        <div class="carousel-caption d-none d-md-block">
-                                            <h3 class="banner-caption-text" style="background-color: rgba(0,0,0,0.5); padding: 0.5rem; border-radius: 5px;">{{ $banner->evento->nomEvento ?? 'Evento sin nombre' }}</h3>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#fotosEventosCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Anterior</span></button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#fotosEventosCarousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Siguiente</span></button>
-                        </div>
-
-                    {{-- Mensaje final si no hay ninguna imagen --}}
-                    @else
-                        <div class="d-flex vh-100 align-items-center justify-content-center text-center text-white">
-                            <div>
-                                <i class="bi bi-camera-reels fs-1"></i>
-                                <h3 class="mt-3">No hay imágenes para mostrar</h3>
-                                <p class="text-white-50">Vuelve a visitarnos pronto.</p>
-                            </div>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
-{{--
-======================================================================
-NUEVO BANNER FOTOS DE LOS EVENTOS REALIZADOS
-======================================================================
---}}
-
-    <!-- Bloque BANNER -->
-
-
-
-
-    
-    @if(!isset($ocultarBanner) || !$ocultarBanner)
-    @if(isset($imagenesBanner) && $imagenesBanner->isNotEmpty())
-        <div id="bannerCarousel" class="carousel slide mb-4 position-relative" data-bs-ride="carousel" data-bs-interval="5000" data-bs-wrap="true">
-
-            <!-- Botón fullscreen (abre modal) -->
-            <!-- Botón de pantalla completa -->
-<button type="button" class="btn btn-sm btn-dark btn-fullscreen-banner" data-bs-toggle="modal" data-bs-target="#modalFullscreenBanner" title="Pantalla completa">
-    <i class="bi bi-arrows-fullscreen"></i>
-</button>
-
-
-            <div class="carousel-inner">
-                @foreach($imagenesBanner as $index => $banner)
-                    @php
-                        $ruta = $banner->ruta ?? $banner->publicidad ?? null;
-                        $rutaImagen = $ruta ? public_path('storage/' . $ruta) : null;
-                    @endphp
-
-                    <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
-                        @if($ruta && file_exists($rutaImagen))
-                            <img src="{{ asset('storage/' . $ruta) }}" class="d-block bannerFotos-img-contain" alt="Foto de evento">
-                        @else
-                            <div class="d-flex align-items-center justify-content-center text-white w-100 h-100 bg-secondary" style="height: 400px;">
-                                <p class="m-0">Imagen no disponible</p>
-                            </div>
+                        @if(!isset($ocultarPublicidad) || !$ocultarPublicidad)
+                            <!-- Botón flotante de Publicidad -->
+                            <button id="togglePublicidadBtn" class="btn btn-warning position-fixed top-50 end-0 translate-middle-y me-3 z-3 rounded-circle shadow" style="width: 60px; height: 60px;">
+                                <i class="bi bi-megaphone-fill fs-3"></i>
+                            </button>
                         @endif
 
-                        <div class="carousel-caption d-none d-md-block">
-                            <div class="banner-caption-bg">
-                                <h5 class="banner-caption-text">
-                                    {{ $banner->evento->nomEvento ?? 'Evento sin nombre' }}
-                                </h5>
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
+                        <!-- Fin BANNER Publicidad  -->
 
-            <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
-            </button>
-        </div>
-    @else
-        <div class="mb-4" style="aspect-ratio: 14 / 10; background-color: #ccc; display: flex; align-items: center; justify-content: center;">
-            <p class="text-muted">No hay imágenes disponibles por el momento.</p>
-        </div>
-    @endif
-@endif
-  <!-- Modal fullscreen de banner -->
-<div class="modal fade" id="modalFullscreenBanner" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-fullscreen">
-    <div class="modal-content bg-black">
-      <div class="modal-header border-0">
-        <h5 class="modal-title text-white">Vista completa del banner</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body p-0">
-        <div id="carouselFullscreen" class="carousel slide h-100" data-bs-ride="carousel">
-          <div class="carousel-inner h-100">
-            @foreach($imagenesBanner as $index => $banner)
-              @php
-                $ruta = $banner->ruta ?? $banner->publicidad ?? null;
-                $rutaImagen = $ruta ? public_path('storage/' . $ruta) : null;
-              @endphp
-              <div class="carousel-item h-100 {{ $loop->first ? 'active' : '' }}">
-                @if($ruta && file_exists($rutaImagen))
-                  <img src="{{ asset('storage/' . $ruta) }}" class="d-block w-100 h-100 img-fullscreen-modal" alt="Evento">
-                @else
-                  <div class="d-flex justify-content-center align-items-center h-100 bg-secondary">
-                    <p class="text-white">Imagen no disponible</p>
-                  </div>
-                @endif
-              </div>
-            @endforeach
-          </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselFullscreen" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselFullscreen" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+                            @include ('public/BannerPublicidad')
+
+                        <!-- fin  banner publicidad-->
+
+
+                        {{--
+                        ======================================================================
+                         BANNER FOTOS DE LOS EVENTOS REALIZADOS
+                        ======================================================================
+                        --}}
+
+
+                            <!-- Fin BANNER FOTOS  -->
+
+                            @include ('public/BannerFotos')
+
+                            <!--Fin banner fotos -->
 
 
 
 
-        <!-- FIN DE BANNER -->
+    {{-- ====================================================================== --}}    
+    {{--                     Index - CONTENIDO CARDS DE EVENTOS AGENDADOS         --}}
+    {{-- ====================================================================== --}}
 
         <!--INICIO CONTENIDO DE EVENTOS -->
         @if(!isset($ocultarEventDetails) || !$ocultarEventDetails)
@@ -344,46 +88,71 @@ NUEVO BANNER FOTOS DE LOS EVENTOS REALIZADOS
 
         <!--FIN CONTENIDO DE EVENTOS -->
 
+    {{-- ====================================================================== --}}    
+    {{--                    MODAL- AUTENTICACION PARA SOLICITUD EVENTOS        --}}
+    {{-- ====================================================================== --}}
+
 
       <!-- Modal de Autenticación -->
-<div class="modal fade" id="authModalAgregarEvento" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <form id="authFormAgregar" class="w-100">
-            <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
-                
-                <!-- Encabezado limpio y elegante -->
-                <div class="modal-header" style="background: linear-gradient(135deg, #38b000, #aacc00); color: white;">
-                    <h5 class="modal-title fw-bold" id="authModalLabel">🔐 Acceso Seguro</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-
-                <!-- Cuerpo del formulario -->
-                <div class="modal-body bg-white px-4 py-4">
-                    <p class="text-muted text-center mb-4">Introduce tus datos de acceso para continuar con la solicitud del evento.</p>
-
-                    <div class="mb-3">
-                        <label for="auth_identificacion" class="form-label">📇 Identificación</label>
-                        <input type="text" class="form-control form-control-lg" id="auth_identificacion" placeholder="Ej. 1098765432" required>
+    <div class="modal fade" id="authModalAgregarEvento" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <form id="authFormAgregar" class="w-100">
+                <div class="modal-content border-0 shadow rounded-4 overflow-hidden">
+                    
+                    <!-- Encabezado limpio y elegante -->
+                    <div class="modal-header" style="background: linear-gradient(135deg, #38b000, #aacc00); color: white;">
+                        <h5 class="modal-title fw-bold" id="authModalLabel">🔐 Acceso Seguro</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="auth_password" class="form-label">🔑 Contraseña</label>
-                        <input type="password" class="form-control form-control-lg" id="auth_password" placeholder="Tu contraseña" required>
+                    <!-- Cuerpo del formulario -->
+                    <div class="modal-body bg-white px-4 py-4">
+                        <p class="text-muted text-center mb-4">Introduce tus datos de acceso para continuar con la solicitud del evento.</p>
+
+                        <div class="mb-3">
+                            <label for="auth_identificacion" class="form-label">📇 Identificación</label>
+                            <input type="text" class="form-control form-control-lg" id="auth_identificacion" placeholder="Ej. 1098765432" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="auth_password" class="form-label">🔑 Contraseña</label>
+                            <input type="password" class="form-control form-control-lg" id="auth_password" placeholder="Tu contraseña" required>
+                        </div>
+
+                        <div id="auth_error_modal" class="text-danger mt-2 text-center small"></div>
                     </div>
 
-                    <div id="auth_error_modal" class="text-danger mt-2 text-center small"></div>
+                    <!-- Footer con botones -->
+                    <div class="modal-footer bg-light justify-content-between">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" id="submitAuthForm" class="btn btn-success px-4">Validar</button>
+                    </div>
                 </div>
-
-                <!-- Footer con botones -->
-                <div class="modal-footer bg-light justify-content-between">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" id="submitAuthForm" class="btn btn-success px-4">Validar</button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-</div>
-<!-- fin modal autenticacion -->
+    <!-- fin modal autenticacion -->
+
+
+                        {{--
+                        ======================================================================
+                                ICONO DE GUIA DE AYUDA PUBLIC
+                        ======================================================================
+                        --}}
+
+                        <!--GUIA AYUDA SOLICITAR evento-->
+
+                            @include ('public/GuiaAyudaPublic')
+
+
+                           <!---///**** BOTON ICONO DE PREGUNTA - PARA GUIA AYUDA PUBLIC  ****\\\--->
+                            <button id="toggleAyudaBtn" class="btn btn-primary position-fixed bottom-0 end-0 translate-middle-y me-3 mb-3 z-3 rounded-circle shadow" style="width: 60px; height: 60px;">
+                                <i class="bi bi-question-lg fs-3"></i> {{-- Icono de pregunta de Bootstrap Icons --}}
+                            </button>
+                            
+                        <!-- Fin  Ayuda Public -->
+
+
 
 
 
@@ -409,6 +178,9 @@ NUEVO BANNER FOTOS DE LOS EVENTOS REALIZADOS
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> 
     <!-- En tu layout/base -->
+         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -1007,10 +779,9 @@ document.getElementById('btnFullscreenBanner').addEventListener('click', () => {
 
 
 
-</script>
 
 @stack('scripts')
-</body>
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
@@ -1043,5 +814,7 @@ document.getElementById('btnFullscreenBanner').addEventListener('click', () => {
 
 
 </script>
+
+
 
 </html>
