@@ -1914,3 +1914,40 @@ html, body {
     display: none;
   }
 }
+
+
+
+
+
+/*  GUIA DE SOLUCITUD DE EVENTO PUBLIC */
+
+/* Opcional: Para asegurar que el contenido del modal de ayuda se posicione correctamente */
+#helpCenterModal .modal-body {
+    position: relative;
+    overflow: hidden; /* Para que los contenidos ocultos no se desborden visualmente */
+}
+
+/* Opcional: Asegura que el contenido del carrusel ocupe el espacio disponible */
+#tutorialDiapositivas, #helpCardsContent {
+    height: 100%;
+    width: 100%;
+    padding-top: 50px; /* Espacio para el botón de volver y el header del modal */
+    padding-bottom: 20px;
+    box-sizing: border-box;
+}
+
+#tutorialCarousel {
+    height: calc(100% - 60px); /* Ajusta según el padding superior/inferior */
+    display: flex; /* Para centrar contenido si es necesario */
+    align-items: center;
+    justify-content: center;
+}
+
+#tutorialCarousel .carousel-item {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+/* FIN GUIA SOLICIRUD EVETO  */
