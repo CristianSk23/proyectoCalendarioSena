@@ -39,8 +39,8 @@ class Participante extends Authenticatable
         'par_tipo_poblacion',
     ];
 
-    // Si tienes timestamps en tu tabla, habilita esto
-    public $timestamps = false; // Cambia a true si tienes created_at y updated_at
+
+    public $timestamps = false; 
 
     public function getAuthPassword()
     {

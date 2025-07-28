@@ -3,13 +3,19 @@
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/estilo.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <link href='https://cdn.boxicons.com/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <link href='https://cdn.boxicons.com/fonts/brands/boxicons-brands.min.css' rel='stylesheet'>
 @endsection
 
 @section('content')
     <div class="container-fluid">
         <h1 class="h3 mb-4 text-gray-800 text-center">Panel de Reportes</h1>
-        <div class="d-flex justify-content-end mb-4">
-            <a href="{{ route('calendario.index') }}" class="btn btn-success me-2">Regresar</a>
+        <div class="d-flex justify-content-start mb-4">
+
+
+            <a href="{{ route('calendario.index') }}" class="btn btn-success me-2">
+             ⬅<i class='bx  bxs-arrow-from-right-stroke bx-flip-vertical'  style='color:#ffffff'></i> 
+            </a>
 
         </div>
         <!-- Estadísticas -->
@@ -237,19 +243,19 @@
                             eventos.forEach(evento => {
 
                                 html += `
-                                   <div class="col-md-4 mb-3">
-                                    <div class="card h-100 shadow-sm border-left-primary">
-                                        <div class="card-body">
-                                            <h6 class="card-title text-success">${evento.nomEvento}</h6>
-                                            <p class="mb-1"><i class='bx bx-calendar'></i> <strong>Fecha:</strong> ${evento.fechaEventoFormatted}</p>
-                                            <p class="mb-1"><i class='bx bx-user-circle'></i> <strong>Solicitante:</strong> ${evento.nomSolicitante}</p>
-                                            <p class="mb-0"><strong>📍Ambiente:</strong> ${evento.ambiente ?? 'Sin Ambiente'}</p>
-                                            <p class="mb-0"><strong>🧾Categoría:</strong> ${evento.categoria ?? 'Sin categoría'}</p>
-                                            <p class="mb-0"><strong>👁️Visualizaciones:</strong> ${evento.visualizaciones ?? 'Sin Visualizaciones'}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                                                    `;
+                                                                           <div class="col-md-4 mb-3">
+                                                                            <div class="card h-100 shadow-sm border-left-primary">
+                                                                                <div class="card-body">
+                                                                                    <h6 class="card-title text-success">${evento.nomEvento}</h6>
+                                                                                    <p class="mb-1"><i class='bx bx-calendar'></i> <strong>Fecha:</strong> ${evento.fechaEventoFormatted}</p>
+                                                                                    <p class="mb-1"><i class='bx bx-user-circle'></i> <strong>Solicitante:</strong> ${evento.nomSolicitante}</p>
+                                                                                    <p class="mb-0"><strong>📍Ambiente:</strong> ${evento.ambiente ?? 'Sin Ambiente'}</p>
+                                                                                    <p class="mb-0"><strong>🧾Categoría:</strong> ${evento.categoria ?? 'Sin categoría'}</p>
+                                                                                    <p class="mb-0"><strong>👁️Visualizaciones:</strong> ${evento.visualizaciones ?? 'Sin Visualizaciones'}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                                                            `;
                             });
                             html += '</div>';
 

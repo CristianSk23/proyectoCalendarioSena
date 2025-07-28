@@ -26,11 +26,11 @@ class EventoController extends Controller
         // Cargar categorías y fichas para el formulario
         $calendario = $this->calendarioGenerado();
         $categorias = Categoria::all();
-        $fichas = Ficha::all();
+        /*  $fichas = Ficha::all(); */
         $participantes = Participante::where('est_apr_id',  2)->select('par_identificacion', 'par_nombres')->paginate(10);
         $ambientes = Ambiente::all();
 
-        return view('Evento.crearEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes'));
+        return view('Evento.crearEvento', compact('categorias',  'calendario', 'participantes', 'ambientes'));
     }
 
 
@@ -396,13 +396,14 @@ class EventoController extends Controller
         $term = $request->input('term');
 
         $participantes = Participante::where('par_nombres', 'LIKE', '%' . $term . '%')
-            ->get(['par_identificacion', 'par_nombres', 'par_apellidos']);
+            ->get(['par_identificacion', 'par_nombres', 'par_apellidos', 'par_correo']);
 
         $resultado = $participantes->map(function ($p) {
             return [
                 'id' => $p->par_identificacion,
                 'nombre' => $p->par_nombres,
                 'apellido' => $p->par_apellidos,
+                'correo' => $p->par_correo ?? null, // Asegurarse de que el campo correo exista
             ];
         });
 
@@ -611,7 +612,7 @@ class EventoController extends Controller
         ]);
     }
 
-    
+
 
 
 
@@ -657,8 +658,8 @@ class EventoController extends Controller
 
     // solicitud evento publico
     public function updatepublica(Request $request, Evento $evento)
-    
-   {
+
+    {
         $validatedData = $this->validateRequest($request);
         $idEvento = $request->input('idEvento');
 
@@ -701,7 +702,7 @@ class EventoController extends Controller
 
     // Método para manejar el formulario externo  -oky
     public function storeExterno(Request $request)
-    { 
+    {
 
         try {
             $validatedData = $this->validateRequest($request);
@@ -757,7 +758,7 @@ class EventoController extends Controller
 
 
 
-            
+
             // Relación en tabla pivote
             DB::table('evento_participante')->insert([
                 'evento_id' => $evento->idEvento,

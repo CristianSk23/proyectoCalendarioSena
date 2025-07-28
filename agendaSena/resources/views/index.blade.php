@@ -34,17 +34,17 @@
                 </div>
             </div>
             <div class="col-auto">
-                <div class="alert alert-info p-1 m-0 d-flex align-items-center small" role="alert">
-                    <span class="me-2"
-                        style="width: 12px; height: 12px; background-color: #0dcaf0; display: inline-block; border-radius: 2px;"></span>
-                    Evento Realizado
-                </div>
-            </div>
-            <div class="col-auto">
                 <div class="alert alert-success p-1 m-0 d-flex align-items-center small" role="alert">
                     <span class="me-1"
                         style="width: 12px; height: 12px; background-color: #198754; display: inline-block; border-radius: 2px;"></span>
                     Evento Confirmado
+                </div>
+            </div>
+            <div class="col-auto">
+                <div class="alert alert-info p-1 m-0 d-flex align-items-center small" role="alert">
+                    <span class="me-2"
+                        style="width: 12px; height: 12px; background-color: #0dcaf0; display: inline-block; border-radius: 2px;"></span>
+                    Evento Realizado
                 </div>
             </div>
             <div class="col-auto">
@@ -88,6 +88,8 @@
             const mesAnioElemento = document.getElementById('mesAnio');
             const anteriorMesBtn = document.getElementById('prevMonth');
             const siguienteMesBtn = document.getElementById('nextMonth');
+            const userRol = "{{ auth()->check() ? auth()->user()->rol : 'Invitado' }}";
+
 
             const obtenerNombresMeses = (idioma = 'es-ES') => {
                 const formatter = new Intl.DateTimeFormat(idioma, {
@@ -119,19 +121,19 @@
 
                 // Limpiar tabla
                 calendarioTabla.innerHTML = `
-                                                                                                                                                                                                                                                                                        <thead>
-                                                                                                                                                                                                                                                                                            <tr class="table-light table-bordered">
-                                                                                                                                                                                                                                                                                                <th class="text-center">Dom</th>
-                                                                                                                                                                                                                                                                                                <th class="text-center">Lun</th>
-                                                                                                                                                                                                                                                                                                <th class="text-center">Mar</th>
-                                                                                                                                                                                                                                                                                                <th class="text-center">Mié</th>
-                                                                                                                                                                                                                                                                                                <th class="text-center">Jue</th>
-                                                                                                                                                                                                                                                                                                <th class="text-center">Vie</th>
-                                                                                                                                                                                                                                                                                                <th class="text-center">Sáb</th>
-                                                                                                                                                                                                                                                                                            </tr>
-                                                                                                                                                                                                                                                                                        </thead>
-                                                                                                                                                                                                                                                                                        <tbody></tbody>
-                                                                                                                                                                                                                                                                                    `;
+                                                                                                                                                                                                                                                                                                                                <thead>
+                                                                                                                                                                                                                                                                                                                                    <tr class="table-light table-bordered">
+                                                                                                                                                                                                                                                                                                                                        <th class="text-center">Dom</th>
+                                                                                                                                                                                                                                                                                                                                        <th class="text-center">Lun</th>
+                                                                                                                                                                                                                                                                                                                                        <th class="text-center">Mar</th>
+                                                                                                                                                                                                                                                                                                                                        <th class="text-center">Mié</th>
+                                                                                                                                                                                                                                                                                                                                        <th class="text-center">Jue</th>
+                                                                                                                                                                                                                                                                                                                                        <th class="text-center">Vie</th>
+                                                                                                                                                                                                                                                                                                                                        <th class="text-center">Sáb</th>
+                                                                                                                                                                                                                                                                                                                                    </tr>
+                                                                                                                                                                                                                                                                                                                                </thead>
+                                                                                                                                                                                                                                                                                                                                <tbody></tbody>
+                                                                                                                                                                                                                                                                                                                            `;
                 const tbody = calendarioTabla.querySelector('tbody');
                 let fila = document.createElement('tr');
 
@@ -304,9 +306,9 @@
                         nombreMes = nombreMes.charAt(0).toUpperCase() + nombreMes.slice(1).toUpperCase();
 
                         const contenedorEventos = `
-                                                                                                                                                                                                                                                    <h2 class="font-weight-bold text-center" id="tituloEventos"></h2>
-                                                                                                                                                                                                                                                    <div id="eventosList"></div>
-                                                                                                                                                                                                                                                `;
+                                                                                                                                                                                                                                                                                            <h2 class="font-weight-bold text-center" id="tituloEventos"></h2>
+                                                                                                                                                                                                                                                                                            <div id="eventosList"></div>
+                                                                                                                                                                                                                                                                                        `;
 
                         modalBody.innerHTML = contenedorEventos;
 
@@ -315,7 +317,6 @@
 
                         if (data.data.length > 0) {
                             const eventosHTML = data.data.map(item => {
-                                console.log(item);
                                 const evento = item.evento;
                                 const categoria = item.categoria;
                                 const horario = item.horario;
@@ -323,35 +324,42 @@
                                 const encargados = item.encargados; // Ahora es un array
                                 const imagenPublicidad = evento.publicidad;
                                 const imagenURL = `/storage/${imagenPublicidad}`;
+                                let botonAccion = '';
+                                let botonEliminar = '';
 
-                                const botonAccion = evento.estadoEvento == 3
-                                    ? `<a href="{{ route('eventos.agregarFotos', '') }}/${evento.idEvento}" class="btn btn-info">Agregar Fotos</a>`
-                                    : `<a href="{{ route('eventos.editarEvento', '') }}/${evento.idEvento}" class="btn btn-warning">Actualizar</a>`;
+                                console.log(evento.ambiente.pla_amb_id);
 
+
+                                if (evento.estadoEvento == 3) {
+                                    botonAccion = `<a href="{{ route('eventos.agregarFotos', '') }}/${evento.idEvento}" class="btn btn-info">Agregar Fotos</a>`;
+                                } else if (evento.estadoEvento != 3 && userRol == 'Administrador') {
+                                    botonAccion = `<a href="{{ route('eventos.editarEvento', '') }}/${evento.idEvento}" class="btn btn-warning">Actualizar</a>`;
+                                    botonEliminar = `<button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>`;
+                                }
                                 // Crear listado de encargados
                                 const encargadosHTML = encargados.length > 0
                                     ? encargados.map(encargado => encargado.par_nombres).join(', ')
                                     : 'Sin encargados asignados';
 
                                 return `
-                <div class="col-6 mb-4"> 
-                    <div class="card col-6" style="width: 100%;">
-                        <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento" style="max-width: 100%; height: auto;">
-                        <div class="card-body">
-                            <h5 class="card-title text-success">${evento.nomEvento}</h5>
-                            <p class="card-text"><b>Descripción:</b> ${linkify(evento.descripcion)}</p>
-                            <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
-                            <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
-                            <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
-                            <p class="card-text"><b>Encargado(s):</b> ${encargadosHTML}</p>
-                            <div class="d-flex justify-content-between">
-                                ${botonAccion}
-                                <button class="btn btn-danger" data-nombre-evento="${evento.nomEvento}" data-id-evento="${evento.idEvento}">Eliminar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+                                                        <div class="col-6 mb-4"> 
+                                                            <div class="card col-6" style="width: 100%;">
+                                                                <img class="card-img-top" src="${imagenURL}" alt="Publicidad del evento" style="max-width: 100%; height: auto;">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title text-success">${evento.nomEvento}</h5>
+                                                                    <p class="card-text"><b>Descripción:</b> ${linkify(evento.descripcion)}</p>
+                                                                    <p class="card-text"><b>Ambiente:</b> ${ambiente.pla_amb_descripcion}</p>
+                                                                    <p class="card-text"><b>Categoría:</b> ${categoria.nomCategoria}</p>
+                                                                    <p class="card-text"><b>Horario:</b> ${horario.inicio} - ${horario.fin}</p>
+                                                                    <p class="card-text"><b>Encargado(s):</b> ${encargadosHTML}</p>
+                                                                    <div class="d-flex justify-content-between">
+                                                                        ${botonAccion}
+                                                                        ${botonEliminar}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    `;
                             }).join('');
 
                             tituloEventos.className = "text-center";
@@ -461,7 +469,7 @@
             @if(session('error'))
                 notyf.error('{{ session('error') }}');
             @endif
-                                                                                                                                                                                                                    });
+                                                                                                                                                                                                                                                            });
     </script>
 
 @endsection

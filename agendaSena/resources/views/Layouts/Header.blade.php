@@ -26,14 +26,14 @@
 <body>
     <nav class="navbar navbar-expand-lg" style="background-color: #4caf50;">
         <div class="container-fluid">
-            <div>
+            <div class="d-flex align-items-center">
                 <img src="{{ asset('images/inicio/logo.png') }}" alt="Logo" class="img-fluid"
                     style="width: 50px; height: 50px;">
-            </div>
-            <div class="ms-2">
-                <a href="{{ route('calendario.index') }}" class="nav-link text-white">
-                    <h1 class="h4">AgenSena</h1>
-                </a>
+                <div class="ms-2 text-center">
+                    <a href="{{ route('calendario.index') }}" class="nav-link text-white">
+                        <h3 class="h4 mb-0">Agenda cultural <br>del CDTI.</h3>
+                    </a>
+                </div>
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,23 +44,19 @@
 
                 </ul>
                 <div class="d-flex align-items-center">
-                    <div class="position-relative">
-                        <a id="icono-notificacion">
-                            <!-- Ícono de campana normal -->
-                            <i id="icono-campana" class="bx bxs-bell" style="color: #ffffff;"></i>
-                            <!-- Ícono de campana sonando (oculto inicialmente) -->
-                            <i id="icono-notificacion-activa" class="bx bxs-bell-ring"
-                                style="color: #ffffff; display: none;"></i>
-                        </a>
-                        <span id="cantidad-eventos"
-                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            0
-                        </span>
-                    </div>
 
-                    <!-- Verificar si el usuario está autenticado -->
                     @auth
-
+                        <div class="position-relative">
+                            <a id="icono-notificacion">
+                                <i id="icono-campana" class="bx bxs-bell" style="color: #ffffff;"></i>
+                                <i id="icono-notificacion-activa" class="bx bxs-bell-ring"
+                                    style="color: #ffffff; display: none;"></i>
+                            </a>
+                            <span id="cantidad-eventos"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                0
+                            </span>
+                        </div>
                         <div class="dropdown ms-4 custom-config-dropdown">
                             <button class="btn dropdown-toggle text-dark border-0" id="menuConfiguracion"
                                 data-bs-toggle="dropdown" style="background-color: transparent; color: #fff;">
@@ -75,16 +71,13 @@
                             </ul>
                         </div>
 
-                        <!-- Si el usuario está autenticado, mostrar el botón de cierre de sesión -->
                         <form method="POST" action="{{ route('login.logout') }}" class="ms-3">
                             @csrf
                             <button type="submit" class="btn btn-danger">
-                                <!-- Ícono de power -->
                                 <i class="bx bx-power-off" style="color: #ffffff;"></i> Cerrar sesión
                             </button>
                         </form>
                     @else
-                        <!-- Si el usuario no está autenticado, mostrar un botón o enlace para iniciar sesión -->
                         <a href="{{ route('login') }}" class="btn btn-primary ms-3">
                             <i class="bx bx-log-in" style="color: #ffffff;"></i> Iniciar sesión
                         </a>
@@ -95,29 +88,58 @@
     </nav>
 
 
+
     <script>
+
+        const userRol = "{{ auth()->check() ? auth()->user()->rol : 'Invitado' }}";
+
         function cargarEventosSinResponder() {
             const ruta = "{{ route('eventos.porConfirmar') }}";
+            const ID_AUDITORIO = 180;
+
             fetch(ruta)
                 .then(response => response.json())
                 .then(data => {
                     const cantidadEventos = data.cantidadEventos;
 
-                    // Actualizar el contenido del span con la cantidad de eventos
                     const cantidadEventosSpan = document.getElementById('cantidad-eventos');
                     const iconoCampana = document.getElementById('icono-campana');
                     const iconoNotificacionActiva = document.getElementById('icono-notificacion-activa');
+                    const iconoNotificacion = document.getElementById('icono-notificacion');
 
-                    cantidadEventosSpan.textContent = cantidadEventos;
+                    const ambienteId = data.ambiente.pla_amb_id;
 
-                    if (cantidadEventos > 0) {
-                        // Cambiar a icono de notificación activa
-                        iconoCampana.style.display = 'none'; // Ocultar el icono de campana
-                        iconoNotificacionActiva.style.display = 'block'; // Mostrar el icono de notificación activa
+                    let mostrarNotificacion = false;
+
+                    // Validar rol
+                    if (ambienteId === ID_AUDITORIO && userRol === "Auditorio") {
+                        mostrarNotificacion = true;
+                    } else if (ambienteId !== ID_AUDITORIO && userRol === "Biblioteca") {
+                        mostrarNotificacion = true;
+                    }
+
+                    if (mostrarNotificacion) {
+                        cantidadEventosSpan.textContent = cantidadEventos;
+
+                        if (cantidadEventos > 0) {
+                            iconoCampana.style.display = 'none';
+                            iconoNotificacionActiva.style.display = 'block';
+                        } else {
+                            iconoCampana.style.display = 'block';
+                            iconoNotificacionActiva.style.display = 'none';
+                        }
+
+                        // Habilitar click
+                        iconoNotificacion.style.pointerEvents = 'auto';
+                        iconoNotificacion.style.opacity = '1';
                     } else {
-                        // Volver al icono de campana
-                        iconoCampana.style.display = 'block'; // Mostrar el icono de campana
-                        iconoNotificacionActiva.style.display = 'none'; // Ocultar el icono de notificación activa
+                        cantidadEventosSpan.textContent = '';
+                        iconoCampana.style.display = 'block';
+                        iconoNotificacionActiva.style.display = 'none';
+
+                        // Deshabilitar click
+                        iconoNotificacion.style.pointerEvents = 'none';
+                        iconoNotificacion.style.opacity = '0.5'; // se verá atenuado
                     }
                 })
                 .catch(error => {
@@ -125,13 +147,14 @@
                 });
         }
 
-        // Llama a la función para cargar los eventos al cargar la página
         document.addEventListener('DOMContentLoaded', cargarEventosSinResponder);
 
         document.getElementById('icono-notificacion').addEventListener('click', function (e) {
             e.preventDefault();
             eventosSinConfirmar();
         });
+
+
 
 
         function eventosSinConfirmar() {
@@ -156,7 +179,7 @@
                 .then(response => response.json())
                 .then(data => {
                     const cantidadEventos = data.cantidadEventos;
-                    console.log(data.ambiente);
+
 
                     if (cantidadEventos > 0) {
                         renderEventosPendientes(data.eventos, data.ambiente);

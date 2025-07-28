@@ -9,13 +9,16 @@ class User extends Authenticatable
 {
     use HasFactory;
 
+    protected $table = 'users_agenda'; // Cambia aquí si tu tabla se llama diferente
+
     protected $fillable = [
         'par_identificacion',
+        'par_nombres',
+        'par_apellidos',
         'email',
         'password',
-        'gender',
         'estado',
-        'remember_token',
+        'rol',
     ];
 
     protected $hidden = [
@@ -23,13 +26,8 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $casts = [
-        'estado' => 'boolean',
-    ];
-
     public function getAuthIdentifierName()
     {
         return 'par_identificacion';
     }
-    
 }

@@ -265,7 +265,8 @@
             encargados = @json($evento->encargados->map(function ($encargado) {
                 return [
                     'id' => $encargado->par_identificacion,
-                    'nombre' => $encargado->par_nombres . ' ' . $encargado->par_apellidos
+                    'nombre' => $encargado->par_nombres . ' ' . $encargado->par_apellidos,
+                    'correo' => $encargado->par_correo
                 ];
             }));
         @endif
@@ -292,6 +293,8 @@
                         li.textContent = `${p.nombre} ${p.apellido}`;
                         li.dataset.id = p.id;
                         li.dataset.nombre = `${p.nombre} ${p.apellido}`;
+                        console.log(`Agregando participante: ${p.nombre} ${p.apellido} (ID: ${p.id}) ${p.correo} `);
+                        
                         resultados.appendChild(li);
                     });
                 });
@@ -337,7 +340,7 @@
             // Guardar los IDs separados por coma
             inputHidden.value = encargados.map(enc => enc.id).join(',');
             console.log(`IDs de encargados: ${inputHidden.value}`);
-
+                                                                                                                                                        
         }
 
         // Eliminar encargado de la selección
@@ -383,17 +386,11 @@
 
         let fichas = [];
 
-        // Si estás editando, cargar fichas desde Blade
-        /*      @if(isset($evento->fichas))
-            fichas = @json($evento->fichas->map(fn($f) => [
-                'numero' => $f->fic_numero,
-                'nombre' => $f->nombreFicha
-            ]));
-            actualizarFichas();
-        @endif */
 
         @if (isset($fichas))
             fichas = @json($fichas);
+            console.log('Fichas precargadas:', fichas);
+            
             actualizarFichas();
         @endif
 
@@ -428,7 +425,7 @@
             if (numero && nombre) {
                 // Verificar que no esté duplicada
                 if (fichas.some(f => f.numero === numero)) {
-                    alert('Esta ficha ya ha sido agregada.');
+                    notyf.error('Esta ficha ya ha sido agregada.');
                     return;
                 }
 
@@ -439,7 +436,7 @@
                 numeroInput.value = '';
                 nombreInput.value = '';
             } else {
-                alert('Debe ingresar el número y el nombre de la ficha.');
+                notyf.error('Debe ingresar el número y el nombre de la ficha.');
             }
         }
 
