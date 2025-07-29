@@ -40,13 +40,16 @@
                     Evento Realizado
                 </div>
             </div>
-            <div class="col-auto">
+            <div class="col-auto" id="legendContainer">
                 <div class="alert alert-success p-1 m-0 d-flex align-items-center small" role="alert">
                     <span class="me-1"
                         style="width: 12px; height: 12px; background-color: #198754; display: inline-block; border-radius: 2px;"></span>
                     Evento Confirmado
                 </div>
             </div>
+
+
+            
             <div class="col-auto">
                 <div class="alert alert-success p-1 m-0 d-flex align-items-center small" role="alert">
                     <span class="me-1"
