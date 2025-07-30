@@ -6,9 +6,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <div class="modal-body p-4">
+            <div class="modal-body p-6">
                 <div class="container-fluid h-100 d-flex flex-column align-items-center justify-content-center">
-                    <h2 class="mb-4">¿En qué podemos ayudarte?</h2>
+                    <h2 class="mb-5 fw-bold" style="font-size: 2rem;">¿En qué podemos ayudarte?</h2>
                     <div class="d-grid gap-3 col-6 mx-auto">
                         <button class="btn btn-lg btn-success" id="showTutorialBtn">
                             <i class="bi bi-book me-2"></i> Tutorial Paso a Paso
@@ -103,6 +103,20 @@
                             <div id="collapseTwo" class="accordion-collapse collapse">
                                 <div class="accordion-body">
                                     Actualmente, los eventos enviados quedan pendientes de confirmación. Para realizar cambios, por favor contacta al administrador del sistema.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTres">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTres">
+                                    ¿Puedo confirmar un evento?
+                                </button>
+                            </h2>
+                            <div id="collapseTres" class="accordion-collapse collapse" aria-labelledby="headingTres" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Actualmente, los eventos pendientes por confirmar aparecen en la campana de notificaciones.
+                                    Una vez allí podrás observar los eventos pendientes por confirmar y dar clic en <b>Confirmar</b> o <b>Rechazar</b>.
                                 </div>
                             </div>
                         </div>

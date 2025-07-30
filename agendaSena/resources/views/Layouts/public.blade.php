@@ -87,7 +87,7 @@
         <!-- aqui me llevara a otras seciones -->
   
             @yield('content') <!-- secciones de contenido -->
-
+                            
         <!--FIN CONTENIDO DE EVENTOS -->
 
     {{-- ====================================================================== --}}    
@@ -142,6 +142,8 @@
                         ======================================================================
                         --}}
 
+
+                        @if(!isset($ocultarBannerGuia) || !$ocultarBannerGuia)
                         <!--GUIA AYUDA SOLICITAR evento-->
 
                             @include ('public/GuiaAyudaPublic')
@@ -151,11 +153,11 @@
                             <button id="toggleAyudaBtn" class="btn btn-primary position-fixed bottom-0 end-0 translate-middle-y me-3 mb-3 z-3 rounded-circle shadow" style="width: 60px; height: 60px;">
                                 <i class="bi bi-question-lg fs-3"></i> {{-- Icono de pregunta de Bootstrap Icons --}}
                             </button>
+
+                            
                             
                         <!-- Fin  Ayuda Public -->
-
-
-
+                         @endif
 
 
 

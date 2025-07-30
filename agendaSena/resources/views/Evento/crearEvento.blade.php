@@ -60,14 +60,14 @@
                 <div class="col-md-6">
                     <label for="horarioEventoInicio" class="form-label">Inicio:</label>
                     <input type="time" name="horarioEventoInicio" required class="form-control"
-                        value="{{ isset($evento) ? $inicioEvento : '' }}" min="07:00" max="20:00">
-                    <div class="invalid-feedback">Hora inválida (7:00 AM - 8:00 PM)</div>
+                        value="{{ isset($evento) ? $inicioEvento : '' }}" min="06:00" max="21:00">
+                    <div class="invalid-feedback">Hora inválida (6:00 AM - 9:00 PM)</div>
                 </div>
                 <div class="col-md-6">
                     <label for="horarioEventoFin" class="form-label">Fin:</label>
                     <input type="time" name="horarioEventoFin" required class="form-control"
-                        value="{{ isset($evento) ? $finalEvento : '' }}" min="07:00" max="20:00">
-                    <div class="invalid-feedback">Hora inválida (7:00 AM - 8:00 PM)</div>
+                        value="{{ isset($evento) ? $finalEvento : '' }}" min="06:00" max="21:00">
+                    <div class="invalid-feedback">Hora inválida (6:00 AM - 9:00 PM)</div>
                 </div>
             </div>
         </div>
