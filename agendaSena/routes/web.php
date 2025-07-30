@@ -15,7 +15,13 @@ use App\Http\Controllers\FotografiaEvento\FotografiaEventoController;
 
 
 // Rutas públicas
-Route::get('/', [PublicController::class, 'index'])->name('public.index');
+Route::get('/AgendaCulturalSenaCDTICali', [PublicController::class, 'index'])->name('public.index');
+
+// Opcional: redirigir / al nombre largo
+Route::get('/', function () {
+    return redirect()->route('public.index');
+});
+
 Route::get('/public/{id}', [PublicController::class, 'show'])->name('public.show');
 
 // Ruta del calendario (cambiada a /calendario)
@@ -49,11 +55,11 @@ Route::post('evento/storeExterno', [EventoController::class, 'storeExterno'])->n
 Route::get('/eventos/buscarFichas', [EventoController::class, 'buscarFichas'])->name('eventos.buscarFichas');
 
 
-//Route::get("eventosPorFecha", [EventoController::class, 'buscarEventosPorFecha'])->name('eventos.buscarEventoPorFecha');
 
-// Evento soliictud publica
-// Ruta para solicitudes públicas SIN autenticación completa
-Route::post('evento/solicitud', [EventoController::class, 'store'])->name('evento.solicitud.store');
+
+// apoyo visual mokup para ayuda guiada  como solicitar un evento desde vista publica.
+Route::get('/apoyo-guia-solicitud', function () {    return view('public.ApoyoGuiaSolicitud');})->name('public.apoyoGuiaSolicitud');
+
 // Ruta protegida solo para usuarios logueados
 // Route::post('evento/crearPost', [EventoController::class, 'store'])->name('eventos.store')->middleware('auth');
 
@@ -115,7 +121,18 @@ Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensu
 
 
 // se agrega vista e ecuestar para  solicitar evento
-Route::get('/solicitud-evento', [EventoController::class, 'solicitudPublica'])->name('evento.solicitud');
+// Route::get('/solicitud-evento', [EventoController::class, 'solicitudPublica'])->name('evento.solicitud');
+Route::get('/solicitud-evento', [EventoController::class, 'solicitudPublica'])
+    ->middleware('solicitudAuth')
+    ->name('evento.solicitud');
+
+
+Route::get('/solicitud-evento/auth', function () {
+    return view('public.SolicitudEvento'); // Vista que solo muestra tu modal
+})->name('mostrar.modal.solicitud');
+
+Route::post('/solicitud-evento/auth', [EventoController::class, 'autenticarSolicitud'])->name('evento.autenticar');
+
 Route::post('/evento/updatepublica/{evento}', [EventoController::class, 'updatePublica'])->name('evento.updatePublica');
 
 

@@ -1,7 +1,9 @@
 @extends('layouts.public')
 
 @section('content')
-    <div class="container" id="future-events"></div>
+<div class="container">
+    <div class="row" id="future-events"></div>
+
 
 
     <!-- Modal de Detalle de Evento -->
@@ -41,6 +43,7 @@
 
 
         // const todosLosEventos = @json($eventos);
+        
 
         function createEventCard(event) {
             const imagenURL = event.publicidad ? `/storage/${event.publicidad}` : 'https://via.placeholder.com/300x200';

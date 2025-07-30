@@ -3,6 +3,8 @@
 <head>
 @include('layouts.header') {{-- o tus estilos/scripts directamente --}}
 <!-- <script src="{{ asset('js/app.js') }}"></script> -->
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/css/shepherd.css"/>
+<script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/shepherd.min.js"></script>
 
 </head>
 
@@ -85,7 +87,7 @@
         <!-- aqui me llevara a otras seciones -->
   
             @yield('content') <!-- secciones de contenido -->
-
+                            
         <!--FIN CONTENIDO DE EVENTOS -->
 
     {{-- ====================================================================== --}}    
@@ -140,6 +142,8 @@
                         ======================================================================
                         --}}
 
+
+                        @if(!isset($ocultarBannerGuia) || !$ocultarBannerGuia)
                         <!--GUIA AYUDA SOLICITAR evento-->
 
                             @include ('public/GuiaAyudaPublic')
@@ -149,11 +153,11 @@
                             <button id="toggleAyudaBtn" class="btn btn-primary position-fixed bottom-0 end-0 translate-middle-y me-3 mb-3 z-3 rounded-circle shadow" style="width: 60px; height: 60px;">
                                 <i class="bi bi-question-lg fs-3"></i> {{-- Icono de pregunta de Bootstrap Icons --}}
                             </button>
+
+                            
                             
                         <!-- Fin  Ayuda Public -->
-
-
-
+                         @endif
 
 
 
@@ -172,6 +176,7 @@
 </body>
     
 
+
     <!-- Cargar Bootstrap JS y dependencias -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
@@ -181,8 +186,14 @@
          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js/dist/css/shepherd.css"/>
+   <script src="https://cdn.jsdelivr.net/npm/shepherd.js/dist/js/shepherd.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/css/shepherd.css"/>
+<script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/shepherd.min.js"></script>
 
    
 
@@ -197,49 +208,47 @@
     
     
     document.addEventListener("DOMContentLoaded", function() {
-        const form = document.getElementById("authFormAgregar");
+    const form = document.getElementById("authFormAgregar");
 
-        form.addEventListener("submit", function(e) {
-            e.preventDefault(); // Evita el envío tradicional del formulario
+    form.addEventListener("submit", function(e) {
+        e.preventDefault(); // Evita el envío tradicional del formulario
 
-            const identificacion = document.getElementById("auth_identificacion").value;
-            const password = document.getElementById("auth_password").value;
+        const identificacion = document.getElementById("auth_identificacion").value;
+        const password = document.getElementById("auth_password").value;
 
-            // Llamar a una función que use estas credenciales para validar o continuar el flujo
-            validarCredenciales(identificacion, password);
-        });
-
-        function validarCredenciales(identificacion, password) {
-            fetch("/evento/storeExterno", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({
-                    auth_identificacion: identificacion,
-                    auth_password: password,
-                    // Aquí puedes incluir también los datos del evento si ya los tienes
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Éxito: continuar con el proceso
-                    console.log("Autenticación válida. ID del evento:", data.evento_id);
-                    // Puedes cerrar el modal si deseas
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('authModalAgregarEvento'));
-                    modal.hide();
-                } else {
-                    // Mostrar error
-                    document.getElementById("auth_error_modal").textContent = data.message;
-                }
-            })
-            .catch(error => {
-                console.error("Error en la solicitud:", error);
-            });
-        }
+        // Llamar a una función que use estas credenciales para validar o continuar el flujo
+        validarCredenciales(identificacion, password);
     });
+
+    function validarCredenciales(identificacion, password) {
+        fetch("{{ route('evento.autenticar') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                auth_identificacion: identificacion,
+                auth_password: password
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Guardamos la sesión en backend (hecho en controlador)
+                // Redirigir al formulario protegido
+                window.location.href = "{{ route('evento.solicitud') }}";
+            } else {
+                // Mostrar error
+                document.getElementById("auth_error_modal").textContent = data.message;
+            }
+        })
+        .catch(error => {
+            console.error("Error en la solicitud:", error);
+        });
+    }
+});
+
     // -- FIN Manejo de formulario publico para agregar eventos -ok
 
 
