@@ -31,7 +31,7 @@
                     style="width: 50px; height: 50px;">
                 <div class="ms-2 text-center">
                     <a href="{{ route('calendario.index') }}" class="nav-link text-white">
-                        <h3 class="h4 mb-0">Agenda cultural <br>del CDTI.</h3>
+                        <h3 class="h4 mb-0">Agenda cultural <br>CDTI.</h3>
                     </a>
                 </div>
             </div>
