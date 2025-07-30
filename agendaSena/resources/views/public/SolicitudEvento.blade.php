@@ -437,6 +437,16 @@ resultadosFichas.addEventListener('click', e => {
 
 
 
+@if(isset($showAuth) && $showAuth)
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const authModal = new bootstrap.Modal(document.getElementById('authModalAgregarEvento'));
+        authModal.show();
+    });
+</script>
+@endif
+
+
 
 </script>
 @endpush

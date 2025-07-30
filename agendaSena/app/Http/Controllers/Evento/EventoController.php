@@ -628,25 +628,38 @@ class EventoController extends Controller
         return view('Evento.inicioEvento', compact('eventos'));
     }
 
-    public function solicitudPublica(Request $reques)
-    {
-        // $categorias = Categoria::all();
-        $categorias = Categoria::where('estadoCategoria', 1)->get();
-
-        $fichas = Ficha::all();
-        $calendario = $this->calendarioGenerado();
-        $participantes = Participante::where('est_apr_id', 2)
-            ->select('par_identificacion', 'par_nombres')
-            ->paginate(10);
-        $ambientes = Ambiente::all();
-        // $eventos = Evento::all();  // O cualquier lógica que estés utilizando para obtener los eventos
-        $eventos = null;
-        // Pasar la variable $eventos a la vista
-        // return view('evento.solicitudEvento', compact('eventos'));
-
-        return view('public.SolicitudEvento', compact('categorias', 'fichas', 'calendario', 'participantes', 'ambientes', 'eventos'));
-        return redirect()->route('public.index')->with('success', 'Evento guardado exitosamente');
+    public function solicitudPublica(Request $request)
+{
+    // Verificamos si ya se autenticó en esta sesión
+    if (!$request->session()->has('solicitud_autenticada')) {
+        // Pasa bandera a la vista para mostrar el modal
+        return view('public.SolicitudEvento', [
+            'showAuth' => true,
+            'categorias' => Categoria::where('estadoCategoria', 1)->get(),
+            'fichas' => Ficha::all(),
+            'calendario' => $this->calendarioGenerado(),
+            'participantes' => Participante::where('est_apr_id', 2)
+                ->select('par_identificacion', 'par_nombres')
+                ->paginate(10),
+            'ambientes' => Ambiente::all(),
+            'eventos' => null
+        ]);
     }
+
+    // Si ya está autenticado
+    return view('public.SolicitudEvento', [
+        'showAuth' => false,
+        'categorias' => Categoria::where('estadoCategoria', 1)->get(),
+        'fichas' => Ficha::all(),
+        'calendario' => $this->calendarioGenerado(),
+        'participantes' => Participante::where('est_apr_id', 2)
+            ->select('par_identificacion', 'par_nombres')
+            ->paginate(10),
+        'ambientes' => Ambiente::all(),
+        'eventos' => null
+    ]);
+}
+
 
     public function authenticated(Request $request, $user)
     {
@@ -785,6 +798,29 @@ class EventoController extends Controller
 
 
     // Fin Método para manejar el formulario externo
+
+
+
+
+
+public function autenticarSolicitud(Request $request)
+{
+    $identificacion = $request->input('auth_identificacion');
+    $password = $request->input('auth_password');
+
+    // Aquí colocas la validación que necesites (ejemplo simple)
+    $usuario = Participante::where('par_identificacion', $identificacion)->first();
+
+    if ($usuario && $password === 'clave123') { // Aquí puedes usar hash real si deseas
+        // Guardar autenticación en sesión
+        $request->session()->put('solicitud_autenticada', true);
+
+        return response()->json(['success' => true]);
+    }
+
+    return response()->json(['success' => false, 'message' => 'Credenciales inválidas']);
+}
+
 
 
 }

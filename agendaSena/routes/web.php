@@ -121,7 +121,18 @@ Route::post('/reportes/pdf/mensual', [PdfController::class, 'generarReporteMensu
 
 
 // se agrega vista e ecuestar para  solicitar evento
-Route::get('/solicitud-evento', [EventoController::class, 'solicitudPublica'])->name('evento.solicitud');
+// Route::get('/solicitud-evento', [EventoController::class, 'solicitudPublica'])->name('evento.solicitud');
+Route::get('/solicitud-evento', [EventoController::class, 'solicitudPublica'])
+    ->middleware('solicitudAuth')
+    ->name('evento.solicitud');
+
+
+Route::get('/solicitud-evento/auth', function () {
+    return view('public.SolicitudEvento'); // Vista que solo muestra tu modal
+})->name('mostrar.modal.solicitud');
+
+Route::post('/solicitud-evento/auth', [EventoController::class, 'autenticarSolicitud'])->name('evento.autenticar');
+
 Route::post('/evento/updatepublica/{evento}', [EventoController::class, 'updatePublica'])->name('evento.updatePublica');
 
 

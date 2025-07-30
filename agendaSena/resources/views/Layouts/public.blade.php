@@ -208,49 +208,47 @@
     
     
     document.addEventListener("DOMContentLoaded", function() {
-        const form = document.getElementById("authFormAgregar");
+    const form = document.getElementById("authFormAgregar");
 
-        form.addEventListener("submit", function(e) {
-            e.preventDefault(); // Evita el envío tradicional del formulario
+    form.addEventListener("submit", function(e) {
+        e.preventDefault(); // Evita el envío tradicional del formulario
 
-            const identificacion = document.getElementById("auth_identificacion").value;
-            const password = document.getElementById("auth_password").value;
+        const identificacion = document.getElementById("auth_identificacion").value;
+        const password = document.getElementById("auth_password").value;
 
-            // Llamar a una función que use estas credenciales para validar o continuar el flujo
-            validarCredenciales(identificacion, password);
-        });
-
-        function validarCredenciales(identificacion, password) {
-            fetch("/evento/storeExterno", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({
-                    auth_identificacion: identificacion,
-                    auth_password: password,
-                    // Aquí puedes incluir también los datos del evento si ya los tienes
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Éxito: continuar con el proceso
-                    console.log("Autenticación válida. ID del evento:", data.evento_id);
-                    // Puedes cerrar el modal si deseas
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('authModalAgregarEvento'));
-                    modal.hide();
-                } else {
-                    // Mostrar error
-                    document.getElementById("auth_error_modal").textContent = data.message;
-                }
-            })
-            .catch(error => {
-                console.error("Error en la solicitud:", error);
-            });
-        }
+        // Llamar a una función que use estas credenciales para validar o continuar el flujo
+        validarCredenciales(identificacion, password);
     });
+
+    function validarCredenciales(identificacion, password) {
+        fetch("{{ route('evento.autenticar') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                auth_identificacion: identificacion,
+                auth_password: password
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Guardamos la sesión en backend (hecho en controlador)
+                // Redirigir al formulario protegido
+                window.location.href = "{{ route('evento.solicitud') }}";
+            } else {
+                // Mostrar error
+                document.getElementById("auth_error_modal").textContent = data.message;
+            }
+        })
+        .catch(error => {
+            console.error("Error en la solicitud:", error);
+        });
+    }
+});
+
     // -- FIN Manejo de formulario publico para agregar eventos -ok
 
 

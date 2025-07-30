@@ -11,7 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'solicitudAuth' => \App\Http\Middleware\CheckSolicitudEventoAuth::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
